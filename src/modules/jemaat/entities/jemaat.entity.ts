@@ -1,6 +1,7 @@
 import { MainEntityAbstract } from 'src/common/abstract/main-entity.abstract';
-import { Column } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
+@Entity({ name: 'jemaat' })
 export class JemaatEntity extends MainEntityAbstract {
   @Column()
   full_name: string;

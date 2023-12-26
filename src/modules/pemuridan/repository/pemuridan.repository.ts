@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { JemaatEntity } from '../entities/jemaat.entity';
+import { PemuridanEntity } from '../entities/pemuridan.entity';
 import { FilterDto } from '../dto/filter.dto';
 
 @Injectable()
-export class JemaatRepository extends Repository<JemaatEntity> {
+export class PemuridanRepository extends Repository<PemuridanEntity> {
   constructor(private dataSource: DataSource) {
-    super(JemaatEntity, dataSource.createEntityManager());
+    super(PemuridanEntity, dataSource.createEntityManager());
   }
 
   async getAll(filter: FilterDto) {
-    const queryBuilder = this.createQueryBuilder('jemaat');
-    queryBuilder.where('jemaat.name != :name', { name: 'superadmin' });
+    const queryBuilder = this.createQueryBuilder('pemuridan');
+    queryBuilder.where('pemuridan.name != :name', { name: 'superadmin' });
 
     filter.search &&
       queryBuilder.andWhere(
-        '(jemaat.name ILIKE :search OR jemaat.email ILIKE :search OR jemaat.full_name ILIKE :search)',
+        '(pemuridan.name ILIKE :search OR pemuridan.lead ILIKE :search)',
         { search: filter.search },
       );
 
     if (filter.take) {
       queryBuilder.take(filter?.take);
-      queryBuilder.orderBy(`jemaat.created_at`, 'DESC');
+      queryBuilder.orderBy(`pemuridan.created_at`, 'DESC');
       queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
 

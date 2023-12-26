@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PemuridanController } from './pemuridan.controller';
-import { PemuridanService } from './pemuridan.service';
+import { PemuridanController } from '../controller/pemuridan.controller';
+import { PemuridanService } from '../services/pemuridan.service';
 
 describe('PemuridanController', () => {
   let controller: PemuridanController;

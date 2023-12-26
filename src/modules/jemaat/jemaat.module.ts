@@ -6,5 +6,6 @@ import { JemaatRepository } from './repository/jemaat.repository';
 @Module({
   controllers: [JemaatController],
   providers: [JemaatService, JemaatRepository],
+  exports: [JemaatService],
 })
 export class JemaatModule {}
