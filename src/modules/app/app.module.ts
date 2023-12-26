@@ -7,8 +7,9 @@ import typeormConfig from 'src/config/typeorm.config';
 import { RegionModule } from '../region/region.module';
 import { AdminModule } from '../admin/admin.module';
 import { AuthModule } from '../auth/auth.module';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LovControler } from './controller/app.controller';
+import { JemaatModule } from '../jemaat/jemaat.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { LovControler } from './controller/app.controller';
     AuthModule,
     AdminModule,
     RegionModule,
+    JemaatModule,
   ],
   controllers: [LovControler],
   providers: [

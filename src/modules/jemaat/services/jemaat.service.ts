@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateJemaatDto } from '../dto/create-jemaat.dto';
 import { UpdateJemaatDto } from '../dto/update-jemaat.dto';
+import { JemaatRepository } from '../repository/jemaat.repository';
+import { FilterDto } from '../dto/filter.dto';
 
 @Injectable()
 export class JemaatService {
-  create(createJemaatDto: CreateJemaatDto) {
-    return 'This action adds a new jemaat';
+  constructor(private readonly jemaatRepository: JemaatRepository) {}
+
+  async create(createJemaatDto: CreateJemaatDto) {
+    const jemaat = this.jemaatRepository.create(createJemaatDto);
+    const newJemaat = await this.jemaatRepository.save(jemaat);
+    return newJemaat;
   }
 
-  findAll() {
-    return `This action returns all jemaat`;
+  findAll(filter: FilterDto) {
+    return this.jemaatRepository.getAll(filter);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} jemaat`;
+  findOne(id: string) {
+    return this.jemaatRepository.findOneBy({ id });
   }
 
-  update(id: number, updateJemaatDto: UpdateJemaatDto) {
-    return `This action updates a #${id} jemaat`;
+  async update(id: string, updateJemaatDto: UpdateJemaatDto) {
+    const jemaat = await this.findOne(id);
+    if (!jemaat)
+      throw new BadRequestException({ message: 'jemaat is not found!' });
+
+    await this.jemaatRepository.save({
+      ...jemaat,
+      ...updateJemaatDto,
+    });
+
+    return jemaat.id;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} jemaat`;
+  async remove(id: string) {
+    const jemaat = await this.findOne(id);
+    if (!jemaat)
+      throw new BadRequestException({ message: 'jemaat is not found!' });
+
+    await this.jemaatRepository.softRemove(jemaat);
+
+    return jemaat.id;
   }
 }
