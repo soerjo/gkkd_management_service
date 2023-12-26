@@ -10,6 +10,8 @@ import { AuthModule } from '../auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LovControler } from './controller/app.controller';
 import { JemaatModule } from '../jemaat/jemaat.module';
+import { PemuridanModule } from '../pemuridan/pemuridan.module';
+import { BlesscomnModule } from '../blesscomn/blesscomn.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { JemaatModule } from '../jemaat/jemaat.module';
     AdminModule,
     RegionModule,
     JemaatModule,
+    PemuridanModule,
+    BlesscomnModule,
   ],
   controllers: [LovControler],
   providers: [

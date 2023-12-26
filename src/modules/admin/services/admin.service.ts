@@ -64,7 +64,8 @@ export class AdminService implements OnApplicationBootstrap {
 
   async update(id: string, updateAdminDto: UpdateAdminDto) {
     const user = await this.findOne(id);
-    if (!user) throw new BadRequestException({ message: 'user is not found!' });
+    if (!user)
+      throw new BadRequestException({ message: 'admin is not found!' });
     if (user.name === 'superadmin') throw new ForbiddenException();
 
     const updateUser = await this.adminRepository.save({
@@ -80,7 +81,8 @@ export class AdminService implements OnApplicationBootstrap {
 
   async remove(id: string) {
     const user = await this.findOne(id);
-    if (!user) throw new BadRequestException({ message: 'user is not found!' });
+    if (!user)
+      throw new BadRequestException({ message: 'admin is not found!' });
 
     await this.adminRepository.softRemove(user);
 

@@ -3,9 +3,12 @@ import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
+  IsEmail,
   IsNotEmpty,
+  IsNumber,
   IsNumberString,
   IsString,
+  Min,
 } from 'class-validator';
 
 export class JemaatDto {
@@ -20,7 +23,7 @@ export class JemaatDto {
   name: string;
 
   @ApiProperty()
-  @IsString()
+  @IsEmail()
   @IsNotEmpty()
   email: string;
 
@@ -60,12 +63,14 @@ export class JemaatDto {
   mother_name: string;
 
   @ApiProperty()
-  @IsNumberString()
+  @IsNumber()
+  @Min(1)
   @IsNotEmpty()
   birth_order: number;
 
   @ApiProperty()
-  @IsNumberString()
+  @IsNumber()
+  @Min(1)
   @IsNotEmpty()
   total_brother_sister: number;
 

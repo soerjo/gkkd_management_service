@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { JemaatService } from '../services/jemaat.service';
 import { CreateJemaatDto } from '../dto/create-jemaat.dto';
@@ -42,9 +43,13 @@ export class JemaatController {
 
   @Get(':id')
   async findOne(@UUIDParam() @Param('id') id: string) {
+    const result = await this.jemaatService.findOne(id);
+    if (!result)
+      throw new BadRequestException({ message: 'result is not found!' });
+
     return {
       message: 'success',
-      data: await this.jemaatService.findOne(id),
+      data: result,
     };
   }
 

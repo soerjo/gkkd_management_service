@@ -9,7 +9,7 @@ export class AdminEntity extends MainEntityAbstract {
   @Column()
   name: string;
 
-  @Column({ unique: true })
+  @Column({ unique: false })
   email: string;
 
   @Column({ default: RoleEnum.ADMIN })

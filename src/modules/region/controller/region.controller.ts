@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { RegionService } from '../services/region.service';
 import { CreateRegionDto } from '../dto/create-region.dto';
@@ -40,9 +41,13 @@ export class RegionController {
 
   @Get(':id')
   async findOne(@Param('id') @UUIDParam() id: string) {
+    const result = await this.regionService.getOneById(id);
+    if (!result)
+      throw new BadRequestException({ message: 'region is not found!' });
+
     return {
       message: 'success',
-      data: await this.regionService.getOneById(id),
+      data: result,
     };
   }
 

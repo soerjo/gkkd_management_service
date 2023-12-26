@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlesscomnController } from './blesscomn.controller';
-import { BlesscomnService } from './blesscomn.service';
+import { BlesscomnController } from '../controller/blesscomn.controller';
+import { BlesscomnService } from '../services/blesscomn.service';
 
 describe('BlesscomnController', () => {
   let controller: BlesscomnController;

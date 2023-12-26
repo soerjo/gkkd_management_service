@@ -9,6 +9,7 @@ import {
   UseGuards,
   BadGatewayException,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { PemuridanService } from '../services/pemuridan.service';
 import { CreatePemuridanDto } from '../dto/create-pemuridan.dto';
@@ -50,9 +51,13 @@ export class PemuridanController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
+    const result = await this.pemuridanService.findOne(id);
+    if (!result)
+      throw new BadRequestException({ message: 'pemuridan is not found!' });
+
     return {
       message: 'success',
-      data: await this.pemuridanService.findOne(id),
+      data: result,
     };
   }
 

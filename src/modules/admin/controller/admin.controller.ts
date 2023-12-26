@@ -18,6 +18,9 @@ import { FilterDto } from '../dto/filter.dto';
 import { RegionService } from 'src/modules/region/services/region.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { Roles } from 'src/common/decorator/role.decorator';
+import { RoleEnum } from 'src/common/constant/role.constant';
+import { RolesGuard } from 'src/common/guard/role.guard';
 
 @ApiTags('Admin')
 @Controller('admin')
@@ -30,6 +33,8 @@ export class AdminController {
   ) {}
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN])
   async create(@Body() createAdminDto: CreateAdminDto) {
     const regions = await this.regionService.getManyByIds(
       createAdminDto.regions_ids,
@@ -55,6 +60,8 @@ export class AdminController {
   }
 
   @Get()
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN])
   async findAll(@Query() filterDto: FilterDto) {
     return {
       message: 'success',
@@ -64,21 +71,23 @@ export class AdminController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
+    const result = await this.adminService.findOne(id);
+    if (!result)
+      throw new BadRequestException({ message: 'admin is not found!' });
+
     return {
       message: 'success',
-      data: await this.adminService.findOne(id),
+      data: result,
     };
   }
 
   @Patch(':id')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN])
   async update(
     @Param('id') @UUIDParam() id: string,
     @Body() updateAdminDto: UpdateAdminDto,
   ) {
-    const regions = await this.regionService.getManyByIds(
-      updateAdminDto.regions_ids,
-    );
-
     const isUsernameExist = await this.adminService.getByUsername(
       updateAdminDto?.name,
     );
@@ -91,7 +100,14 @@ export class AdminController {
     if (isEmailExist && id != isEmailExist.id)
       throw new BadRequestException({ message: 'email already exist' });
 
-    updateAdminDto.regions = regions;
+    let regions;
+    if (updateAdminDto.regions_ids) {
+      regions = await this.regionService.getManyByIds(
+        updateAdminDto.regions_ids,
+      );
+      updateAdminDto.regions = regions;
+    }
+
     return {
       message: 'success',
       data: await this.adminService.update(id, updateAdminDto),
@@ -99,6 +115,8 @@ export class AdminController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN])
   async remove(@Param('id') id: string) {
     return {
       message: 'success',
