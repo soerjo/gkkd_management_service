@@ -6,14 +6,18 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { RegionService } from '../services/region.service';
 import { CreateRegionDto } from '../dto/create-region.dto';
 import { UpdateRegionDto } from '../dto/update-region.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UUIDParam } from 'src/common/decorator/uuid.decorator';
+import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 
 @ApiTags('Region')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('region')
 export class RegionController {
   constructor(private readonly regionService: RegionService) {}

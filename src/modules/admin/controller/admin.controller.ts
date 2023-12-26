@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { AdminService } from '../services/admin.service';
 import { CreateAdminDto } from '../dto/create-admin.dto';
@@ -15,10 +16,13 @@ import { UpdateAdminDto } from '../dto/update-admin.dto';
 import { UUIDParam } from 'src/common/decorator/uuid.decorator';
 import { FilterDto } from '../dto/filter.dto';
 import { RegionService } from 'src/modules/region/services/region.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 
 @ApiTags('Admin')
 @Controller('admin')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class AdminController {
   constructor(
     private readonly adminService: AdminService,
