@@ -16,14 +16,17 @@ export class AdminRepository extends Repository<AdminEntity> {
     filter.search &&
       queryBuilder.andWhere(
         '(user.name ILIKE :search OR user.email ILIKE :search)',
-        { search: filter.search },
+        { search: `%${filter.search}%` },
       );
 
-    if (filter.take) {
-      queryBuilder.take(filter?.take);
-      queryBuilder.orderBy(`user.created_at`, 'DESC');
-      queryBuilder.skip((filter?.page - 1) * filter?.take);
+    if (!filter.take) {
+      const entities = await queryBuilder.getMany();
+      return {entities}
     }
+
+    queryBuilder.take(filter?.take);
+    queryBuilder.orderBy(`user.created_at`, 'DESC');
+    queryBuilder.skip((filter?.page - 1) * filter?.take);
 
     const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getMany();
