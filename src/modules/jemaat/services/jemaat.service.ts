@@ -3,6 +3,7 @@ import { CreateJemaatDto } from '../dto/create-jemaat.dto';
 import { UpdateJemaatDto } from '../dto/update-jemaat.dto';
 import { JemaatRepository } from '../repository/jemaat.repository';
 import { FilterDto } from '../dto/filter.dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class JemaatService {
@@ -16,6 +17,14 @@ export class JemaatService {
 
   findAll(filter: FilterDto) {
     return this.jemaatRepository.getAll(filter);
+  }
+
+  findManyOfId(ids: string[]) {
+    return this.jemaatRepository.find({
+      where:{
+        id: In(ids)
+      }
+    })
   }
 
   findOne(id: string) {

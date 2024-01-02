@@ -1,5 +1,6 @@
+import { RegionEntity } from '../../region/entities/region.entity';
 import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'blesscomn' })
 export class BlesscomnEntity extends MainEntityAbstract {
@@ -14,4 +15,9 @@ export class BlesscomnEntity extends MainEntityAbstract {
 
   @Column('simple-array')
   members: string[];
+
+  @ManyToOne(type => RegionEntity, region => region.blesscomn)
+  @JoinColumn({name : 'region_id'})
+  region: RegionEntity
+
 }

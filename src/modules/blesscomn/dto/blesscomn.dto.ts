@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { RegionEntity } from 'src/modules/region/entities/region.entity';
 
 export class BlesscomnDto {
   @ApiProperty()
@@ -21,4 +22,11 @@ export class BlesscomnDto {
   @IsString({ each: true })
   @IsNotEmpty()
   members: string[];
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  region_id: string;
+
+  region: RegionEntity
 }

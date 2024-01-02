@@ -1,5 +1,6 @@
+import { RegionEntity } from "../../region/entities/region.entity";
 import { MainEntityAbstract } from "../../../common/abstract/main-entity.abstract";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 @Entity({name: 'report_region'})
 export class ReportRegionEntity extends MainEntityAbstract {
@@ -17,4 +18,9 @@ export class ReportRegionEntity extends MainEntityAbstract {
 
     @Column()
     new: number
+
+    @ManyToOne(type => RegionEntity, region => region.report)
+    @JoinColumn({name : 'region_id'})
+    region: RegionEntity
+  
 }

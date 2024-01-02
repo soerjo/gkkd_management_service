@@ -26,15 +26,10 @@ import { FilterDto } from '../dto/filter.dto';
 export class PemuridanController {
   constructor(
     private readonly pemuridanService: PemuridanService,
-    private readonly jemaatService: JemaatService,
   ) {}
 
   @Post()
   async create(@Body() createPemuridanDto: CreatePemuridanDto) {
-    const jemaat = await this.jemaatService.findOne(createPemuridanDto.lead);
-    if (!jemaat)
-      throw new BadGatewayException({ message: 'lead group is not jemaat' });
-
     return {
       message: 'success',
       data: await this.pemuridanService.create(createPemuridanDto),
