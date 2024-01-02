@@ -39,6 +39,6 @@ export class ReportRegionService {
 
     await this.reportRegionRepository.softRemove(pastReportRegion)
 
-    return id
+    return { id }
   }
 }

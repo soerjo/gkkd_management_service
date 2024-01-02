@@ -39,6 +39,6 @@ export class ReportPemuridanService {
 
     await this.reportPemuridanRepository.softRemove(pastReportPemuridan)
 
-    return id
+    return { id }
   }
 }

@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { IsDateString, IsNotEmpty, IsNumber, Min } from "class-validator"
+import { IsDateString, IsNotEmpty, IsNumber, IsUUID, Min } from "class-validator"
+import { BlesscomnEntity } from "src/modules/blesscomn/entities/blesscomn.entity"
 
 export class ReportBlesscomnDto {
     @ApiProperty()
@@ -35,4 +36,11 @@ export class ReportBlesscomnDto {
     @Transform(val => Number(val.value))
     @IsNotEmpty()
     new: number
+
+    @ApiProperty()
+    @IsUUID()
+    @IsNotEmpty()
+    blesscomn_id: string;
+  
+    blesscomn: BlesscomnEntity
 }
