@@ -1,7 +1,8 @@
 import { RegionEntity } from '../../region/entities/region.entity';
 import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { JemaatEntity } from '../../jemaat/entities/jemaat.entity';
+import { ReportPemuridanEntity } from '../../report-pemuridan/entities/report-pemuridan.entity';
 
 @Entity({ name: 'pemuridan' })
 export class PemuridanEntity extends MainEntityAbstract {
@@ -18,8 +19,10 @@ export class PemuridanEntity extends MainEntityAbstract {
   @JoinColumn({name : 'lead_id'})
   lead: JemaatEntity
 
-
   @ManyToOne(type => RegionEntity, region => region.pemuridan)
   @JoinColumn({name : 'region_id'})
   region: RegionEntity
+
+  @OneToMany(type => ReportPemuridanEntity, report => report.pemuridan)
+  report: ReportPemuridanEntity[];
 }

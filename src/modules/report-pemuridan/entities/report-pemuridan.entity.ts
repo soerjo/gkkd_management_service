@@ -1,5 +1,6 @@
+import { PemuridanEntity } from "../../pemuridan/entities/pemuridan.entity";
 import { MainEntityAbstract } from "../../../common/abstract/main-entity.abstract";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 @Entity({name: 'report_pemuridan'})
 export class ReportPemuridanEntity extends MainEntityAbstract {
@@ -11,4 +12,9 @@ export class ReportPemuridanEntity extends MainEntityAbstract {
 
     @Column()
     total: number
+
+    @ManyToOne(type => PemuridanEntity, pemuridan => pemuridan.report)
+    @JoinColumn({name : 'pemuridan_id'})
+    pemuridan: PemuridanEntity
+
 }

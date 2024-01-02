@@ -3,12 +3,20 @@ import { CreateReportPemuridanDto } from '../dto/create-report-pemuridan.dto';
 import { UpdateReportPemuridanDto } from '../dto/update-report-pemuridan.dto';
 import { ReportPemuridanRepository } from '../repository/report-pemuridan.repository';
 import { FilterDto } from '../dto/filter.dto';
+import { PemuridanService } from 'src/modules/pemuridan/services/pemuridan.service';
 
 @Injectable()
 export class ReportPemuridanService {
-  constructor(private readonly reportPemuridanRepository: ReportPemuridanRepository){}
+  constructor(
+    private readonly reportPemuridanRepository: ReportPemuridanRepository,
+    private readonly pemuridanService: PemuridanService,
+  ){}
 
-  create(createReportPemuridanDto: CreateReportPemuridanDto) {
+  async create(createReportPemuridanDto: CreateReportPemuridanDto) {
+    const pemuridan = await this.pemuridanService.findOne(createReportPemuridanDto.pemuridan_id)
+    if(!pemuridan) throw new BadRequestException({message: 'Pemuridan is not found!'})
+    createReportPemuridanDto.pemuridan = pemuridan
+
     const reportPemuridan = this.reportPemuridanRepository.create(createReportPemuridanDto)
     return this.reportPemuridanRepository.save(reportPemuridan)
   }
@@ -24,6 +32,10 @@ export class ReportPemuridanService {
   async update(id: string, updateReportPemuridanDto: UpdateReportPemuridanDto) {
     const pastReportPemuridan = await this.findOne(id)
     if(!pastReportPemuridan) throw new BadRequestException({message: "Pemuridan report is not found!"})
+
+    const pemuridan = await this.pemuridanService.findOne(updateReportPemuridanDto.pemuridan_id)
+    if(!pemuridan) throw new BadRequestException({message: 'Pemuridan is not found!'})
+    updateReportPemuridanDto.pemuridan = pemuridan
 
     await this.reportPemuridanRepository.save({
       ...pastReportPemuridan,

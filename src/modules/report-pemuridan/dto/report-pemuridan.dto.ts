@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { IsDateString, IsNotEmpty, IsNumber, IsString, Min } from "class-validator"
+import { IsDateString, IsNotEmpty, IsNumber, IsString, IsUUID, Min } from "class-validator"
+import { PemuridanEntity } from "src/modules/pemuridan/entities/pemuridan.entity"
 
 export class ReportPemuridanDto {
     @ApiProperty()
@@ -19,4 +20,11 @@ export class ReportPemuridanDto {
     @Transform(val => Number(val.value))
     @IsNotEmpty()
     total: number
+
+    @ApiProperty()
+    @IsUUID()
+    @IsNotEmpty()
+    pemuridan_id: string;
+  
+    pemuridan: PemuridanEntity
 }
