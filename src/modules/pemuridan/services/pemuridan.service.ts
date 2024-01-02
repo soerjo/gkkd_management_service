@@ -40,13 +40,17 @@ export class PemuridanService {
     if (!pemuridan)
       throw new BadRequestException({ message: 'Pemuridan is not found!' });
 
-    const region = await this.regionService.getOneById(updatePemuridanDto.region_id)
-    if(!region) throw new BadRequestException({message: 'Region is not found!'})
-    updatePemuridanDto.region = region
+    if(updatePemuridanDto.region_id){
+      const region = await this.regionService.getOneById(updatePemuridanDto.region_id)
+      if(!region) throw new BadRequestException({message: 'Region is not found!'})
+      updatePemuridanDto.region = region
+    }
 
-    const lead = await this.jemaatService.findOne(updatePemuridanDto.lead_id)
-    if(!lead) throw new BadRequestException({message: 'Lead is not found in Jemaat!'})
-    updatePemuridanDto.lead = lead
+    if(updatePemuridanDto.lead_id){
+      const lead = await this.jemaatService.findOne(updatePemuridanDto.lead_id)
+      if(!lead) throw new BadRequestException({message: 'Lead is not found in Jemaat!'})
+      updatePemuridanDto.lead = lead
+    }
 
       await this.pemuridanRepository.save({
       ...pemuridan,
