@@ -8,8 +8,10 @@ import {
   IsNumber,
   IsNumberString,
   IsString,
+  IsUUID,
   Min,
 } from 'class-validator';
+import { RegionEntity } from 'src/modules/region/entities/region.entity';
 
 export class JemaatDto {
   @ApiProperty()
@@ -94,4 +96,11 @@ export class JemaatDto {
   @IsString()
   @IsNotEmpty()
   region_service: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  region_id: string;
+
+  region: RegionEntity
 }

@@ -4,6 +4,7 @@ import { AdminEntity } from '../../admin/entities/admin.entity';
 import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { BlesscomnEntity } from '../../blesscomn/entities/blesscomn.entity';
 import { ReportRegionEntity } from '../../report-region/entities/report-region.entity';
+import { JemaatEntity } from '../../jemaat/entities/jemaat.entity';
 
 @Entity({ name: 'region' })
 export class RegionEntity extends MainEntityAbstract {
@@ -27,4 +28,7 @@ export class RegionEntity extends MainEntityAbstract {
 
   @OneToMany(type => ReportRegionEntity, report => report.region)
   report: ReportRegionEntity[];
+
+  @OneToMany(type => JemaatEntity, jemaat => jemaat.region)
+  jemaat: JemaatEntity[];
 }

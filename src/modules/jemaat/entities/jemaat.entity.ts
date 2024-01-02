@@ -1,6 +1,7 @@
 import { PemuridanEntity } from '../../pemuridan/entities/pemuridan.entity';
 import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { RegionEntity } from '../../region/entities/region.entity';
 
 @Entity({ name: 'jemaat' })
 export class JemaatEntity extends MainEntityAbstract {
@@ -54,4 +55,8 @@ export class JemaatEntity extends MainEntityAbstract {
 
   @OneToMany(type => PemuridanEntity, pemuridan => pemuridan.lead)
   pemuridan: PemuridanEntity[];
+
+  @ManyToOne(type => RegionEntity, region => region.jemaat)
+  @JoinColumn({name : 'region_id'})
+  region: RegionEntity
 }
