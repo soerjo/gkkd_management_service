@@ -33,9 +33,11 @@ export class ReportBlesscomnService {
     const pastReportBlesscomn = await this.findOne(id)
     if(!pastReportBlesscomn) throw new BadRequestException({message: "Blesscomn report is not found!"})
 
-    const blesscomn = await this.blesscomnService.findOne(updateReportBlesscomnDto.blesscomn_id)
-    if(!blesscomn) throw new BadRequestException({message: "Blesscomn is not found!"})
-    updateReportBlesscomnDto.blesscomn = blesscomn
+    if(updateReportBlesscomnDto.blesscomn_id){
+      const blesscomn = await this.blesscomnService.findOne(updateReportBlesscomnDto.blesscomn_id)
+      if(!blesscomn) throw new BadRequestException({message: "Blesscomn is not found!"})
+      updateReportBlesscomnDto.blesscomn = blesscomn
+    }
 
     await this.reportBlesscomnRepository.save({
       ...pastReportBlesscomn,
