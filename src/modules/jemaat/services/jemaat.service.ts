@@ -14,10 +14,19 @@ export class JemaatService {
   ) {}
 
   async create(createJemaatDto: CreateJemaatDto) {
+    const isJemaatExist = await this.jemaatRepository.findOne({
+      where:[
+        {name: createJemaatDto.name},
+        {full_name: createJemaatDto.full_name},
+      ]
+    })
+    if(isJemaatExist) throw new BadRequestException({message: 'Jemaat already exist'})
+
     const region = await this.regionService.getOneById(createJemaatDto.region_id)
     if(!region) throw new BadRequestException({ message: 'Region is not found!'})
 
     createJemaatDto.region = region
+    createJemaatDto.region_service = region.name
     const jemaat = this.jemaatRepository.create(createJemaatDto);
 
     return this.jemaatRepository.save(jemaat);
