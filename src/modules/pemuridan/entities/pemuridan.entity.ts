@@ -14,4 +14,7 @@ export class PemuridanEntity extends MainEntityAbstract {
 
   @Column({ nullable: true })
   region: string;
+
+  @Column({default: ""})
+  book_level: string;
 }

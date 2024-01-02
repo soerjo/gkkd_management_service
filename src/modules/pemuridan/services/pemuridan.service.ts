@@ -26,7 +26,7 @@ export class PemuridanService {
     if (!pemuridan)
       throw new BadRequestException({ message: 'pemuridan is not found!' });
 
-    const updatePemuridan = await this.pemuridanRepository.save({
+    await this.pemuridanRepository.save({
       ...pemuridan,
       ...UpdatePemuridanDto,
     });
