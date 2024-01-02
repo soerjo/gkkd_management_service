@@ -33,9 +33,11 @@ export class ReportPemuridanService {
     const pastReportPemuridan = await this.findOne(id)
     if(!pastReportPemuridan) throw new BadRequestException({message: "Pemuridan report is not found!"})
 
-    const pemuridan = await this.pemuridanService.findOne(updateReportPemuridanDto.pemuridan_id)
-    if(!pemuridan) throw new BadRequestException({message: 'Pemuridan is not found!'})
-    updateReportPemuridanDto.pemuridan = pemuridan
+    if(updateReportPemuridanDto.pemuridan_id){
+      const pemuridan = await this.pemuridanService.findOne(updateReportPemuridanDto.pemuridan_id)
+      if(!pemuridan) throw new BadRequestException({message: 'Pemuridan is not found!'})
+      updateReportPemuridanDto.pemuridan = pemuridan
+    }
 
     await this.reportPemuridanRepository.save({
       ...pastReportPemuridan,
