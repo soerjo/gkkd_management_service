@@ -33,10 +33,11 @@ export class BlesscomnService {
     const blesscomn = await this.findOne(id);
     if (!blesscomn) throw new BadRequestException({ message: 'blesscomn is not found!' });
 
-    const region = await this.regionService.getOneById(updateBlesscomnDto.region_id)
-    if(!region) throw new BadRequestException({message: 'Region is not found!'})
-
-    updateBlesscomnDto.region = region
+    if(updateBlesscomnDto.region_id){
+      const region = await this.regionService.getOneById(updateBlesscomnDto.region_id)
+      if(!region) throw new BadRequestException({message: 'Region is not found!'})
+      updateBlesscomnDto.region = region
+    }
 
     await this.blesscomnRepository.save({
       ...blesscomn,
