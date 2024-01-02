@@ -8,5 +8,6 @@ import { RegionModule } from '../region/region.module';
   imports: [RegionModule],
   controllers: [BlesscomnController],
   providers: [BlesscomnService, BlesscomnRepository],
+  exports: [BlesscomnService]
 })
 export class BlesscomnModule {}
