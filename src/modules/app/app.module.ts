@@ -12,6 +12,9 @@ import { LovControler } from './controller/app.controller';
 import { JemaatModule } from '../jemaat/jemaat.module';
 import { PemuridanModule } from '../pemuridan/pemuridan.module';
 import { BlesscomnModule } from '../blesscomn/blesscomn.module';
+import { ReportRegionModule } from '../report-region/report-region.module';
+import { ReportBlesscomnModule } from '../report-blesscomn/report-blesscomn.module';
+import { ReportPemuridanModule } from '../report-pemuridan/report-pemuridan.module';
 
 @Module({
   imports: [
@@ -33,6 +36,10 @@ import { BlesscomnModule } from '../blesscomn/blesscomn.module';
     JemaatModule,
     PemuridanModule,
     BlesscomnModule,
+    ReportRegionModule,
+    ReportBlesscomnModule,
+    ReportPemuridanModule,
+    
   ],
   controllers: [LovControler],
   providers: [
