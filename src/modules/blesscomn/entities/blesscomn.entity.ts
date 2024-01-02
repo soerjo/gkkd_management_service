@@ -14,7 +14,7 @@ export class BlesscomnEntity extends MainEntityAbstract {
   @Column()
   lead: string;
 
-  @Column('simple-array')
+  @Column('simple-array', {select: false})
   members: string[];
 
   @ManyToOne(type => RegionEntity, region => region.blesscomn)

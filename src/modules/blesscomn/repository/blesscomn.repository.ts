@@ -11,13 +11,16 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
 
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('blesscomn');
-    queryBuilder.where('blesscomn.name != :name', { name: 'superadmin' });
 
     filter.search &&
       queryBuilder.andWhere(
         '(blesscomn.name ILIKE :search OR blesscomn.lead ILIKE :search)',
         { search: filter.search },
       );
+
+    filter.region_id &&
+      queryBuilder.leftJoin('blesscomn.region', 'region')
+      .where(`region.id = :region_id`, { region_id: filter.region_id })
 
     if (filter.take) {
       queryBuilder.take(filter?.take);

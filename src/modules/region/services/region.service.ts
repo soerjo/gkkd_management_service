@@ -8,7 +8,10 @@ import { In } from 'typeorm';
 export class RegionService {
   constructor(private readonly regionRepository: RegionRepository) {}
 
-  create(createRegionDto: CreateRegionDto) {
+  async create(createRegionDto: CreateRegionDto) {
+    const isRegionNameExist = await this.regionRepository.findOneBy({name: createRegionDto.name})
+    if(isRegionNameExist) throw new BadRequestException({message: 'Region already exists!'})
+
     const region = this.regionRepository.create(createRegionDto);
     return this.regionRepository.save(region);
   }

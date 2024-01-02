@@ -20,8 +20,8 @@ import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 
 @ApiTags('Blesscomn')
 @Controller('blesscomn')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+// @ApiBearerAuth()
+// @UseGuards(JwtAuthGuard)
 export class BlesscomnController {
   constructor(private readonly blesscomnService: BlesscomnService) {}
 
@@ -35,21 +35,20 @@ export class BlesscomnController {
 
   @Get()
   async findAll(@Query() filter: FilterDto) {
-    const result = await this.blesscomnService.findAll(filter);
-    if (!result)
-      throw new BadRequestException({ message: 'blesscomn is not found!' });
+    return {
+      message: 'success',
+      data: await this.blesscomnService.findAll(filter),
+    };
+  }
+  
+  @Get(':id')
+  async findOne(@UUIDParam() @Param('id') id: string) {
+    const result = await this.blesscomnService.findOne(id);
+    if (!result) throw new BadRequestException({ message: 'blesscomn is not found!' });
 
     return {
       message: 'success',
       data: result,
-    };
-  }
-
-  @Get(':id')
-  async findOne(@UUIDParam() @Param('id') id: string) {
-    return {
-      message: 'success',
-      data: await this.blesscomnService.findOne(id),
     };
   }
 
