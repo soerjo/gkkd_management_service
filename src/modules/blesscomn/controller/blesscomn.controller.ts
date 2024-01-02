@@ -20,8 +20,8 @@ import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 
 @ApiTags('Blesscomn')
 @Controller('blesscomn')
-// @ApiBearerAuth()
-// @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class BlesscomnController {
   constructor(private readonly blesscomnService: BlesscomnService) {}
 

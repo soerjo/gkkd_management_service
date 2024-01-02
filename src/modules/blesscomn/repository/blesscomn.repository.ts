@@ -22,6 +22,10 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       queryBuilder.leftJoin('blesscomn.region', 'region')
       .where(`region.id = :region_id`, { region_id: filter.region_id })
 
+
+    !filter.region_id &&
+      queryBuilder.leftJoinAndSelect('blesscomn.region', 'region')
+
     if (filter.take) {
       queryBuilder.take(filter?.take);
       queryBuilder.orderBy(`blesscomn.created_at`, 'DESC');

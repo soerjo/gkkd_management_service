@@ -2,6 +2,7 @@ import { PemuridanEntity } from '../../pemuridan/entities/pemuridan.entity';
 import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { RegionEntity } from '../../region/entities/region.entity';
+import { BlesscomnEntity } from '../../blesscomn/entities/blesscomn.entity';
 
 @Entity({ name: 'jemaat' })
 export class JemaatEntity extends MainEntityAbstract {
@@ -59,4 +60,7 @@ export class JemaatEntity extends MainEntityAbstract {
   @ManyToOne(type => RegionEntity, region => region.jemaat)
   @JoinColumn({name : 'region_id'})
   region: RegionEntity
+
+  @OneToMany(type => BlesscomnEntity, blesscomn => blesscomn.lead_jemaat)
+  lead_blesscomn: BlesscomnEntity[];
 }

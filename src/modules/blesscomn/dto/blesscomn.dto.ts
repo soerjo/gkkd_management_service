@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { JemaatEntity } from 'src/modules/jemaat/entities/jemaat.entity';
 import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { IsAtLeastOnePropertyNotEmpty } from '../decorator/notEmpty-validator.decorator';
 
 export class BlesscomnDto {
   @ApiProperty()
@@ -15,18 +17,29 @@ export class BlesscomnDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   lead: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsOptional()
+  lead_id: string;
+
+  lead_jemaat: JemaatEntity
+
+  @IsAtLeastOnePropertyNotEmpty({ message: 'At least fill lead_id or lead' })
+  validationPlaceholder: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  @IsOptional()
+  region_id: string;
+
+  region: RegionEntity
 
   @ApiProperty()
   @IsString({ each: true })
   @IsNotEmpty()
   members: string[];
-
-  @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  region_id: string;
-
-  region: RegionEntity
 }
