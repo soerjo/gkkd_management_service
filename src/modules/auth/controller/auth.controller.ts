@@ -20,19 +20,13 @@ export class AuthController {
     );
 
     if (!user)
-      throw new BadRequestException({
-        message: 'username or email or password is not valid',
-      });
+      throw new BadRequestException({ message: 'username or email or password is not valid' });
 
     if (!user.password)
-      throw new BadRequestException({
-        message: 'user is not valid',
-      });
+      throw new BadRequestException({ message: 'user is not valid' });
 
     if (!validatePassword(createAuthDto.password, user.password))
-      throw new BadRequestException({
-        message: 'username or email or password is not valid',
-      });
+      throw new BadRequestException({ message: 'username or email or password is not valid' });
 
     const result = this.authService.generateJwt(user);
 

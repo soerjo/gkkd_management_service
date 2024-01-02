@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { IsDateString, IsNotEmpty, IsNumber, Min } from "class-validator"
+import { IsDateString, IsNotEmpty, IsNumber, IsUUID, Min } from "class-validator"
+import { RegionEntity } from "src/modules/region/entities/region.entity"
 
 export class ReportRegionDto {
     @ApiProperty()
@@ -35,4 +36,11 @@ export class ReportRegionDto {
     @Transform(val => Number(val.value))
     @IsNotEmpty()
     new: number
+
+    @ApiProperty()
+    @IsUUID()
+    @IsNotEmpty()
+    region_id: string;
+  
+    region: RegionEntity
 }
