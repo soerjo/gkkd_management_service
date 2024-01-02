@@ -6,15 +6,9 @@ export class ReportPemuridanEntity extends MainEntityAbstract {
     @Column()
     date: Date
 
-    @Column()
-    total_male: number
-
-    @Column()
-    total_female: number
+    @Column({default: ''})
+    material: string
 
     @Column()
     total: number
-
-    @Column()
-    new: number
 }

@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsDateString, IsNotEmpty, IsNumber, Min } from "class-validator"
+import { Transform } from "class-transformer"
+import { IsDateString, IsNotEmpty, IsNumber, IsString, Min } from "class-validator"
 
 export class ReportPemuridanDto {
     @ApiProperty()
@@ -8,26 +9,14 @@ export class ReportPemuridanDto {
     date: Date
 
     @ApiProperty()
-    @IsNumber()
-    @Min(0)
+    @IsString()
     @IsNotEmpty()
-    total_male: number
+    material: string
 
     @ApiProperty()
     @IsNumber()
-    @Min(0)
-    @IsNotEmpty()
-    total_female: number
-
-    @ApiProperty()
-    @IsNumber()
-    @Min(0)
+    @Min(1)
+    @Transform(val => Number(val.value))
     @IsNotEmpty()
     total: number
-
-    @ApiProperty()
-    @IsNumber()
-    @Min(0)
-    @IsNotEmpty()
-    new: number
 }
