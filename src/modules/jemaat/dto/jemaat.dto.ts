@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsNumberString,
+  IsOptional,
   IsString,
   IsUUID,
   Min,
@@ -79,18 +80,18 @@ export class JemaatDto {
   @ApiProperty()
   @IsBoolean()
   @Transform((val) => Boolean(val.value === 'true' ? true : false))
-  @IsNotEmpty()
-  marital_status: boolean;
+  @IsOptional()
+  marital_status?: boolean;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  husband_wife_name: string;
+  @IsOptional()
+  husband_wife_name?: string;
 
   @ApiProperty()
   @IsDateString()
-  @IsNotEmpty()
-  wedding_date: Date;
+  @IsOptional()
+  wedding_date?: Date;
 
   @ApiProperty()
   @IsString()
@@ -102,5 +103,5 @@ export class JemaatDto {
   @IsNotEmpty()
   region_id: string;
 
-  region: RegionEntity
+  region: RegionEntity;
 }

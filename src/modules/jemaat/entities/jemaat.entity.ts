@@ -42,25 +42,25 @@ export class JemaatEntity extends MainEntityAbstract {
   @Column()
   total_brother_sister: number;
 
-  @Column()
+  @Column({ default: false })
   marital_status: boolean;
 
-  @Column()
+  @Column({ default: '' })
   husband_wife_name: string;
 
-  @Column()
+  @Column({ nullable: true })
   wedding_date: Date;
 
   @Column()
   region_service: string;
 
-  @OneToMany(type => PemuridanEntity, pemuridan => pemuridan.lead)
+  @OneToMany((type) => PemuridanEntity, (pemuridan) => pemuridan.lead)
   pemuridan: PemuridanEntity[];
 
-  @ManyToOne(type => RegionEntity, region => region.jemaat)
-  @JoinColumn({name : 'region_id'})
-  region: RegionEntity
+  @ManyToOne((type) => RegionEntity, (region) => region.jemaat)
+  @JoinColumn({ name: 'region_id' })
+  region: RegionEntity;
 
-  @OneToMany(type => BlesscomnEntity, blesscomn => blesscomn.lead_jemaat)
+  @OneToMany((type) => BlesscomnEntity, (blesscomn) => blesscomn.lead_jemaat)
   lead_blesscomn: BlesscomnEntity[];
 }
