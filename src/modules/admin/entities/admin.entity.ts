@@ -13,8 +13,8 @@ export class AdminEntity extends MainEntityAbstract {
   @Column({ unique: false })
   email: string;
 
-  @Column({ default: RoleEnum.ADMIN })
-  role: RoleEnum;
+  @Column({ type: 'enum', enum: RoleEnum, array: true, default: [RoleEnum.ADMIN] })
+  role: RoleEnum[];
 
   @ManyToMany(() => RegionEntity, (role) => role.admin, { nullable: true })
   @JoinTable()
@@ -29,6 +29,6 @@ export class AdminEntity extends MainEntityAbstract {
   temp_password: string;
 
   @OneToOne(() => JemaatEntity)
-  @JoinColumn({name: 'jemaat_id'})
-  jemaat?: JemaatEntity
+  @JoinColumn({ name: 'jemaat_id' })
+  jemaat?: JemaatEntity;
 }

@@ -6,6 +6,7 @@ import { RoleEnum } from 'src/common/constant/role.constant';
 import { FilterDto } from '../dto/filter.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
 import { JemaatService } from 'src/modules/jemaat/services/jemaat.service';
+import { IsNull } from 'typeorm';
 
 @Injectable()
 export class AdminService implements OnApplicationBootstrap {
@@ -21,22 +22,23 @@ export class AdminService implements OnApplicationBootstrap {
         name: 'superadmin',
         email: 'superadmin@mail.com',
         password: 'Asdf1234.',
-        role: RoleEnum.SUPERADMIN,
+        role: [RoleEnum.SUPERADMIN],
       });
     }
   }
 
   getByUsername(name: string) {
-    return this.adminRepository.findOneBy({ name });
+    return this.adminRepository.findOneBy({ name: name ?? IsNull() });
   }
 
   getByEmail(email: string) {
-    return this.adminRepository.findOneBy({ email });
+    return this.adminRepository.findOneBy({ email: email ?? IsNull() });
   }
 
   getByUsernameOrEmail(usernameOrEmail: string) {
     return this.adminRepository.findOne({
       where: [{ name: usernameOrEmail }, { email: usernameOrEmail }],
+      relations: { jemaat: true },
     });
   }
 
@@ -59,7 +61,7 @@ export class AdminService implements OnApplicationBootstrap {
 
   findOne(id: string) {
     return this.adminRepository.findOne({
-      where: { id },
+      where: { id: id ?? IsNull() },
       relations: { regions: true },
     });
   }
