@@ -13,18 +13,25 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
     const queryBuilder = this.createQueryBuilder('blesscomn');
 
     filter.search &&
-      queryBuilder.andWhere(
-        '(blesscomn.name ILIKE :search OR blesscomn.lead ILIKE :search)',
-        { search: filter.search },
-      );
+      queryBuilder.andWhere('(blesscomn.name ILIKE :search OR blesscomn.lead ILIKE :search)', {
+        search: filter.search,
+      });
 
-    filter.region_id &&
-      queryBuilder.leftJoin('blesscomn.region', 'region')
-      .where(`region.id = :region_id`, { region_id: filter.region_id })
+    if (filter.region_id) {
+      queryBuilder
+        .leftJoin('blesscomn.region', 'region')
+        .andWhere(`region.id = :region_id`, { region_id: filter.region_id });
+    }
 
+    if (filter.region_ids || filter.region_ids?.length) {
+      queryBuilder
+        .leftJoin('blesscomn.region', 'region')
+        .where(`region.id IN (:...region_ids)`, { region_ids: filter.region_ids });
+    }
 
-    !filter.region_id &&
-      queryBuilder.leftJoinAndSelect('blesscomn.region', 'region')
+    if (!filter.region_id && !filter.region_ids) {
+      queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
+    }
 
     if (filter.take) {
       queryBuilder.take(filter?.take);
@@ -39,9 +46,7 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       page: filter?.page || 0,
       offset: filter?.take || 0,
       itemCount: itemCount || 0,
-      pageCount: Math.ceil(itemCount / filter?.take)
-        ? Math.ceil(itemCount / filter?.take)
-        : 0,
+      pageCount: Math.ceil(itemCount / filter?.take) ? Math.ceil(itemCount / filter?.take) : 0,
     };
 
     return { entities, meta };

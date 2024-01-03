@@ -17,6 +17,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UUIDParam } from 'src/common/decorator/uuid.decorator';
 import { FilterDto } from '../dto/filter.dto';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
+import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
 
 @ApiTags('Blesscomn')
 @Controller('blesscomn')
@@ -34,13 +36,15 @@ export class BlesscomnController {
   }
 
   @Get()
-  async findAll(@Query() filter: FilterDto) {
+  async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
+    filter.region_ids = jwtPayload.regions && jwtPayload.regions.map((val) => val.id);
+
     return {
       message: 'success',
       data: await this.blesscomnService.findAll(filter),
     };
   }
-  
+
   @Get(':id')
   async findOne(@UUIDParam() @Param('id') id: string) {
     const result = await this.blesscomnService.findOne(id);
@@ -53,10 +57,7 @@ export class BlesscomnController {
   }
 
   @Patch(':id')
-  async update(
-    @UUIDParam() @Param('id') id: string,
-    @Body() updateBlesscomnDto: UpdateBlesscomnDto,
-  ) {
+  async update(@UUIDParam() @Param('id') id: string, @Body() updateBlesscomnDto: UpdateBlesscomnDto) {
     return {
       message: 'success',
       data: await this.blesscomnService.update(id, updateBlesscomnDto),

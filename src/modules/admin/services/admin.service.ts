@@ -38,7 +38,7 @@ export class AdminService implements OnApplicationBootstrap {
   getByUsernameOrEmail(usernameOrEmail: string) {
     return this.adminRepository.findOne({
       where: [{ name: usernameOrEmail }, { email: usernameOrEmail }],
-      relations: { jemaat: true },
+      relations: { jemaat: true, regions: true },
     });
   }
 

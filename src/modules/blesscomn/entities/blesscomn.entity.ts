@@ -15,18 +15,17 @@ export class BlesscomnEntity extends MainEntityAbstract {
   @Column()
   lead: string;
 
-  @Column('simple-array', {select: false})
+  @Column('simple-array', { select: false, default: [] })
   members: string[];
 
-  @ManyToOne(type => JemaatEntity, jemaat => jemaat.lead_blesscomn)
-  @JoinColumn({name : 'lead_jemaat_id'})
-  lead_jemaat: JemaatEntity
+  @ManyToOne((type) => JemaatEntity, (jemaat) => jemaat.lead_blesscomn)
+  @JoinColumn({ name: 'lead_jemaat_id' })
+  lead_jemaat: JemaatEntity;
 
-  @ManyToOne(type => RegionEntity, region => region.blesscomn)
-  @JoinColumn({name : 'region_id'})
-  region: RegionEntity
+  @ManyToOne((type) => RegionEntity, (region) => region.blesscomn)
+  @JoinColumn({ name: 'region_id' })
+  region: RegionEntity;
 
-  @OneToMany(type => ReportBlesscomnEntity, report => report.blesscomn)
+  @OneToMany((type) => ReportBlesscomnEntity, (report) => report.blesscomn)
   report: ReportBlesscomnEntity[];
-
 }

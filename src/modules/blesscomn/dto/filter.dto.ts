@@ -12,4 +12,6 @@ export class FilterDto extends PaginationDto {
   @IsUUID()
   @IsOptional()
   region_id: string;
+
+  region_ids: string[];
 }

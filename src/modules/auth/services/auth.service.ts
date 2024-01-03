@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AdminEntity } from 'src/modules/admin/entities/admin.entity';
+import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +12,7 @@ export class AuthService {
   ) {}
 
   generateJwt(user: AdminEntity) {
-    const payload = {
+    const payload: IJwtPayload = {
       username: user.name,
       email: user.email,
       role: user.role,
