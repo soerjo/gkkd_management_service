@@ -11,17 +11,16 @@ export class AdminRepository extends Repository<AdminEntity> {
 
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('user');
+    queryBuilder.leftJoin('user.jemaat', 'jemaat');
+    queryBuilder.addSelect(['jemaat.id', 'jemaat.name', 'jemaat.full_name']);
     queryBuilder.where('user.name != :name', { name: 'superadmin' });
 
     filter.search &&
-      queryBuilder.andWhere(
-        '(user.name ILIKE :search OR user.email ILIKE :search)',
-        { search: `%${filter.search}%` },
-      );
+      queryBuilder.andWhere('(user.name ILIKE :search OR user.email ILIKE :search)', { search: `%${filter.search}%` });
 
     if (!filter.take) {
       const entities = await queryBuilder.getMany();
-      return {entities}
+      return { entities };
     }
 
     queryBuilder.take(filter?.take);
@@ -35,9 +34,7 @@ export class AdminRepository extends Repository<AdminEntity> {
       page: filter?.page || 0,
       offset: filter?.take || 0,
       itemCount: itemCount || 0,
-      pageCount: Math.ceil(itemCount / filter?.take)
-        ? Math.ceil(itemCount / filter?.take)
-        : 0,
+      pageCount: Math.ceil(itemCount / filter?.take) ? Math.ceil(itemCount / filter?.take) : 0,
     };
 
     return { entities, meta };

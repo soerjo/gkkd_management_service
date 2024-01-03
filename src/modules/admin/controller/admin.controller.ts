@@ -36,21 +36,13 @@ export class AdminController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN])
   async create(@Body() createAdminDto: CreateAdminDto) {
-    const regions = await this.regionService.getManyByIds(
-      createAdminDto.regions_ids,
-    );
+    const regions = await this.regionService.getManyByIds(createAdminDto.regions_ids);
 
-    const isUsernameExist = await this.adminService.getByUsername(
-      createAdminDto.name,
-    );
-    if (isUsernameExist)
-      throw new BadRequestException({ message: 'username already exist' });
+    const isUsernameExist = await this.adminService.getByUsername(createAdminDto.name);
+    if (isUsernameExist) throw new BadRequestException({ message: 'username already exist' });
 
-    const isEmailExist = await this.adminService.getByEmail(
-      createAdminDto.email,
-    );
-    if (isEmailExist)
-      throw new BadRequestException({ message: 'email already exist' });
+    const isEmailExist = await this.adminService.getByEmail(createAdminDto.email);
+    if (isEmailExist) throw new BadRequestException({ message: 'email already exist' });
 
     createAdminDto.regions = regions;
     return {
@@ -72,8 +64,7 @@ export class AdminController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const result = await this.adminService.findOne(id);
-    if (!result)
-      throw new BadRequestException({ message: 'admin is not found!' });
+    if (!result) throw new BadRequestException({ message: 'admin is not found!' });
 
     return {
       message: 'success',
@@ -84,27 +75,18 @@ export class AdminController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN])
-  async update(
-    @Param('id') @UUIDParam() id: string,
-    @Body() updateAdminDto: UpdateAdminDto,
-  ) {
-    const isUsernameExist = await this.adminService.getByUsername(
-      updateAdminDto?.name,
-    );
-    if (isUsernameExist && id != isUsernameExist.id)
+  async update(@Param('id') @UUIDParam() id: string, @Body() updateAdminDto: UpdateAdminDto) {
+    const isUsernameExist = await this.adminService.getByUsername(updateAdminDto?.name);
+    if (isUsernameExist && id != isUsernameExist.id && isUsernameExist.name === updateAdminDto.name)
       throw new BadRequestException({ message: 'username already exist' });
 
-    const isEmailExist = await this.adminService.getByEmail(
-      updateAdminDto?.email,
-    );
-    if (isEmailExist && id != isEmailExist.id)
+    const isEmailExist = await this.adminService.getByEmail(updateAdminDto?.email);
+    if (isEmailExist && id != isEmailExist.id && isEmailExist.email === updateAdminDto.email)
       throw new BadRequestException({ message: 'email already exist' });
 
     let regions;
     if (updateAdminDto.regions_ids) {
-      regions = await this.regionService.getManyByIds(
-        updateAdminDto.regions_ids,
-      );
+      regions = await this.regionService.getManyByIds(updateAdminDto.regions_ids);
       updateAdminDto.regions = regions;
     }
 

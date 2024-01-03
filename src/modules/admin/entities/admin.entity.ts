@@ -1,8 +1,9 @@
 import { Exclude } from 'class-transformer';
 import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne } from 'typeorm';
 import { RoleEnum } from '../../../common/constant/role.constant';
 import { RegionEntity } from '../../region/entities/region.entity';
+import { JemaatEntity } from '../../jemaat/entities/jemaat.entity';
 
 @Entity({ name: 'admin' })
 export class AdminEntity extends MainEntityAbstract {
@@ -26,4 +27,8 @@ export class AdminEntity extends MainEntityAbstract {
   @Exclude()
   @Column({ nullable: true })
   temp_password: string;
+
+  @OneToOne(() => JemaatEntity)
+  @JoinColumn({name: 'jemaat_id'})
+  jemaat?: JemaatEntity
 }

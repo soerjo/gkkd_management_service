@@ -1,19 +1,18 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  OnApplicationBootstrap,
-} from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { AdminRepository } from '../repository/admin.repository';
 import { encryptPassword } from 'src/utils/hashing.util';
 import { CreateAdminDto } from '../dto/create-admin.dto';
 import { RoleEnum } from 'src/common/constant/role.constant';
 import { FilterDto } from '../dto/filter.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
+import { JemaatService } from 'src/modules/jemaat/services/jemaat.service';
 
 @Injectable()
 export class AdminService implements OnApplicationBootstrap {
-  constructor(private readonly adminRepository: AdminRepository) {}
+  constructor(
+    private readonly adminRepository: AdminRepository,
+    private readonly jemaatService: JemaatService,
+  ) {}
 
   async onApplicationBootstrap() {
     const superadmin = await this.getByUsername('superadmin');
@@ -41,7 +40,10 @@ export class AdminService implements OnApplicationBootstrap {
     });
   }
 
-  create(createAdminDto: CreateAdminDto) {
+  async create(createAdminDto: CreateAdminDto) {
+    const jemaat = await this.jemaatService.findOne(createAdminDto.jemaat_id);
+    createAdminDto.jemaat = jemaat;
+
     const newUser = this.adminRepository.create({
       ...createAdminDto,
       password: encryptPassword(createAdminDto.password),
@@ -64,16 +66,18 @@ export class AdminService implements OnApplicationBootstrap {
 
   async update(id: string, updateAdminDto: UpdateAdminDto) {
     const user = await this.findOne(id);
-    if (!user)
-      throw new BadRequestException({ message: 'admin is not found!' });
+    if (!user) throw new BadRequestException({ message: 'admin is not found!' });
     if (user.name === 'superadmin') throw new ForbiddenException();
+
+    if (updateAdminDto.jemaat_id) {
+      const jemaat = await this.jemaatService.findOne(updateAdminDto.jemaat_id);
+      updateAdminDto.jemaat = jemaat;
+    }
 
     const updateUser = await this.adminRepository.save({
       ...user,
       ...updateAdminDto,
-      password: updateAdminDto.password
-        ? encryptPassword(updateAdminDto.password)
-        : user.password,
+      password: updateAdminDto.password ? encryptPassword(updateAdminDto.password) : user.password,
     });
 
     return updateUser.id;
@@ -81,8 +85,7 @@ export class AdminService implements OnApplicationBootstrap {
 
   async remove(id: string) {
     const user = await this.findOne(id);
-    if (!user)
-      throw new BadRequestException({ message: 'admin is not found!' });
+    if (!user) throw new BadRequestException({ message: 'admin is not found!' });
 
     await this.adminRepository.softRemove(user);
 

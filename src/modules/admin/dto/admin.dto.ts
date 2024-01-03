@@ -2,12 +2,15 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
+  IsUUID,
   MinLength,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/constant/role.constant';
 import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { JemaatEntity } from 'src/modules/jemaat/entities/jemaat.entity';
 
 export class AdminDto {
   @ApiProperty()
@@ -32,4 +35,11 @@ export class AdminDto {
   password: string;
 
   regions?: RegionEntity[];
+  
+  @ApiProperty()
+  @IsUUID()
+  @IsOptional()
+  jemaat_id?: string;
+
+  jemaat?: JemaatEntity
 }
