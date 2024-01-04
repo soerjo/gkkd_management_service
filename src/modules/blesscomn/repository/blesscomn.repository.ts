@@ -23,10 +23,10 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
         .andWhere(`region.id = :region_id`, { region_id: filter.region_id });
     }
 
-    if (filter.region_ids || filter.region_ids?.length) {
+    if (filter.region_ids && filter.region_ids.length) {
       queryBuilder
         .leftJoin('blesscomn.region', 'region')
-        .where(`region.id IN (:...region_ids)`, { region_ids: filter.region_ids });
+        .andWhere(`region.id IN (:...region_ids)`, { region_ids: filter.region_ids });
     }
 
     if (!filter.region_id && !filter.region_ids) {

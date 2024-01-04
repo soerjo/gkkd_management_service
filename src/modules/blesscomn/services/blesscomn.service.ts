@@ -5,6 +5,7 @@ import { BlesscomnRepository } from '../repository/blesscomn.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { RegionService } from 'src/modules/region/services/region.service';
 import { JemaatService } from 'src/modules/jemaat/services/jemaat.service';
+import { IsNull } from 'typeorm';
 
 @Injectable()
 export class BlesscomnService {
@@ -57,6 +58,10 @@ export class BlesscomnService {
         members: true,
       },
     });
+  }
+
+  findOneByLeadId(leadId: string) {
+    return this.blesscomnRepository.findOne({ where: { lead_jemaat: { id: leadId ?? IsNull() } } });
   }
 
   async update(id: string, updateBlesscomnDto: UpdateBlesscomnDto) {

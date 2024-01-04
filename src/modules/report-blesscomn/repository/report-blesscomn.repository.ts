@@ -10,20 +10,19 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
   }
 
   async getAll(filter: FilterDto) {
-    const queryBuilder = this.createQueryBuilder('region');
-    queryBuilder.where('region.name != :name', { name: 'superadmin' });
+    const queryBuilder = this.createQueryBuilder('blesscomn_report');
+    queryBuilder.leftJoinAndSelect('blesscomn_report.blesscomn', 'blesscomn');
 
-    // filter.search &&
-    //   queryBuilder.andWhere(
-    //     '(region.name ILIKE :search OR region.lead ILIKE :search)',
-    //     { search: filter.search },
-    //   );
+    if (!filter.region_id && !filter.region_ids) {
+      queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
+    }
 
     if (filter.take) {
       queryBuilder.take(filter?.take);
-      queryBuilder.orderBy(`region.created_at`, 'DESC');
       queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
+
+    queryBuilder.orderBy(`blesscomn_report.created_at`, 'DESC');
 
     const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getMany();
@@ -32,9 +31,7 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
       page: filter?.page || 0,
       offset: filter?.take || 0,
       itemCount: itemCount || 0,
-      pageCount: Math.ceil(itemCount / filter?.take)
-        ? Math.ceil(itemCount / filter?.take)
-        : 0,
+      pageCount: Math.ceil(itemCount / filter?.take) ? Math.ceil(itemCount / filter?.take) : 0,
     };
 
     return { entities, meta };

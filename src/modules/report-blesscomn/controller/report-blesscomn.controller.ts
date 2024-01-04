@@ -9,18 +9,30 @@ import { FilterDto } from '../dto/filter.dto';
 import { RolesGuard } from 'src/common/guard/role.guard';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { RoleEnum } from 'src/common/constant/role.constant';
+import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
+import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
+import { BlesscomnService } from 'src/modules/blesscomn/services/blesscomn.service';
 
-@ApiTags('Blesscomn')
+@ApiTags('Blesscomn Report')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('blesscomn/report')
+@Controller('blesscomn_report')
 export class ReportBlesscomnController {
-  constructor(private readonly reportBlesscomnService: ReportBlesscomnService) {}
+  constructor(
+    private readonly reportBlesscomnService: ReportBlesscomnService,
+    private readonly blesscomnService: BlesscomnService,
+  ) {}
 
   @Post()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
-  async create(@Body() createReportBlesscomnDto: CreateReportBlesscomnDto) {
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createReportBlesscomnDto: CreateReportBlesscomnDto) {
+    if (jwtPayload.jemaat_id) {
+      const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
+      console.log({ blesscomn });
+      createReportBlesscomnDto.blesscomn_id = blesscomn.id;
+    }
+
     return {
       message: 'success',
       data: await this.reportBlesscomnService.create(createReportBlesscomnDto),
@@ -30,7 +42,9 @@ export class ReportBlesscomnController {
   @Get()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
-  async findAll(@Query() filter: FilterDto) {
+  async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
+    if (jwtPayload.regions.length) filter.region_id = jwtPayload.regions[0].id;
+
     return {
       message: 'success',
       data: await this.reportBlesscomnService.findAll(filter),
