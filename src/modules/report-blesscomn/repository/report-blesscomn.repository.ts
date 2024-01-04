@@ -34,11 +34,10 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
       queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
 
-    queryBuilder.orderBy(`blesscomn_report.created_at`, 'DESC');
+    queryBuilder.orderBy('blesscomn_report.created_at', 'DESC');
 
-    const data = await queryBuilder.getMany();
-    const entities = this.filterUniqueRecordsByDate(data);
-    const itemCount = entities.length;
+    const entities = await queryBuilder.getMany();
+    const itemCount = await queryBuilder.getCount();
 
     const meta = {
       page: filter?.page || 0,

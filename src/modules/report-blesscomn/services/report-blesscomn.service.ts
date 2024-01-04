@@ -13,6 +13,11 @@ export class ReportBlesscomnService {
   ) {}
 
   async create(createReportBlesscomnDto: CreateReportBlesscomnDto) {
+    const isDataExist = await this.reportBlesscomnRepository.findOne({
+      where: { date: createReportBlesscomnDto.date, blesscomn: { id: createReportBlesscomnDto.blesscomn_id } },
+    });
+    if (isDataExist) throw new BadRequestException({ message: 'data already exist!' });
+
     const blesscomn = await this.blesscomnService.findOne(createReportBlesscomnDto.blesscomn_id);
     if (!blesscomn) throw new BadRequestException({ message: 'Blesscomn is not found!' });
     createReportBlesscomnDto.blesscomn = blesscomn;
