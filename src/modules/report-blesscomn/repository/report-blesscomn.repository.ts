@@ -17,6 +17,18 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
       queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
     }
 
+    if (filter.blesscomn_id) {
+      queryBuilder.andWhere('blesscomn.id = :blesscomn_id', { blesscomn_id: filter.blesscomn_id });
+    }
+
+    if (filter.date_start) {
+      queryBuilder.andWhere('blesscomn_report.date >= :date_start', { date_start: filter.date_start });
+    }
+
+    if (filter.date_end) {
+      queryBuilder.andWhere('blesscomn_report.date <= :date_end', { date_end: filter.date_end });
+    }
+
     if (filter.take) {
       queryBuilder.take(filter?.take);
       queryBuilder.skip((filter?.page - 1) * filter?.take);
@@ -24,8 +36,9 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
 
     queryBuilder.orderBy(`blesscomn_report.created_at`, 'DESC');
 
-    const itemCount = await queryBuilder.getCount();
-    const entities = await queryBuilder.getMany();
+    const data = await queryBuilder.getMany();
+    const entities = this.filterUniqueRecordsByDate(data);
+    const itemCount = entities.length;
 
     const meta = {
       page: filter?.page || 0,
@@ -35,5 +48,21 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
     };
 
     return { entities, meta };
+  }
+
+  filterUniqueRecordsByDate(records: ReportBlesscomnEntity[]): ReportBlesscomnEntity[] {
+    const seenDate = new Set();
+    const seenBlesscomn = new Set();
+
+    return records.filter((record) => {
+      const dateValue = record.date.toISOString();
+      const blesscomnValue = record.blesscomn.name;
+      if (!seenDate.has(dateValue) || !seenBlesscomn.has(blesscomnValue)) {
+        seenDate.add(dateValue);
+        seenBlesscomn.add(blesscomnValue);
+        return true;
+      }
+      return false;
+    });
   }
 }

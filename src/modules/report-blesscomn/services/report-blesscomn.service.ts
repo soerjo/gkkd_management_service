@@ -17,7 +17,11 @@ export class ReportBlesscomnService {
     if (!blesscomn) throw new BadRequestException({ message: 'Blesscomn is not found!' });
     createReportBlesscomnDto.blesscomn = blesscomn;
 
-    const reportBlesscomn = this.reportBlesscomnRepository.create(createReportBlesscomnDto);
+    const reportBlesscomn = this.reportBlesscomnRepository.create({
+      ...createReportBlesscomnDto,
+      total: createReportBlesscomnDto.total_female + createReportBlesscomnDto.total_male,
+    });
+
     return this.reportBlesscomnRepository.save(reportBlesscomn);
   }
 

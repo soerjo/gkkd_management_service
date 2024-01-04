@@ -27,7 +27,7 @@ export class ReportBlesscomnDto {
   @IsNumber()
   @Min(0)
   @Transform((val) => Number(val.value))
-  @IsNotEmpty()
+  @IsOptional()
   total: number;
 
   @ApiProperty()

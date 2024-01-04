@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDateString, IsOptional, IsString, IsUUID } from 'class-validator';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { BlesscomnEntity } from 'src/modules/blesscomn/entities/blesscomn.entity';
 
@@ -8,6 +8,16 @@ export class FilterDto extends PaginationDto {
   @IsString()
   @IsOptional()
   search: string;
+
+  @ApiPropertyOptional()
+  @IsDateString()
+  @IsOptional()
+  date_start: Date;
+
+  @ApiPropertyOptional()
+  @IsDateString()
+  @IsOptional()
+  date_end: Date;
 
   @ApiPropertyOptional()
   @IsUUID()

@@ -29,7 +29,6 @@ export class ReportBlesscomnController {
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createReportBlesscomnDto: CreateReportBlesscomnDto) {
     if (jwtPayload.jemaat_id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
-      console.log({ blesscomn });
       createReportBlesscomnDto.blesscomn_id = blesscomn.id;
     }
 
@@ -44,6 +43,11 @@ export class ReportBlesscomnController {
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
     if (jwtPayload.regions.length) filter.region_id = jwtPayload.regions[0].id;
+
+    if (jwtPayload.jemaat_id) {
+      const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
+      filter.blesscomn_id = blesscomn.id;
+    }
 
     return {
       message: 'success',
