@@ -12,30 +12,29 @@ export class BlesscomnService {
     private readonly blesscomnRepository: BlesscomnRepository,
     private readonly regionService: RegionService,
     private readonly jemaatService: JemaatService,
-    ) {}
+  ) {}
 
-    async create(createBlesscomnDto: CreateBlesscomnDto) {
-      const region = await this.regionService.getOneById(createBlesscomnDto.region_id)
-      if(!region) throw new BadRequestException({message: 'Region is not found!'})
-      createBlesscomnDto.region = region
+  async create(createBlesscomnDto: CreateBlesscomnDto) {
+    const region = await this.regionService.getOneById(createBlesscomnDto.region_id);
+    if (!region) throw new BadRequestException({ message: 'Region is not found!' });
+    createBlesscomnDto.region = region;
 
-      const isBlesscomnNameExist = await this.blesscomnRepository.findOne({
-        where: {
-          name: createBlesscomnDto.name,
-          region: {
-            id: createBlesscomnDto.region_id
-          }
+    const isBlesscomnNameExist = await this.blesscomnRepository.findOne({
+      where: {
+        name: createBlesscomnDto.name,
+        region: {
+          id: createBlesscomnDto.region_id,
         },
-      })
-      if(isBlesscomnNameExist) throw new BadRequestException({ message: `blesscomn name is already exist in region ${region.name}`})
+      },
+    });
+    if (isBlesscomnNameExist)
+      throw new BadRequestException({ message: `blesscomn name is already exist in region ${region.name}` });
 
-
-
-    if(createBlesscomnDto.lead_id){
-      const lead = await this.jemaatService.findOne(createBlesscomnDto.lead_id)
-      if(!lead) throw new BadRequestException({ message: "Lead is not found in jemaat"})
-      createBlesscomnDto.lead_jemaat = lead
-      createBlesscomnDto.lead = lead.name
+    if (createBlesscomnDto.lead_id) {
+      const lead = await this.jemaatService.findOne(createBlesscomnDto.lead_id);
+      if (!lead) throw new BadRequestException({ message: 'Lead is not found in jemaat' });
+      createBlesscomnDto.lead_jemaat = lead;
+      createBlesscomnDto.lead = lead.name;
     }
 
     const blesscomn = this.blesscomnRepository.create(createBlesscomnDto);
@@ -47,24 +46,34 @@ export class BlesscomnService {
   }
 
   findOne(id: string) {
-    return this.blesscomnRepository.findOneBy({ id });
+    return this.blesscomnRepository.findOne({
+      where: { id },
+      relations: { region: true },
+      select: {
+        id: true,
+        name: true,
+        location: true,
+        lead: true,
+        members: true,
+      },
+    });
   }
 
   async update(id: string, updateBlesscomnDto: UpdateBlesscomnDto) {
     const blesscomn = await this.findOne(id);
     if (!blesscomn) throw new BadRequestException({ message: 'blesscomn is not found!' });
 
-    if(updateBlesscomnDto.region_id){
-      const region = await this.regionService.getOneById(updateBlesscomnDto.region_id)
-      if(!region) throw new BadRequestException({message: 'Region is not found!'})
-      updateBlesscomnDto.region = region
+    if (updateBlesscomnDto.region_id) {
+      const region = await this.regionService.getOneById(updateBlesscomnDto.region_id);
+      if (!region) throw new BadRequestException({ message: 'Region is not found!' });
+      updateBlesscomnDto.region = region;
     }
 
-    if(updateBlesscomnDto.lead_id){
-      const lead = await this.jemaatService.findOne(updateBlesscomnDto.lead_id)
-      if(!lead) throw new BadRequestException({ message: "Lead is not found in jemaat"})
-      updateBlesscomnDto.lead_jemaat = lead
-      updateBlesscomnDto.lead = lead.name
+    if (updateBlesscomnDto.lead_id) {
+      const lead = await this.jemaatService.findOne(updateBlesscomnDto.lead_id);
+      if (!lead) throw new BadRequestException({ message: 'Lead is not found in jemaat' });
+      updateBlesscomnDto.lead_jemaat = lead;
+      updateBlesscomnDto.lead = lead.name;
     }
 
     await this.blesscomnRepository.save({

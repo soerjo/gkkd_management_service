@@ -19,6 +19,9 @@ import { FilterDto } from '../dto/filter.dto';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
 import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
+import { RolesGuard } from 'src/common/guard/role.guard';
+import { Roles } from 'src/common/decorator/role.decorator';
+import { RoleEnum } from 'src/common/constant/role.constant';
 
 @ApiTags('Blesscomn')
 @Controller('blesscomn')
@@ -28,6 +31,8 @@ export class BlesscomnController {
   constructor(private readonly blesscomnService: BlesscomnService) {}
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
   async create(@Body() createBlesscomnDto: CreateBlesscomnDto) {
     return {
       message: 'success',
@@ -36,6 +41,8 @@ export class BlesscomnController {
   }
 
   @Get()
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
     filter.region_ids = jwtPayload.regions && jwtPayload.regions.map((val) => val.id);
 
@@ -46,6 +53,8 @@ export class BlesscomnController {
   }
 
   @Get(':id')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findOne(@UUIDParam() @Param('id') id: string) {
     const result = await this.blesscomnService.findOne(id);
     if (!result) throw new BadRequestException({ message: 'blesscomn is not found!' });
@@ -57,6 +66,8 @@ export class BlesscomnController {
   }
 
   @Patch(':id')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async update(@UUIDParam() @Param('id') id: string, @Body() updateBlesscomnDto: UpdateBlesscomnDto) {
     return {
       message: 'success',
@@ -65,6 +76,8 @@ export class BlesscomnController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
   async remove(@UUIDParam() @Param('id') id: string) {
     return {
       message: 'success',
