@@ -11,7 +11,6 @@ export class JemaatRepository extends Repository<JemaatEntity> {
 
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('jemaat');
-    queryBuilder.where('jemaat.name != :name', { name: 'superadmin' });
 
     filter.search &&
       queryBuilder.andWhere(
@@ -21,9 +20,10 @@ export class JemaatRepository extends Repository<JemaatEntity> {
 
     if (filter.take) {
       queryBuilder.take(filter?.take);
-      queryBuilder.orderBy(`jemaat.created_at`, 'DESC');
       queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
+
+    queryBuilder.orderBy(`jemaat.created_at`, 'DESC');
 
     const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getMany();
@@ -32,9 +32,7 @@ export class JemaatRepository extends Repository<JemaatEntity> {
       page: filter?.page || 0,
       offset: filter?.take || 0,
       itemCount: itemCount || 0,
-      pageCount: Math.ceil(itemCount / filter?.take)
-        ? Math.ceil(itemCount / filter?.take)
-        : 0,
+      pageCount: Math.ceil(itemCount / filter?.take) ? Math.ceil(itemCount / filter?.take) : 0,
     };
 
     return { entities, meta };

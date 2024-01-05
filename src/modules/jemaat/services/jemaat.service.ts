@@ -52,7 +52,9 @@ export class JemaatService {
     if (updateJemaatDto.region_id) {
       const region = await this.regionService.getOneById(updateJemaatDto.region_id);
       if (!region) throw new BadRequestException({ message: 'Region is not found!' });
+
       updateJemaatDto.region = region;
+      updateJemaatDto.region_service = region.name;
     }
 
     await this.jemaatRepository.save({

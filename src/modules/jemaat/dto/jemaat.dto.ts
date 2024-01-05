@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsDateString,
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsNumberString,
@@ -12,6 +13,7 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
+import { GenderEnum } from 'src/common/constant/gender.constant';
 import { RegionEntity } from 'src/modules/region/entities/region.entity';
 
 export class JemaatDto {
@@ -30,10 +32,10 @@ export class JemaatDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ enum: GenderEnum })
+  @IsEnum(GenderEnum)
   @IsNotEmpty()
-  sexs: string;
+  gender: GenderEnum;
 
   @ApiProperty()
   @IsString()
@@ -93,10 +95,10 @@ export class JemaatDto {
   @IsOptional()
   wedding_date?: Date;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  region_service: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsNotEmpty()
+  region_service?: string;
 
   @ApiProperty()
   @IsUUID()
