@@ -4,6 +4,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 import typeormConfig from 'src/config/typeorm.config';
+import appConfig from 'src/config/app.config';
 import { RegionModule } from '../region/region.module';
 import { AdminModule } from '../admin/admin.module';
 import { AuthModule } from '../auth/auth.module';
@@ -20,12 +21,11 @@ import { ReportPemuridanModule } from '../report-pemuridan/report-pemuridan.modu
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [typeormConfig],
+      load: [appConfig, typeormConfig],
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) =>
-        configService.get('typeorm'),
+      useFactory: async (configService: ConfigService) => configService.get('typeorm'),
     }),
     JwtModule.register({
       global: true,
@@ -39,7 +39,6 @@ import { ReportPemuridanModule } from '../report-pemuridan/report-pemuridan.modu
     ReportRegionModule,
     ReportBlesscomnModule,
     ReportPemuridanModule,
-    
   ],
   controllers: [LovControler],
   providers: [
