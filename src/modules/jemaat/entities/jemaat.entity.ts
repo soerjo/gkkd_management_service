@@ -3,6 +3,7 @@ import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstrac
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { RegionEntity } from '../../region/entities/region.entity';
 import { BlesscomnEntity } from '../../blesscomn/entities/blesscomn.entity';
+import { GenderEnum } from '../../../common/constant/gender.constant';
 
 @Entity({ name: 'jemaat' })
 export class JemaatEntity extends MainEntityAbstract {
@@ -15,8 +16,8 @@ export class JemaatEntity extends MainEntityAbstract {
   @Column()
   email: string;
 
-  @Column()
-  sexs: string;
+  @Column({ default: GenderEnum.MALE })
+  gender: string;
 
   @Column()
   place_birthday: string;
