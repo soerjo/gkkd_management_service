@@ -9,6 +9,7 @@ import {
   UseGuards,
   Query,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PemuridanService } from '../services/pemuridan.service';
 import { CreatePemuridanDto } from '../dto/create-pemuridan.dto';
@@ -19,6 +20,8 @@ import { FilterDto } from '../dto/filter.dto';
 import { RoleEnum } from 'src/common/constant/role.constant';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { RolesGuard } from 'src/common/guard/role.guard';
+import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
+import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
 
 @ApiTags('Pemuridan')
 @Controller('pemuridan')
@@ -29,8 +32,10 @@ export class PemuridanController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async create(@Body() createPemuridanDto: CreatePemuridanDto) {
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createPemuridanDto: CreatePemuridanDto) {
+    if (jwtPayload.jemaat_id) createPemuridanDto.lead_id = jwtPayload.jemaat_id;
+
     return {
       message: 'success',
       data: await this.pemuridanService.create(createPemuridanDto),
@@ -39,8 +44,10 @@ export class PemuridanController {
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async findAll(@Query() filter: FilterDto) {
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
+    filter.lead_id = jwtPayload.jemaat_id;
+
     return {
       message: 'success',
       data: await this.pemuridanService.findAll(filter),
@@ -49,7 +56,7 @@ export class PemuridanController {
 
   @Get(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async findOne(@Param('id') id: string) {
     const result = await this.pemuridanService.findOne(id);
     if (!result) throw new BadRequestException({ message: 'pemuridan is not found!' });
@@ -62,8 +69,14 @@ export class PemuridanController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async update(@Param('id') id: string, @Body() updatePemuridanDto: UpdatePemuridanDto) {
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  async update(
+    @CurrentUser() jwtPayload: IJwtPayload,
+    @Param('id') id: string,
+    @Body() updatePemuridanDto: UpdatePemuridanDto,
+  ) {
+    if (jwtPayload.jemaat_id) updatePemuridanDto.lead_id = jwtPayload.jemaat_id;
+
     return {
       message: 'success',
       data: await this.pemuridanService.update(id, updatePemuridanDto),
