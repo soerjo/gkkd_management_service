@@ -87,6 +87,19 @@ export class ReportBlesscomnService {
       updateReportBlesscomnDto.blesscomn = blesscomn;
     }
 
+    if (updateReportBlesscomnDto.date) {
+      const isDataExist = await this.reportBlesscomnRepository.findOne({
+        where: { date: updateReportBlesscomnDto.date, blesscomn: { id: updateReportBlesscomnDto.blesscomn_id } },
+      });
+      if (isDataExist && isDataExist.id != id) throw new BadRequestException({ message: 'data already exist!' });
+    }
+
+    if (updateReportBlesscomnDto.total_female || updateReportBlesscomnDto.total_male) {
+      updateReportBlesscomnDto.total_female = updateReportBlesscomnDto.total_female ?? pastReportBlesscomn.total_female;
+      updateReportBlesscomnDto.total_male = updateReportBlesscomnDto.total_male ?? pastReportBlesscomn.total_male;
+      updateReportBlesscomnDto.total = updateReportBlesscomnDto.total_female + updateReportBlesscomnDto.total_male;
+    }
+
     await this.reportBlesscomnRepository.save({
       ...pastReportBlesscomn,
       ...updateReportBlesscomnDto,
