@@ -46,7 +46,7 @@ export class PemuridanController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    filter.lead_id = jwtPayload.jemaat_id;
+    if (jwtPayload.jemaat_id) filter.lead_id = jwtPayload.jemaat_id;
 
     return {
       message: 'success',

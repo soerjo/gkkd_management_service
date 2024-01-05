@@ -10,20 +10,32 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
   }
 
   async getAll(filter: FilterDto) {
-    const queryBuilder = this.createQueryBuilder('region');
-    queryBuilder.where('region.name != :name', { name: 'superadmin' });
+    const queryBuilder = this.createQueryBuilder('pemuridan_report');
 
-    // filter.search &&
-    //   queryBuilder.andWhere(
-    //     '(region.name ILIKE :search OR region.lead ILIKE :search)',
-    //     { search: filter.search },
-    //   );
+    queryBuilder.leftJoin('pemuridan_report.pemuridan', 'pemuridan');
+    queryBuilder.addSelect(['pemuridan.name', 'pemuridan.id']);
+
+    queryBuilder.leftJoin('pemuridan.lead', 'lead');
+    queryBuilder.addSelect(['lead.id', 'lead.full_name', 'lead.name']);
+
+    if (filter.lead_id) {
+      queryBuilder.andWhere('lead.id = :lead_id', { lead_id: filter.lead_id });
+    }
+
+    if (filter.date_start) {
+      queryBuilder.andWhere('pemuridan_report.date >= :date_start', { date_start: filter.date_start });
+    }
+
+    if (filter.date_end) {
+      queryBuilder.andWhere('pemuridan_report.date <= :date_end', { date_end: filter.date_end });
+    }
 
     if (filter.take) {
       queryBuilder.take(filter?.take);
-      queryBuilder.orderBy(`region.created_at`, 'DESC');
       queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
+
+    queryBuilder.orderBy(`pemuridan_report.created_at`, 'DESC');
 
     const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getMany();
@@ -32,9 +44,7 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
       page: filter?.page || 0,
       offset: filter?.take || 0,
       itemCount: itemCount || 0,
-      pageCount: Math.ceil(itemCount / filter?.take)
-        ? Math.ceil(itemCount / filter?.take)
-        : 0,
+      pageCount: Math.ceil(itemCount / filter?.take) ? Math.ceil(itemCount / filter?.take) : 0,
     };
 
     return { entities, meta };

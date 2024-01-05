@@ -9,6 +9,6 @@ import { RegionModule } from '../region/region.module';
   imports: [JemaatModule, RegionModule],
   controllers: [PemuridanController],
   providers: [PemuridanService, PemuridanRepository],
-  exports: [PemuridanService]
+  exports: [PemuridanService, PemuridanRepository],
 })
 export class PemuridanModule {}

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsDateString, IsNotEmpty, IsNumber, IsString, IsUUID, Min } from 'class-validator';
+import { JemaatEntity } from 'src/modules/jemaat/entities/jemaat.entity';
 import { PemuridanEntity } from 'src/modules/pemuridan/entities/pemuridan.entity';
 
 export class ReportPemuridanDto {
@@ -26,5 +27,5 @@ export class ReportPemuridanDto {
   @IsNotEmpty()
   pemuridan_id: string;
 
-  pemuridan: PemuridanEntity;
+  pemuridan?: PemuridanEntity;
 }
