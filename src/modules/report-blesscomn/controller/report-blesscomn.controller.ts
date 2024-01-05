@@ -55,6 +55,23 @@ export class ReportBlesscomnController {
     };
   }
 
+  @Get('chart')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  async getChart(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
+    if (jwtPayload.regions.length) filter.region_id = jwtPayload.regions[0].id;
+
+    if (jwtPayload.jemaat_id) {
+      const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
+      filter.blesscomn_id = blesscomn.id;
+    }
+
+    return {
+      message: 'success',
+      data: await this.reportBlesscomnService.chart(filter),
+    };
+  }
+
   @Get(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])

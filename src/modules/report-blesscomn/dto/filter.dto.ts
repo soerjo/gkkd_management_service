@@ -10,12 +10,12 @@ export class FilterDto extends PaginationDto {
   search: string;
 
   @ApiPropertyOptional()
-  @IsDateString()
+  @IsDateString({ strict: true })
   @IsOptional()
   date_start: Date;
 
   @ApiPropertyOptional()
-  @IsDateString()
+  @IsDateString({ strict: true })
   @IsOptional()
   date_end: Date;
 

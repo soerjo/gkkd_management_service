@@ -5,7 +5,7 @@ import { BlesscomnEntity } from 'src/modules/blesscomn/entities/blesscomn.entity
 
 export class ReportBlesscomnDto {
   @ApiProperty()
-  @IsDateString()
+  @IsDateString({ strict: true })
   @IsNotEmpty()
   date: Date;
 
