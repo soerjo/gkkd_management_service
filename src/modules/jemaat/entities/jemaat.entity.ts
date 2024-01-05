@@ -21,7 +21,7 @@ export class JemaatEntity extends MainEntityAbstract {
   @Column()
   place_birthday: string;
 
-  @Column()
+  @Column({ type: 'date', default: new Date() })
   date_birthday: Date;
 
   @Column()
