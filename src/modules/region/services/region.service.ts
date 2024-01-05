@@ -2,22 +2,22 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { RegionRepository } from '../repository/region.repository';
 import { CreateRegionDto } from '../dto/create-region.dto';
 import { UpdateRegionDto } from '../dto/update-region.dto';
-import { In } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 
 @Injectable()
 export class RegionService {
   constructor(private readonly regionRepository: RegionRepository) {}
 
   async create(createRegionDto: CreateRegionDto) {
-    const isRegionNameExist = await this.regionRepository.findOneBy({name: createRegionDto.name})
-    if(isRegionNameExist) throw new BadRequestException({message: 'Region already exists!'})
+    const isRegionNameExist = await this.regionRepository.findOneBy({ name: createRegionDto.name });
+    if (isRegionNameExist) throw new BadRequestException({ message: 'Region already exists!' });
 
     const region = this.regionRepository.create(createRegionDto);
     return this.regionRepository.save(region);
   }
 
   getOneById(id: string) {
-    return this.regionRepository.findOneBy({ id });
+    return this.regionRepository.findOneBy({ id: id ?? IsNull() });
   }
 
   getManyByIds(ids: string[]) {
@@ -34,8 +34,7 @@ export class RegionService {
 
   async update(id: string, updateRegionDto: UpdateRegionDto) {
     const region = await this.getOneById(id);
-    if (!region)
-      throw new BadRequestException({ message: 'regions is not found' });
+    if (!region) throw new BadRequestException({ message: 'regions is not found' });
 
     const updateRegion = await this.regionRepository.save({
       ...region,
@@ -47,8 +46,7 @@ export class RegionService {
 
   async remove(id: string) {
     const region = await this.getOneById(id);
-    if (!region)
-      throw new BadRequestException({ message: 'regions is not found' });
+    if (!region) throw new BadRequestException({ message: 'regions is not found' });
 
     await this.regionRepository.softRemove(region);
 

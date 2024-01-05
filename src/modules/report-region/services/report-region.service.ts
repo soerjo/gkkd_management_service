@@ -4,6 +4,7 @@ import { UpdateReportRegionDto } from '../dto/update-report-region.dto';
 import { ReportRegionRepository } from '../repository/report-region.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { RegionService } from 'src/modules/region/services/region.service';
+import { IsNull } from 'typeorm';
 
 @Injectable()
 export class ReportRegionService {
@@ -35,7 +36,46 @@ export class ReportRegionService {
   }
 
   findOne(id: string) {
-    return this.reportRegionRepository.findOneBy({ id });
+    return this.reportRegionRepository.findOneBy({ id: id ?? IsNull() });
+  }
+
+  async chart(filter: FilterDto) {
+    const { entities: data } = await this.findAll(filter);
+
+    // Group data by month
+    const groupedData = data.reduce((acc, data) => {
+      const month = new Date(data.date).getMonth();
+      if (!acc[month]) {
+        acc[month] = [];
+      }
+      acc[month].push({
+        total: data.total,
+        male: data.total_male,
+        female: data.total_female,
+        new: data.new,
+      });
+      return acc;
+    }, {});
+
+    // Calculate the average for each month
+    const averagePerMonth = Object.keys(groupedData).map((month) => {
+      const values = groupedData[month];
+
+      const averageTotal = values.reduce((sum, value) => sum + value.total, 0) / values.length;
+      const averageMale = values.reduce((sum, value) => sum + value.male, 0) / values.length;
+      const averageFemale = values.reduce((sum, value) => sum + value.female, 0) / values.length;
+      const averageNew = values.reduce((sum, value) => sum + value.new, 0) / values.length;
+
+      return {
+        month,
+        averageTotal,
+        averageMale,
+        averageFemale,
+        averageNew,
+      };
+    });
+
+    return averagePerMonth;
   }
 
   async update(id: string, updateReportRegionDto: UpdateReportRegionDto) {

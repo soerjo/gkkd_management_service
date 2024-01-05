@@ -48,7 +48,7 @@ export class BlesscomnService {
 
   findOne(id: string) {
     return this.blesscomnRepository.findOne({
-      where: { id },
+      where: { id: id ?? IsNull() },
       relations: { region: true },
       select: {
         id: true,

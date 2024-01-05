@@ -22,7 +22,9 @@ export class ReportRegionController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async create(@Body() createReportRegionDto: CreateReportRegionDto) {
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createReportRegionDto: CreateReportRegionDto) {
+    if (jwtPayload?.regions?.length) createReportRegionDto.region_id = jwtPayload.regions[0].id;
+
     return {
       message: 'success',
       data: await this.reportRegionService.create(createReportRegionDto),
@@ -38,6 +40,18 @@ export class ReportRegionController {
     return {
       message: 'success',
       data: await this.reportRegionService.findAll(filter),
+    };
+  }
+
+  @Get('chart')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  async getChart(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
+    if (jwtPayload.regions.length) filter.region_id = jwtPayload.regions[0].id;
+
+    return {
+      message: 'success',
+      data: await this.reportRegionService.chart(filter),
     };
   }
 
