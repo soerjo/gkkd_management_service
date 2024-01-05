@@ -43,7 +43,7 @@ export class ReportBlesscomnService {
 
     // Group data by month
     const groupedData = data.reduce((acc, data) => {
-      const month = data.date.getMonth();
+      const month = new Date(data.date).getMonth();
       if (!acc[month]) {
         acc[month] = [];
       }
