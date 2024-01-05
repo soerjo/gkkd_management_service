@@ -10,20 +10,27 @@ export class ReportRegionRepository extends Repository<ReportRegionEntity> {
   }
 
   async getAll(filter: FilterDto) {
-    const queryBuilder = this.createQueryBuilder('region');
-    queryBuilder.where('region.name != :name', { name: 'superadmin' });
+    const queryBuilder = this.createQueryBuilder('region_report');
+    queryBuilder.leftJoinAndSelect('region_report.region', 'region');
 
-    // filter.search &&
-    //   queryBuilder.andWhere(
-    //     '(region.name ILIKE :search OR region.lead ILIKE :search)',
-    //     { search: filter.search },
-    //   );
+    if (filter.region_id) {
+      queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });
+    }
+
+    if (filter.date_start) {
+      queryBuilder.andWhere('region_report.date >= :date_start', { date_start: filter.date_start });
+    }
+
+    if (filter.date_end) {
+      queryBuilder.andWhere('region_report.date <= :date_end', { date_end: filter.date_end });
+    }
 
     if (filter.take) {
       queryBuilder.take(filter?.take);
-      queryBuilder.orderBy(`region.created_at`, 'DESC');
       queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
+
+    queryBuilder.orderBy('region_report.date', 'DESC');
 
     const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getMany();
@@ -32,9 +39,7 @@ export class ReportRegionRepository extends Repository<ReportRegionEntity> {
       page: filter?.page || 0,
       offset: filter?.take || 0,
       itemCount: itemCount || 0,
-      pageCount: Math.ceil(itemCount / filter?.take)
-        ? Math.ceil(itemCount / filter?.take)
-        : 0,
+      pageCount: Math.ceil(itemCount / filter?.take) ? Math.ceil(itemCount / filter?.take) : 0,
     };
 
     return { entities, meta };

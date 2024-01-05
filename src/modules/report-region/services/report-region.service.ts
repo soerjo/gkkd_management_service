@@ -10,49 +10,71 @@ export class ReportRegionService {
   constructor(
     private readonly reportRegionRepository: ReportRegionRepository,
     private readonly regionService: RegionService,
-  ){}
+  ) {}
 
   async create(createReportRegionDto: CreateReportRegionDto) {
-    const region = await this.regionService.getOneById(createReportRegionDto.region_id)
-    if(!region) throw new BadRequestException({ message: 'Region is not found!'})
-    createReportRegionDto.region = region
+    const isDataExist = await this.reportRegionRepository.findOne({
+      where: { date: createReportRegionDto.date, region: { id: createReportRegionDto.region_id } },
+    });
+    if (isDataExist) throw new BadRequestException({ message: 'data already exist!' });
 
-    const reportRegion = this.reportRegionRepository.create(createReportRegionDto)
-    return this.reportRegionRepository.save(reportRegion)
+    const region = await this.regionService.getOneById(createReportRegionDto.region_id);
+    if (!region) throw new BadRequestException({ message: 'Region is not found!' });
+    createReportRegionDto.region = region;
+
+    const reportRegion = this.reportRegionRepository.create({
+      ...createReportRegionDto,
+      total: createReportRegionDto.total_female + createReportRegionDto.total_male,
+    });
+
+    return this.reportRegionRepository.save(reportRegion);
   }
 
   findAll(filter: FilterDto) {
-    return this.reportRegionRepository.find()
+    return this.reportRegionRepository.getAll(filter);
   }
 
   findOne(id: string) {
-    return this.reportRegionRepository.findOneBy({ id })
+    return this.reportRegionRepository.findOneBy({ id });
   }
 
   async update(id: string, updateReportRegionDto: UpdateReportRegionDto) {
-    const pastReportRegion = await this.findOne(id)
-    if(!pastReportRegion) throw new BadRequestException({message: "region report is not found!"})
+    const pastReportRegion = await this.findOne(id);
+    if (!pastReportRegion) throw new BadRequestException({ message: 'region report is not found!' });
 
-    if(updateReportRegionDto.region_id){
-      const region = await this.regionService.getOneById(updateReportRegionDto.region_id)
-      if(!region) throw new BadRequestException({ message: 'Region is not found!'})
-      updateReportRegionDto.region = region
+    if (updateReportRegionDto.region_id) {
+      const region = await this.regionService.getOneById(updateReportRegionDto.region_id);
+      if (!region) throw new BadRequestException({ message: 'Region is not found!' });
+      updateReportRegionDto.region = region;
+    }
+
+    if (updateReportRegionDto.date) {
+      const isDataExist = await this.reportRegionRepository.findOne({
+        where: { date: updateReportRegionDto.date, region: { id: updateReportRegionDto.region_id } },
+      });
+      if (isDataExist && isDataExist.id != id) throw new BadRequestException({ message: 'data already exist!' });
+    }
+
+    if (updateReportRegionDto.total_female || updateReportRegionDto.total_male) {
+      updateReportRegionDto.total_female = updateReportRegionDto.total_female ?? pastReportRegion.total_female;
+      updateReportRegionDto.total_male = updateReportRegionDto.total_male ?? pastReportRegion.total_male;
+      updateReportRegionDto.total = updateReportRegionDto.total_female + updateReportRegionDto.total_male;
     }
 
     await this.reportRegionRepository.save({
       ...pastReportRegion,
       ...updateReportRegionDto,
-    })
+    });
 
-    return { id }
+    return { id };
   }
 
   async remove(id: string) {
-    const pastReportRegion = await this.findOne(id)
-    if(!pastReportRegion) throw new BadRequestException({message: "region report is not found!"})
+    const pastReportRegion = await this.findOne(id);
+    if (!pastReportRegion) throw new BadRequestException({ message: 'region report is not found!' });
 
-    await this.reportRegionRepository.softRemove(pastReportRegion)
+    await this.reportRegionRepository.softRemove(pastReportRegion);
 
-    return { id }
+    return { id };
   }
 }

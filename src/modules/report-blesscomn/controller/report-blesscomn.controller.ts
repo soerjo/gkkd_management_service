@@ -85,7 +85,16 @@ export class ReportBlesscomnController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
-  async update(@UUIDParam() @Param('id') id: string, @Body() updateReportBlesscomnDto: UpdateReportBlesscomnDto) {
+  async update(
+    @CurrentUser() jwtPayload: IJwtPayload,
+    @UUIDParam() @Param('id') id: string,
+    @Body() updateReportBlesscomnDto: UpdateReportBlesscomnDto,
+  ) {
+    if (jwtPayload.jemaat_id) {
+      const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
+      updateReportBlesscomnDto.blesscomn_id = blesscomn.id;
+    }
+
     return {
       message: 'success',
       data: await this.reportBlesscomnService.update(id, updateReportBlesscomnDto),

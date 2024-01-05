@@ -1,26 +1,25 @@
-import { RegionEntity } from "../../region/entities/region.entity";
-import { MainEntityAbstract } from "../../../common/abstract/main-entity.abstract";
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { RegionEntity } from '../../region/entities/region.entity';
+import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
-@Entity({name: 'report_region'})
+@Entity({ name: 'report_region' })
 export class ReportRegionEntity extends MainEntityAbstract {
-    @Column()
-    date: Date
+  @Column({ type: 'date', default: new Date() })
+  date: Date;
 
-    @Column()
-    total_male: number
+  @Column()
+  total_male: number;
 
-    @Column()
-    total_female: number
+  @Column()
+  total_female: number;
 
-    @Column()
-    total: number
+  @Column()
+  total: number;
 
-    @Column()
-    new: number
+  @Column()
+  new: number;
 
-    @ManyToOne(type => RegionEntity, region => region.report)
-    @JoinColumn({name : 'region_id'})
-    region: RegionEntity
-  
+  @ManyToOne((type) => RegionEntity, (region) => region.report)
+  @JoinColumn({ name: 'region_id' })
+  region: RegionEntity;
 }
