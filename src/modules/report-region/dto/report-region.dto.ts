@@ -42,5 +42,5 @@ export class ReportRegionDto {
   @IsOptional()
   region_id: string;
 
-  region: RegionEntity;
+  region?: RegionEntity;
 }

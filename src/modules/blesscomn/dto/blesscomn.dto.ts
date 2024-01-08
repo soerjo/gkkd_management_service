@@ -23,20 +23,20 @@ export class BlesscomnDto {
   @ApiProperty()
   @IsUUID()
   @IsOptional()
-  lead_id: string;
+  lead_id?: string;
 
-  lead_jemaat: JemaatEntity;
+  lead_jemaat?: JemaatEntity;
 
   @IsAtLeastOnePropertyNotEmpty({ message: 'At least fill lead_id or lead' })
-  validationPlaceholder: string;
+  validationPlaceholder?: string;
 
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   @IsOptional()
-  region_id: string;
+  region_id?: string;
 
-  region: RegionEntity;
+  region?: RegionEntity;
 
   @ApiProperty()
   @IsString({ each: true })

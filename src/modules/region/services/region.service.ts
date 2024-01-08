@@ -8,6 +8,11 @@ import { In, IsNull } from 'typeorm';
 export class RegionService {
   constructor(private readonly regionRepository: RegionRepository) {}
 
+  async percobaan(name: string) {
+    if (typeof name === 'string') return true;
+    return false;
+  }
+
   async create(createRegionDto: CreateRegionDto) {
     const isRegionNameExist = await this.regionRepository.findOneBy({ name: createRegionDto.name });
     if (isRegionNameExist) throw new BadRequestException({ message: 'Region already exists!' });

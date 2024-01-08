@@ -7,6 +7,11 @@ import { RegionService } from 'src/modules/region/services/region.service';
 import { JemaatService } from 'src/modules/jemaat/services/jemaat.service';
 import { IsNull } from 'typeorm';
 
+export interface IPercobaan {
+  name: 'soerjo';
+  age: 27;
+}
+
 @Injectable()
 export class BlesscomnService {
   constructor(
@@ -14,6 +19,11 @@ export class BlesscomnService {
     private readonly regionService: RegionService,
     private readonly jemaatService: JemaatService,
   ) {}
+
+  async coba(data: IPercobaan) {
+    if (!(await this.regionService.percobaan(data.name))) throw new BadRequestException({ message: 'error' });
+    return { ...data, id: '123' };
+  }
 
   async create(createBlesscomnDto: CreateBlesscomnDto) {
     const region = await this.regionService.getOneById(createBlesscomnDto.region_id);
