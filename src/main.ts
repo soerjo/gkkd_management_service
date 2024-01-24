@@ -9,14 +9,14 @@ import * as morgan from 'morgan';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  const config = new DocumentBuilder()
-    .setTitle('Auth Service')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+  const config = new DocumentBuilder().setTitle('Auth Service').setVersion('1.0').addBearerAuth().build();
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.setGlobalPrefix('api');
+  app.enableCors({
+    origin: [configService.get('APP_URL'), configService.get('WEB_URL')],
+    credentials: true,
+  });
   app.use(compression());
   app.use(morgan('tiny'));
 
