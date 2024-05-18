@@ -3,6 +3,7 @@ import { RegionRepository } from '../repository/region.repository';
 import { CreateRegionDto } from '../dto/create-region.dto';
 import { UpdateRegionDto } from '../dto/update-region.dto';
 import { In, IsNull } from 'typeorm';
+import { FilterDto } from '../dto/filter.dto';
 
 @Injectable()
 export class RegionService {
@@ -33,8 +34,8 @@ export class RegionService {
     });
   }
 
-  getAll() {
-    return this.regionRepository.find();
+  getAll(filter: FilterDto) {
+    return this.regionRepository.getAll(filter);
   }
 
   async update(id: string, updateRegionDto: UpdateRegionDto) {

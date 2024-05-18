@@ -22,7 +22,7 @@ export class AdminService implements OnApplicationBootstrap {
         name: 'superadmin',
         email: 'superadmin@mail.com',
         password: 'Asdf1234.',
-        role: [RoleEnum.SUPERADMIN],
+        role: RoleEnum.SUPERADMIN,
       });
     }
   }
@@ -38,14 +38,11 @@ export class AdminService implements OnApplicationBootstrap {
   getByUsernameOrEmail(usernameOrEmail: string) {
     return this.adminRepository.findOne({
       where: [{ name: usernameOrEmail }, { email: usernameOrEmail }],
-      relations: { jemaat: true, regions: true },
+      relations: { region: true },
     });
   }
 
   async create(createAdminDto: CreateAdminDto) {
-    const jemaat = await this.jemaatService.findOne(createAdminDto.jemaat_id);
-    createAdminDto.jemaat = jemaat;
-
     const newUser = this.adminRepository.create({
       ...createAdminDto,
       password: encryptPassword(createAdminDto.password),
@@ -62,7 +59,7 @@ export class AdminService implements OnApplicationBootstrap {
   findOne(id: string) {
     return this.adminRepository.findOne({
       where: { id: id ?? IsNull() },
-      relations: { regions: true },
+      relations: { region: true },
     });
   }
 
@@ -70,11 +67,6 @@ export class AdminService implements OnApplicationBootstrap {
     const user = await this.findOne(id);
     if (!user) throw new BadRequestException({ message: 'admin is not found!' });
     if (user.name === 'superadmin') throw new ForbiddenException();
-
-    if (updateAdminDto.jemaat_id) {
-      const jemaat = await this.jemaatService.findOne(updateAdminDto.jemaat_id);
-      updateAdminDto.jemaat = jemaat;
-    }
 
     const updateUser = await this.adminRepository.save({
       ...user,

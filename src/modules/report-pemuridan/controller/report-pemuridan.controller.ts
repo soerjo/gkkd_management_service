@@ -27,7 +27,7 @@ import { PemuridanRepository } from 'src/modules/pemuridan/repository/pemuridan.
 @ApiTags('Pemuridan Report')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('pemuridan_report')
+@Controller('/report/pemuridan')
 export class ReportPemuridanController {
   constructor(
     private readonly reportPemuridanService: ReportPemuridanService,
@@ -38,15 +38,15 @@ export class ReportPemuridanController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createReportPemuridanDto: CreateReportPemuridanDto) {
-    if (jwtPayload.jemaat_id && jwtPayload.role.some((val) => val === RoleEnum.PEMBIMBING)) {
-      const isValidLead = await this.pemuridanRepository.findOne({
-        where: {
-          id: createReportPemuridanDto.pemuridan_id,
-          lead: { id: jwtPayload.jemaat_id },
-        },
-      });
-      if (!isValidLead) throw new ForbiddenException();
-    }
+    // if (jwtPayload.jemaat_id && jwtPayload.role.some((val) => val === RoleEnum.PEMBIMBING)) {
+    //   const isValidLead = await this.pemuridanRepository.findOne({
+    //     where: {
+    //       id: createReportPemuridanDto.pemuridan_id,
+    //       lead: { id: jwtPayload.jemaat_id },
+    //     },
+    //   });
+    //   if (!isValidLead) throw new ForbiddenException();
+    // }
 
     return {
       message: 'success',
@@ -96,15 +96,15 @@ export class ReportPemuridanController {
     @UUIDParam() @Param('id') id: string,
     @Body() updateReportPemuridanDto: UpdateReportPemuridanDto,
   ) {
-    if (jwtPayload.jemaat_id && jwtPayload.role.some((val) => val === RoleEnum.PEMBIMBING)) {
-      const isValidLead = await this.pemuridanRepository.findOne({
-        where: {
-          id: updateReportPemuridanDto.pemuridan_id,
-          lead: { id: jwtPayload.jemaat_id },
-        },
-      });
-      if (!isValidLead) throw new ForbiddenException();
-    }
+    // if (jwtPayload.jemaat_id && jwtPayload.role.some((val) => val === RoleEnum.PEMBIMBING)) {
+    //   const isValidLead = await this.pemuridanRepository.findOne({
+    //     where: {
+    //       id: updateReportPemuridanDto.pemuridan_id,
+    //       lead: { id: jwtPayload.jemaat_id },
+    //     },
+    //   });
+    //   if (!isValidLead) throw new ForbiddenException();
+    // }
 
     return {
       message: 'success',

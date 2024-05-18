@@ -33,11 +33,11 @@ const schema = Joi.object<IAppConfig>({
   PORT: Joi.number().required(),
   TZ: Joi.string().valid('UTC').required(),
   SECRET_KEY: Joi.string().required(),
-  DATABASE_HOST: Joi.string().required(),
-  DATABASE_PORT: Joi.number().required(),
-  DATABASE_USERNAME: Joi.string().required(),
-  DATABASE_PASSWORD: Joi.string().required(),
-  DATABASE_NAME: Joi.string().required(),
+  DATABASE_HOST: Joi.string().optional(),
+  DATABASE_PORT: Joi.number().optional(),
+  DATABASE_USERNAME: Joi.string().optional(),
+  DATABASE_PASSWORD: Joi.string().optional(),
+  DATABASE_NAME: Joi.string().optional(),
 });
 
 export default registerAs('app_configs', () => {

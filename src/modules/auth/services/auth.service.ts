@@ -16,8 +16,7 @@ export class AuthService {
       username: user.name,
       email: user.email,
       role: user.role,
-      regions: user.regions,
-      jemaat_id: user?.jemaat?.id,
+      region: user.region,
     };
     const jwt = this.jwtService.sign(payload, {
       secret: this.configService.get('SECRET_KEY'),

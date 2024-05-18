@@ -12,10 +12,10 @@ import { RoleEnum } from 'src/common/constant/role.constant';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { RolesGuard } from 'src/common/guard/role.guard';
 
-@ApiTags('Region Report')
+@ApiTags('Sunday Service Report')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('region_report')
+@Controller('/report/sunday-service')
 export class ReportRegionController {
   constructor(private readonly reportRegionService: ReportRegionService) {}
 
@@ -23,8 +23,6 @@ export class ReportRegionController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createReportRegionDto: CreateReportRegionDto) {
-    if (jwtPayload?.regions?.length) createReportRegionDto.region_id = jwtPayload.regions[0].id;
-
     return {
       message: 'success',
       data: await this.reportRegionService.create(createReportRegionDto),
@@ -35,7 +33,7 @@ export class ReportRegionController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload?.regions?.length) filter.region_id = jwtPayload.regions[0].id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
 
     return {
       message: 'success',
@@ -47,7 +45,7 @@ export class ReportRegionController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async getChart(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.regions.length) filter.region_id = jwtPayload.regions[0].id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
 
     return {
       message: 'success',
@@ -73,8 +71,6 @@ export class ReportRegionController {
     @UUIDParam() @Param('id') id: string,
     @Body() updateReportRegionDto: UpdateReportRegionDto,
   ) {
-    if (jwtPayload?.regions?.length) updateReportRegionDto.region_id = jwtPayload.regions[0].id;
-
     return {
       message: 'success',
       data: await this.reportRegionService.update(id, updateReportRegionDto),

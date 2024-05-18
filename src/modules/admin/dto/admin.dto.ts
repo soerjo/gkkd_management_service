@@ -27,11 +27,9 @@ export class AdminDto {
   email: string;
 
   @ApiProperty()
-  @IsArray()
   @IsEnum(RoleEnum, { each: true })
   @IsNotEmpty()
-  @Type(() => String)
-  role: RoleEnum[];
+  role: RoleEnum;
 
   @ApiProperty()
   @IsString()
@@ -39,12 +37,5 @@ export class AdminDto {
   @IsNotEmpty()
   password: string;
 
-  regions?: RegionEntity[];
-
-  @ApiProperty()
-  @IsUUID()
-  @IsOptional()
-  jemaat_id?: string;
-
-  jemaat?: JemaatEntity;
+  region?: RegionEntity;
 }

@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsUUID, Min } from 'class-validator';
 import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { SundayServiceEntity } from 'src/modules/sunday-service/entities/sunday-service.entity';
 
 export class ReportRegionDto {
   @ApiProperty()
@@ -40,7 +41,7 @@ export class ReportRegionDto {
   @ApiProperty()
   @IsUUID()
   @IsOptional()
-  region_id: string;
+  sunday_service_id: string;
 
-  region?: RegionEntity;
+  sunday_service?: SundayServiceEntity;
 }

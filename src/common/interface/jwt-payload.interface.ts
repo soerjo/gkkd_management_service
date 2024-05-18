@@ -4,7 +4,7 @@ import { RoleEnum } from '../constant/role.constant';
 export interface IJwtPayload {
   username: string;
   email: string;
-  role: RoleEnum[];
-  regions?: RegionEntity[] | undefined;
+  role: RoleEnum;
+  region?: RegionEntity;
   jemaat_id?: string | undefined;
 }

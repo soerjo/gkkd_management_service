@@ -1,6 +1,6 @@
-import { RegionEntity } from '../../region/entities/region.entity';
 import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { SundayServiceEntity } from 'src/modules/sunday-service/entities/sunday-service.entity';
 
 @Entity({ name: 'report_region' })
 export class ReportRegionEntity extends MainEntityAbstract {
@@ -19,7 +19,7 @@ export class ReportRegionEntity extends MainEntityAbstract {
   @Column()
   new: number;
 
-  @ManyToOne((type) => RegionEntity, (region) => region.report)
-  @JoinColumn({ name: 'region_id' })
-  region: RegionEntity;
+  @ManyToOne((type) => SundayServiceEntity, (region) => region.report)
+  @JoinColumn({ name: 'sunday_service_id' })
+  sunday_service: SundayServiceEntity;
 }

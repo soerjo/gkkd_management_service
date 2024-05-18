@@ -5,6 +5,7 @@ import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { BlesscomnEntity } from '../../blesscomn/entities/blesscomn.entity';
 import { ReportRegionEntity } from '../../report-region/entities/report-region.entity';
 import { JemaatEntity } from '../../jemaat/entities/jemaat.entity';
+import { SundayServiceEntity } from 'src/modules/sunday-service/entities/sunday-service.entity';
 
 @Entity({ name: 'region' })
 export class RegionEntity extends MainEntityAbstract {
@@ -17,18 +18,18 @@ export class RegionEntity extends MainEntityAbstract {
   @Column()
   location: string;
 
-  @ManyToMany(() => AdminEntity, (admin) => admin.regions, { nullable: true })
+  @OneToMany(() => AdminEntity, (admin) => admin.region, { nullable: true })
   admin: AdminEntity[];
 
-  @OneToMany(type => PemuridanEntity, pemuridan => pemuridan.region)
+  @OneToMany((type) => PemuridanEntity, (pemuridan) => pemuridan.region)
   pemuridan: PemuridanEntity[];
 
-  @OneToMany(type => BlesscomnEntity, blesscomn => blesscomn.region)
+  @OneToMany((type) => BlesscomnEntity, (blesscomn) => blesscomn.region)
   blesscomn: BlesscomnEntity[];
 
-  @OneToMany(type => ReportRegionEntity, report => report.region)
-  report: ReportRegionEntity[];
+  @OneToMany((type) => SundayServiceEntity, (sunday_service) => sunday_service.region)
+  sunday_service: SundayServiceEntity[];
 
-  @OneToMany(type => JemaatEntity, jemaat => jemaat.region)
+  @OneToMany((type) => JemaatEntity, (jemaat) => jemaat.region)
   jemaat: JemaatEntity[];
 }

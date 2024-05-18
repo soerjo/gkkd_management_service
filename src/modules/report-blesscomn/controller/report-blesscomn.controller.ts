@@ -16,7 +16,7 @@ import { BlesscomnService } from 'src/modules/blesscomn/services/blesscomn.servi
 @ApiTags('Blesscomn Report')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('blesscomn_report')
+@Controller('/report/blesscomn')
 export class ReportBlesscomnController {
   constructor(
     private readonly reportBlesscomnService: ReportBlesscomnService,
@@ -42,7 +42,7 @@ export class ReportBlesscomnController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.regions.length) filter.region_id = jwtPayload.regions[0].id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
 
     if (jwtPayload.jemaat_id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
@@ -59,7 +59,7 @@ export class ReportBlesscomnController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async getChart(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.regions.length) filter.region_id = jwtPayload.regions[0].id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
 
     if (jwtPayload.jemaat_id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);

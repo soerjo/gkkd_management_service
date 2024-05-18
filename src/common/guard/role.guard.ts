@@ -18,17 +18,11 @@ export class RolesGuard implements CanActivate {
     return this.matchRoles(roles, user.role, user);
   }
 
-  matchRoles(roles: RoleEnum[], userRoles: RoleEnum[], payload: IJwtPayload) {
+  matchRoles(roles: RoleEnum[], userRole: RoleEnum, payload: IJwtPayload) {
     let isValid = false;
 
-    for (const userRole of userRoles) {
-      if (userRole == RoleEnum.PEMBIMBING && !payload.jemaat_id) {
-        throw new ForbiddenException();
-      }
-
-      isValid = roles.some((role) => role === userRole);
-      if (isValid) return true;
-    }
+    isValid = roles.some((role) => role === userRole);
+    if (isValid) return true;
 
     return false;
   }

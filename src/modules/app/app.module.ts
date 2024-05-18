@@ -16,6 +16,8 @@ import { BlesscomnModule } from '../blesscomn/blesscomn.module';
 import { ReportRegionModule } from '../report-region/report-region.module';
 import { ReportBlesscomnModule } from '../report-blesscomn/report-blesscomn.module';
 import { ReportPemuridanModule } from '../report-pemuridan/report-pemuridan.module';
+import { DashboardModule } from '../dashboard/dashboard.module';
+import { SundayServiceModule } from '../sunday-service/sunday-service.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { ReportPemuridanModule } from '../report-pemuridan/report-pemuridan.modu
     ReportRegionModule,
     ReportBlesscomnModule,
     ReportPemuridanModule,
+    DashboardModule,
+    SundayServiceModule,
   ],
   controllers: [LovControler],
   providers: [

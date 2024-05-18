@@ -33,12 +33,12 @@ export class JemaatController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createJemaatDto: CreateJemaatDto) {
-    if (jwtPayload?.regions?.length) createJemaatDto.region_id = jwtPayload.regions[0].id;
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateJemaatDto) {
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload.region.id;
 
     return {
       message: 'success',
-      data: await this.jemaatService.create(createJemaatDto),
+      data: await this.jemaatService.create(dto),
     };
   }
 
@@ -46,7 +46,7 @@ export class JemaatController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload?.regions?.length) filter.region_id = jwtPayload.regions[0].id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
 
     return {
       message: 'success',
@@ -73,13 +73,13 @@ export class JemaatController {
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
     @UUIDParam() @Param('id') id: string,
-    @Body() updateJemaatDto: UpdateJemaatDto,
+    @Body() dto: UpdateJemaatDto,
   ) {
-    if (jwtPayload?.regions?.length) updateJemaatDto.region_id = jwtPayload.regions[0].id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload.region.id;
 
     return {
       message: 'success',
-      data: await this.jemaatService.update(id, updateJemaatDto),
+      data: await this.jemaatService.update(id, dto),
     };
   }
 

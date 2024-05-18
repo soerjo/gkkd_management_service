@@ -36,7 +36,7 @@ export class AdminController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN])
   async create(@Body() createAdminDto: CreateAdminDto) {
-    const regions = await this.regionService.getManyByIds(createAdminDto.regions_ids);
+    const region = await this.regionService.getOneById(createAdminDto.regions_id);
 
     const isUsernameExist = await this.adminService.getByUsername(createAdminDto.name);
     if (isUsernameExist) throw new BadRequestException({ message: 'username already exist' });
@@ -44,7 +44,7 @@ export class AdminController {
     const isEmailExist = await this.adminService.getByEmail(createAdminDto.email);
     if (isEmailExist) throw new BadRequestException({ message: 'email already exist' });
 
-    createAdminDto.regions = regions;
+    createAdminDto.region = region;
     return {
       message: 'success',
       data: await this.adminService.create(createAdminDto),
@@ -52,8 +52,8 @@ export class AdminController {
   }
 
   @Get()
-  @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN])
+  @UseGuards(RolesGuard)
   async findAll(@Query() filterDto: FilterDto) {
     return {
       message: 'success',
@@ -84,10 +84,10 @@ export class AdminController {
     if (isEmailExist && id != isEmailExist.id && isEmailExist.email === updateAdminDto.email)
       throw new BadRequestException({ message: 'email already exist' });
 
-    let regions;
-    if (updateAdminDto.regions_ids) {
-      regions = await this.regionService.getManyByIds(updateAdminDto.regions_ids);
-      updateAdminDto.regions = regions;
+    let region;
+    if (updateAdminDto.regions_id) {
+      region = await this.regionService.getOneById(updateAdminDto.regions_id);
+      updateAdminDto.region = region;
     }
 
     return {

@@ -3,25 +3,25 @@ import { CreateReportRegionDto } from '../dto/create-report-region.dto';
 import { UpdateReportRegionDto } from '../dto/update-report-region.dto';
 import { ReportRegionRepository } from '../repository/report-region.repository';
 import { FilterDto } from '../dto/filter.dto';
-import { RegionService } from 'src/modules/region/services/region.service';
 import { IsNull } from 'typeorm';
+import { SundayServiceService } from 'src/modules/sunday-service/services/sunday-service.service';
 
 @Injectable()
 export class ReportRegionService {
   constructor(
     private readonly reportRegionRepository: ReportRegionRepository,
-    private readonly regionService: RegionService,
+    private readonly sundayService: SundayServiceService,
   ) {}
 
   async create(createReportRegionDto: CreateReportRegionDto) {
     const isDataExist = await this.reportRegionRepository.findOne({
-      where: { date: createReportRegionDto.date, region: { id: createReportRegionDto.region_id } },
+      where: { date: createReportRegionDto.date, sunday_service: { id: createReportRegionDto.sunday_service_id } },
     });
     if (isDataExist) throw new BadRequestException({ message: 'data already exist!' });
 
-    const region = await this.regionService.getOneById(createReportRegionDto.region_id);
+    const region = await this.sundayService.getOneById(createReportRegionDto.sunday_service_id);
     if (!region) throw new BadRequestException({ message: 'Region is not found!' });
-    createReportRegionDto.region = region;
+    createReportRegionDto.sunday_service = region;
 
     const reportRegion = this.reportRegionRepository.create({
       ...createReportRegionDto,
@@ -82,15 +82,15 @@ export class ReportRegionService {
     const pastReportRegion = await this.findOne(id);
     if (!pastReportRegion) throw new BadRequestException({ message: 'region report is not found!' });
 
-    if (updateReportRegionDto.region_id) {
-      const region = await this.regionService.getOneById(updateReportRegionDto.region_id);
+    if (updateReportRegionDto.sunday_service_id) {
+      const region = await this.sundayService.getOneById(updateReportRegionDto.sunday_service_id);
       if (!region) throw new BadRequestException({ message: 'Region is not found!' });
-      updateReportRegionDto.region = region;
+      updateReportRegionDto.sunday_service = region;
     }
 
     if (updateReportRegionDto.date) {
       const isDataExist = await this.reportRegionRepository.findOne({
-        where: { date: updateReportRegionDto.date, region: { id: updateReportRegionDto.region_id } },
+        where: { date: updateReportRegionDto.date, sunday_service: { id: updateReportRegionDto.sunday_service_id } },
       });
       if (isDataExist && isDataExist.id != id) throw new BadRequestException({ message: 'data already exist!' });
     }

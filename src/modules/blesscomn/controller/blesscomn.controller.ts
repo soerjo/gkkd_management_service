@@ -44,7 +44,7 @@ export class BlesscomnController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    filter.region_ids = jwtPayload.regions && jwtPayload.regions.map((val) => val.id);
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
 
     return {
       message: 'success',
