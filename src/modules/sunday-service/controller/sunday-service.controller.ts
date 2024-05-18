@@ -10,6 +10,7 @@ import { RolesGuard } from 'src/common/guard/role.guard';
 import { RoleEnum } from 'src/common/constant/role.constant';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { FilterDto } from '../dto/filter.dto';
+import { UUIDParam } from 'src/common/decorator/uuid.decorator';
 
 @ApiTags('Sunday Service')
 @ApiBearerAuth()
@@ -41,7 +42,7 @@ export class SundayServiceController {
   }
 
   @Get(':id')
-  async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string, filter: FilterDto) {
+  async findOne(@CurrentUser() jwtPayload: IJwtPayload, @UUIDParam() @Param('id') id: string, filter: FilterDto) {
     if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
 
     return {
@@ -51,7 +52,11 @@ export class SundayServiceController {
   }
 
   @Patch(':id')
-  async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string, @Body() dto: UpdateSundayServiceDto) {
+  async update(
+    @CurrentUser() jwtPayload: IJwtPayload,
+    @UUIDParam() @Param('id') id: string,
+    @Body() dto: UpdateSundayServiceDto,
+  ) {
     if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload.region.id;
 
     return {
@@ -61,7 +66,7 @@ export class SundayServiceController {
   }
 
   @Delete(':id')
-  async remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
+  async remove(@CurrentUser() jwtPayload: IJwtPayload, @UUIDParam() @Param('id') id: string) {
     return {
       message: 'success',
       data: await this.sundayServiceService.remove(id),

@@ -6,12 +6,10 @@ export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  search: string;
+  search?: string;
 
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
-  region_id: string;
-
-  region_ids?: string[];
+  region_id?: string;
 }

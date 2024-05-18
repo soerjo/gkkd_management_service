@@ -6,14 +6,14 @@ export class PaginationDto {
   @ApiPropertyOptional()
   @Min(1)
   @IsNumber()
-  @Transform(val => Number(val.value))
+  @Transform((val) => Number(val.value))
   @IsOptional()
-  take: number;
+  take?: number;
 
   @ApiPropertyOptional()
   @Min(0)
   @IsNumber()
-  @Transform(val => Number(val.value))
+  @Transform((val) => Number(val.value))
   @IsOptional()
-  page: number = 1;
+  page?: number = 1;
 }
