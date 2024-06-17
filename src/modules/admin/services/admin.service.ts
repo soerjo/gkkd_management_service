@@ -22,7 +22,7 @@ export class AdminService implements OnApplicationBootstrap {
         name: 'superadmin',
         email: 'superadmin@mail.com',
         password: 'Asdf1234.',
-        role: RoleEnum.SUPERADMIN,
+        role: RoleEnum.SYSTEMADMIN,
       });
     }
   }
@@ -56,17 +56,17 @@ export class AdminService implements OnApplicationBootstrap {
     return this.adminRepository.getAll(filter);
   }
 
-  findOne(id: number) {
+  findOne(id: number, region_id?: number) {
     return this.adminRepository.findOne({
-      where: { id: id ?? IsNull() },
+      where: { id: id ?? IsNull(), region: { id: region_id } },
       relations: { region: true },
     });
   }
 
   async update(id: number, updateAdminDto: UpdateAdminDto) {
-    const user = await this.findOne(id);
+    const user = await this.findOne(id, updateAdminDto.regions_id);
     if (!user) throw new BadRequestException({ message: 'admin is not found!' });
-    if (user.name === 'superadmin') throw new ForbiddenException();
+    if (user.name === RoleEnum.SYSTEMADMIN) throw new ForbiddenException();
 
     const updateUser = await this.adminRepository.save({
       ...user,
@@ -77,9 +77,10 @@ export class AdminService implements OnApplicationBootstrap {
     return updateUser.id;
   }
 
-  async remove(id: number) {
+  async remove(id: number, region_id?: number) {
     const user = await this.findOne(id);
     if (!user) throw new BadRequestException({ message: 'admin is not found!' });
+    if (user.name === RoleEnum.SYSTEMADMIN) throw new ForbiddenException();
 
     await this.adminRepository.softRemove(user);
 

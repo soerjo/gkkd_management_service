@@ -1,6 +1,6 @@
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 import typeormConfig from 'src/config/typeorm.config';
@@ -18,6 +18,7 @@ import { ReportBlesscomnModule } from '../report-blesscomn/report-blesscomn.modu
 import { ReportPemuridanModule } from '../report-pemuridan/report-pemuridan.module';
 import { DashboardModule } from '../dashboard/dashboard.module';
 import { SundayServiceModule } from '../sunday-service/sunday-service.module';
+import { ParameterModule } from '../parameter/parameter.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { SundayServiceModule } from '../sunday-service/sunday-service.module';
     ReportPemuridanModule,
     DashboardModule,
     SundayServiceModule,
+    ParameterModule,
   ],
   controllers: [LovControler],
   providers: [

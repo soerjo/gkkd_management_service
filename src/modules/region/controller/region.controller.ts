@@ -17,6 +17,9 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 import { FilterDto } from '../dto/filter.dto';
+import { RolesGuard } from 'src/common/guard/role.guard';
+import { RoleEnum } from 'src/common/constant/role.constant';
+import { Roles } from 'src/common/decorator/role.decorator';
 
 @ApiTags('Region')
 @ApiBearerAuth()
@@ -25,6 +28,8 @@ import { FilterDto } from '../dto/filter.dto';
 export class RegionController {
   constructor(private readonly regionService: RegionService) {}
 
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SYSTEMADMIN])
   @Post()
   async create(@Body() createRegionDto: CreateRegionDto) {
     return {
@@ -52,6 +57,8 @@ export class RegionController {
     };
   }
 
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SYSTEMADMIN])
   @Patch(':id')
   async update(@Param('id') id: number, @Body() updateRegionDto: UpdateRegionDto) {
     return {
@@ -60,6 +67,8 @@ export class RegionController {
     };
   }
 
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SYSTEMADMIN])
   @Delete(':id')
   async remove(@Param('id') id: number) {
     return {

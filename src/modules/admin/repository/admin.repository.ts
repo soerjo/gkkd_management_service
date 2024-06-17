@@ -17,6 +17,8 @@ export class AdminRepository extends Repository<AdminEntity> {
     filter.search &&
       queryBuilder.andWhere('(user.name ILIKE :search OR user.email ILIKE :search)', { search: `%${filter.search}%` });
 
+    filter.region_id && queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });
+
     if (!filter.take) {
       const entities = await queryBuilder.getMany();
       return { entities };

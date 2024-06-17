@@ -9,6 +9,7 @@ import {
   Query,
   BadRequestException,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AdminService } from '../services/admin.service';
 import { CreateAdminDto } from '../dto/create-admin.dto';
@@ -21,6 +22,8 @@ import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { RoleEnum } from 'src/common/constant/role.constant';
 import { RolesGuard } from 'src/common/guard/role.guard';
+import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
+import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
 
 @ApiTags('Admin')
 @Controller('admin')
@@ -34,8 +37,9 @@ export class AdminController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN])
-  async create(@Body() createAdminDto: CreateAdminDto) {
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN])
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createAdminDto: CreateAdminDto) {
+    if (jwtPayload.role !== RoleEnum.SYSTEMADMIN) createAdminDto.regions_id = jwtPayload.region.id;
     const region = await this.regionService.getOneById(createAdminDto.regions_id);
 
     const isUsernameExist = await this.adminService.getByUsername(createAdminDto.name);
@@ -52,9 +56,11 @@ export class AdminController {
   }
 
   @Get()
-  @Roles([RoleEnum.SUPERADMIN])
   @UseGuards(RolesGuard)
-  async findAll(@Query() filterDto: FilterDto) {
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN])
+  async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filterDto: FilterDto) {
+    if (jwtPayload.role !== RoleEnum.SYSTEMADMIN) filterDto.region_id = jwtPayload.region.id;
+
     return {
       message: 'success',
       data: await this.adminService.getAll(filterDto),
@@ -62,8 +68,8 @@ export class AdminController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
-    const result = await this.adminService.findOne(id);
+  async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
+    const result = await this.adminService.findOne(id, jwtPayload.region.id);
     if (!result) throw new BadRequestException({ message: 'admin is not found!' });
 
     return {
@@ -74,8 +80,13 @@ export class AdminController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN])
-  async update(@Param('id') id: number, @Body() updateAdminDto: UpdateAdminDto) {
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN])
+  async update(
+    @CurrentUser() jwtPayload: IJwtPayload,
+    @Param('id') id: number,
+    @Body() updateAdminDto: UpdateAdminDto,
+  ) {
+    if (jwtPayload.role !== RoleEnum.SYSTEMADMIN) updateAdminDto.regions_id = jwtPayload.region.id;
     const isUsernameExist = await this.adminService.getByUsername(updateAdminDto?.name);
     if (isUsernameExist && id != isUsernameExist.id && isUsernameExist.name === updateAdminDto.name)
       throw new BadRequestException({ message: 'username already exist' });
@@ -98,8 +109,12 @@ export class AdminController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN])
-  async remove(@Param('id') id: number) {
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN])
+  async remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
+    const user = await this.adminService.findOne(id, jwtPayload.region.id);
+    if (!user) throw new BadRequestException({ message: 'admin is not found!' });
+    if (user.id === jwtPayload.id) throw new ForbiddenException();
+
     return {
       message: 'success',
       data: await this.adminService.remove(id),
