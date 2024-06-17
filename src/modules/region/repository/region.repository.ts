@@ -13,7 +13,13 @@ export class RegionRepository extends Repository<RegionEntity> {
     const queryBuilder = this.createQueryBuilder('region');
 
     filter.search &&
-      queryBuilder.andWhere('(region.name ILIKE :search OR region.email ILIKE :search)', { search: filter.search });
+      queryBuilder.andWhere('(region.name ILIKE :search OR region.alt_name ILIKE :search)', {
+        search: `%${filter.search}%`,
+      });
+
+    queryBuilder.take(filter?.take);
+    queryBuilder.orderBy(`region.created_at`, 'DESC');
+    queryBuilder.skip((filter?.page - 1) * filter?.take);
 
     const entities = await queryBuilder.getMany();
     const itemCount = await queryBuilder.getCount();
