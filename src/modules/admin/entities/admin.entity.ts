@@ -1,9 +1,9 @@
 import { Exclude } from 'class-transformer';
 import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne } from 'typeorm';
-import { RoleEnum } from '../../../common/constant/role.constant';
-import { RegionEntity } from '../../region/entities/region.entity';
-import { JemaatEntity } from '../../jemaat/entities/jemaat.entity';
+
+import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { RoleEnum } from 'src/common/constant/role.constant';
 
 @Entity({ name: 'admin' })
 export class AdminEntity extends MainEntityAbstract {

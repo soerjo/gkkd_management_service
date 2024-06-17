@@ -15,7 +15,7 @@ import { CreateJemaatDto } from '../dto/create-jemaat.dto';
 import { UpdateJemaatDto } from '../dto/update-jemaat.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
-import { UUIDParam } from 'src/common/decorator/uuid.decorator';
+
 import { FilterDto } from '../dto/filter.dto';
 import { RoleEnum } from 'src/common/constant/role.constant';
 import { Roles } from 'src/common/decorator/role.decorator';
@@ -57,7 +57,7 @@ export class JemaatController {
   @Get(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async findOne(@UUIDParam() @Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     const result = await this.jemaatService.findOne(id);
     if (!result) throw new BadRequestException({ message: 'result is not found!' });
 
@@ -70,11 +70,7 @@ export class JemaatController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async update(
-    @CurrentUser() jwtPayload: IJwtPayload,
-    @UUIDParam() @Param('id') id: string,
-    @Body() dto: UpdateJemaatDto,
-  ) {
+  async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number, @Body() dto: UpdateJemaatDto) {
     if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload.region.id;
 
     return {
@@ -86,7 +82,7 @@ export class JemaatController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN])
-  async remove(@UUIDParam() @Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     return {
       message: 'success',
       data: await this.jemaatService.remove(id),

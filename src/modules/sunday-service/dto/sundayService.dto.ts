@@ -17,6 +17,5 @@ export class SundayServiceDto {
   segment: SegmentEnum;
 
   @ApiProperty()
-  @IsUUID()
-  region_id: string;
+  region_id: number;
 }

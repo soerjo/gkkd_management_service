@@ -11,7 +11,7 @@ export class AdminRepository extends Repository<AdminEntity> {
 
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('user');
-    queryBuilder.leftJoinAndSelect('user.regions', 'regions');
+    queryBuilder.leftJoinAndSelect('user.region', 'region');
     queryBuilder.where('user.name != :name', { name: 'superadmin' });
 
     filter.search &&

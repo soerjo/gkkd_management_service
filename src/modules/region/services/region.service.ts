@@ -22,11 +22,11 @@ export class RegionService {
     return this.regionRepository.save(region);
   }
 
-  getOneById(id: string) {
+  getOneById(id: number) {
     return this.regionRepository.findOneBy({ id: id ?? IsNull() });
   }
 
-  getManyByIds(ids: string[]) {
+  getManyByIds(ids: number[]) {
     return this.regionRepository.find({
       where: {
         id: In(ids),
@@ -38,7 +38,7 @@ export class RegionService {
     return this.regionRepository.getAll(filter);
   }
 
-  async update(id: string, updateRegionDto: UpdateRegionDto) {
+  async update(id: number, updateRegionDto: UpdateRegionDto) {
     const region = await this.getOneById(id);
     if (!region) throw new BadRequestException({ message: 'regions is not found' });
 
@@ -50,7 +50,7 @@ export class RegionService {
     return updateRegion.id;
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const region = await this.getOneById(id);
     if (!region) throw new BadRequestException({ message: 'regions is not found' });
 

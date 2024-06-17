@@ -23,9 +23,8 @@ export class ReportPemuridanDto {
   total: number;
 
   @ApiProperty()
-  @IsUUID()
   @IsNotEmpty()
-  pemuridan_id: string;
+  pemuridan_id: number;
 
   pemuridan?: PemuridanEntity;
 }

@@ -57,7 +57,7 @@ export class PemuridanController {
   @Get(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     const result = await this.pemuridanService.findOne(id);
     if (!result) throw new BadRequestException({ message: 'pemuridan is not found!' });
 
@@ -72,7 +72,7 @@ export class PemuridanController {
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updatePemuridanDto: UpdatePemuridanDto,
   ) {
     if (jwtPayload.jemaat_id) updatePemuridanDto.lead_id = jwtPayload.jemaat_id;
@@ -86,7 +86,7 @@ export class PemuridanController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     return {
       message: 'success',
       data: await this.pemuridanService.remove(id),

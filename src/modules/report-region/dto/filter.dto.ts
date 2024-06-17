@@ -21,7 +21,7 @@ export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
-  region_id: string;
+  region_id: number;
 
-  region_ids?: string[];
+  region_ids?: number[];
 }

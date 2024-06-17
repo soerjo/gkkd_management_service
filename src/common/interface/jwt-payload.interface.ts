@@ -6,5 +6,5 @@ export interface IJwtPayload {
   email: string;
   role: RoleEnum;
   region?: RegionEntity;
-  jemaat_id?: string | undefined;
+  jemaat_id?: number | undefined;
 }

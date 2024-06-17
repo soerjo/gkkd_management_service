@@ -23,7 +23,7 @@ export class BlesscomnDto {
   @ApiProperty()
   @IsUUID()
   @IsOptional()
-  lead_id?: string;
+  lead_id?: number;
 
   lead_jemaat?: JemaatEntity;
 
@@ -34,7 +34,7 @@ export class BlesscomnDto {
   @IsUUID()
   @IsNotEmpty()
   @IsOptional()
-  region_id?: string;
+  region_id?: number;
 
   region?: RegionEntity;
 

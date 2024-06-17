@@ -1,9 +1,7 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsUUID } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { AdminDto } from './admin.dto';
 
 export class CreateAdminDto extends AdminDto {
   @ApiPropertyOptional()
-  @IsUUID()
-  regions_id?: string;
+  regions_id?: number;
 }

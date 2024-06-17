@@ -1,9 +1,9 @@
-import { PemuridanEntity } from '../../pemuridan/entities/pemuridan.entity';
 import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { RegionEntity } from '../../region/entities/region.entity';
-import { BlesscomnEntity } from '../../blesscomn/entities/blesscomn.entity';
 import { GenderEnum } from '../../../common/constant/gender.constant';
+import { PemuridanEntity } from 'src/modules/pemuridan/entities/pemuridan.entity';
+import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { BlesscomnEntity } from 'src/modules/blesscomn/entities/blesscomn.entity';
 
 @Entity({ name: 'jemaat' })
 export class JemaatEntity extends MainEntityAbstract {

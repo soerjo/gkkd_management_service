@@ -1,5 +1,5 @@
-import { BlesscomnEntity } from '../../blesscomn/entities/blesscomn.entity';
-import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
+import { MainEntityAbstract } from 'src/common/abstract/main-entity.abstract';
+import { BlesscomnEntity } from 'src/modules/blesscomn/entities/blesscomn.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'report_blesscomn' })

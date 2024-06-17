@@ -39,9 +39,8 @@ export class ReportRegionDto {
   new: number;
 
   @ApiProperty()
-  @IsUUID()
   @IsOptional()
-  sunday_service_id: string;
+  sunday_service_id: number;
 
   sunday_service?: SundayServiceEntity;
 }

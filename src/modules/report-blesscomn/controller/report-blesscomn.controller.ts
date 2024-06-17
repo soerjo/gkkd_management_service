@@ -4,7 +4,7 @@ import { CreateReportBlesscomnDto } from '../dto/create-report-blesscomn.dto';
 import { UpdateReportBlesscomnDto } from '../dto/update-report-blesscomn.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
-import { UUIDParam } from 'src/common/decorator/uuid.decorator';
+
 import { FilterDto } from '../dto/filter.dto';
 import { RolesGuard } from 'src/common/guard/role.guard';
 import { Roles } from 'src/common/decorator/role.decorator';
@@ -75,7 +75,7 @@ export class ReportBlesscomnController {
   @Get(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
-  async findOne(@UUIDParam() @Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     return {
       message: 'success',
       data: await this.reportBlesscomnService.findOne(id),
@@ -87,7 +87,7 @@ export class ReportBlesscomnController {
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
-    @UUIDParam() @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateReportBlesscomnDto: UpdateReportBlesscomnDto,
   ) {
     if (jwtPayload.jemaat_id) {
@@ -104,7 +104,7 @@ export class ReportBlesscomnController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
-  async remove(@UUIDParam() @Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     return {
       message: 'success',
       data: await this.reportBlesscomnService.remove(id),

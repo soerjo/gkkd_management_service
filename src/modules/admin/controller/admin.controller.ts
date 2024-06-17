@@ -13,7 +13,7 @@ import {
 import { AdminService } from '../services/admin.service';
 import { CreateAdminDto } from '../dto/create-admin.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
-import { UUIDParam } from 'src/common/decorator/uuid.decorator';
+
 import { FilterDto } from '../dto/filter.dto';
 import { RegionService } from 'src/modules/region/services/region.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -62,7 +62,7 @@ export class AdminController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     const result = await this.adminService.findOne(id);
     if (!result) throw new BadRequestException({ message: 'admin is not found!' });
 
@@ -75,7 +75,7 @@ export class AdminController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN])
-  async update(@Param('id') @UUIDParam() id: string, @Body() updateAdminDto: UpdateAdminDto) {
+  async update(@Param('id') id: number, @Body() updateAdminDto: UpdateAdminDto) {
     const isUsernameExist = await this.adminService.getByUsername(updateAdminDto?.name);
     if (isUsernameExist && id != isUsernameExist.id && isUsernameExist.name === updateAdminDto.name)
       throw new BadRequestException({ message: 'username already exist' });
@@ -99,7 +99,7 @@ export class AdminController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN])
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     return {
       message: 'success',
       data: await this.adminService.remove(id),

@@ -20,16 +20,14 @@ export class FilterDto extends PaginationDto {
   date_end: Date;
 
   @ApiPropertyOptional()
-  @IsUUID()
   @IsOptional()
-  region_id: string;
+  region_id: number;
 
-  region_ids?: string[];
+  region_ids?: number[];
 
   @ApiPropertyOptional()
-  @IsUUID()
   @IsOptional()
-  blesscomn_id: string;
+  blesscomn_id: number;
 
   blesscomn?: BlesscomnEntity;
 }

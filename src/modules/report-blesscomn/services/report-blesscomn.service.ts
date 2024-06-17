@@ -34,7 +34,7 @@ export class ReportBlesscomnService {
     return this.reportBlesscomnRepository.getAll(filter);
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     return this.reportBlesscomnRepository.findOneBy({ id });
   }
 
@@ -77,7 +77,7 @@ export class ReportBlesscomnService {
     return averagePerMonth;
   }
 
-  async update(id: string, updateReportBlesscomnDto: UpdateReportBlesscomnDto) {
+  async update(id: number, updateReportBlesscomnDto: UpdateReportBlesscomnDto) {
     const pastReportBlesscomn = await this.findOne(id);
     if (!pastReportBlesscomn) throw new BadRequestException({ message: 'Blesscomn report is not found!' });
 
@@ -108,7 +108,7 @@ export class ReportBlesscomnService {
     return { id };
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const pastReportBlesscomn = await this.findOne(id);
     if (!pastReportBlesscomn) throw new BadRequestException({ message: 'Blesscomn report is not found!' });
 

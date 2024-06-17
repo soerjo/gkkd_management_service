@@ -15,7 +15,7 @@ import { CreateReportPemuridanDto } from '../dto/create-report-pemuridan.dto';
 import { UpdateReportPemuridanDto } from '../dto/update-report-pemuridan.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
-import { UUIDParam } from 'src/common/decorator/uuid.decorator';
+
 import { FilterDto } from '../dto/filter.dto';
 import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
 import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
@@ -81,7 +81,7 @@ export class ReportPemuridanController {
   @Get(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
-  async findOne(@CurrentUser() jwtPayload: IJwtPayload, @UUIDParam() @Param('id') id: string) {
+  async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
     return {
       message: 'success',
       data: await this.reportPemuridanService.findOne(id),
@@ -93,7 +93,7 @@ export class ReportPemuridanController {
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
-    @UUIDParam() @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateReportPemuridanDto: UpdateReportPemuridanDto,
   ) {
     // if (jwtPayload.jemaat_id && jwtPayload.role.some((val) => val === RoleEnum.PEMBIMBING)) {
@@ -115,7 +115,7 @@ export class ReportPemuridanController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
-  async remove(@UUIDParam() @Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     return {
       message: 'success',
       data: await this.reportPemuridanService.remove(id),

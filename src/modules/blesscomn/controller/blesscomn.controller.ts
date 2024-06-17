@@ -14,7 +14,7 @@ import { BlesscomnService } from '../services/blesscomn.service';
 import { CreateBlesscomnDto } from '../dto/create-blesscomn.dto';
 import { UpdateBlesscomnDto } from '../dto/update-blesscomn.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { UUIDParam } from 'src/common/decorator/uuid.decorator';
+
 import { FilterDto } from '../dto/filter.dto';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
@@ -55,7 +55,7 @@ export class BlesscomnController {
   @Get(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
-  async findOne(@UUIDParam() @Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     const result = await this.blesscomnService.findOne(id);
     if (!result) throw new BadRequestException({ message: 'blesscomn is not found!' });
 
@@ -68,7 +68,7 @@ export class BlesscomnController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
-  async update(@UUIDParam() @Param('id') id: string, @Body() updateBlesscomnDto: UpdateBlesscomnDto) {
+  async update(@Param('id') id: number, @Body() updateBlesscomnDto: UpdateBlesscomnDto) {
     return {
       message: 'success',
       data: await this.blesscomnService.update(id, updateBlesscomnDto),
@@ -78,7 +78,7 @@ export class BlesscomnController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async remove(@UUIDParam() @Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     return {
       message: 'success',
       data: await this.blesscomnService.remove(id),

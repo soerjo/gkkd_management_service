@@ -48,11 +48,11 @@ export class PemuridanService {
     return this.pemuridanRepository.getAll(filter);
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     return this.pemuridanRepository.findOneBy({ id });
   }
 
-  async update(id: string, updatePemuridanDto: UpdatePemuridanDto) {
+  async update(id: number, updatePemuridanDto: UpdatePemuridanDto) {
     const pemuridan = await this.findOne(id);
     if (!pemuridan) throw new BadRequestException({ message: 'Pemuridan is not found!' });
 
@@ -76,7 +76,7 @@ export class PemuridanService {
     return id;
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const pemuridan = await this.findOne(id);
     if (!pemuridan) throw new BadRequestException({ message: 'Pemuridan is not found!' });
 

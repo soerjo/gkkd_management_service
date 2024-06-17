@@ -14,7 +14,7 @@ import { RegionService } from '../services/region.service';
 import { CreateRegionDto } from '../dto/create-region.dto';
 import { UpdateRegionDto } from '../dto/update-region.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { UUIDParam } from 'src/common/decorator/uuid.decorator';
+
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 import { FilterDto } from '../dto/filter.dto';
 
@@ -42,7 +42,7 @@ export class RegionController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') @UUIDParam() id: string) {
+  async findOne(@Param('id') id: number) {
     const result = await this.regionService.getOneById(id);
     if (!result) throw new BadRequestException({ message: 'region is not found!' });
 
@@ -53,7 +53,7 @@ export class RegionController {
   }
 
   @Patch(':id')
-  async update(@Param('id') @UUIDParam() id: string, @Body() updateRegionDto: UpdateRegionDto) {
+  async update(@Param('id') id: number, @Body() updateRegionDto: UpdateRegionDto) {
     return {
       message: 'success',
       data: await this.regionService.update(id, updateRegionDto),
@@ -61,7 +61,7 @@ export class RegionController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') @UUIDParam() id: string) {
+  async remove(@Param('id') id: number) {
     return {
       message: 'success',
       data: await this.regionService.remove(id),

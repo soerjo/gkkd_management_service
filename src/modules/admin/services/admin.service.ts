@@ -56,14 +56,14 @@ export class AdminService implements OnApplicationBootstrap {
     return this.adminRepository.getAll(filter);
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     return this.adminRepository.findOne({
       where: { id: id ?? IsNull() },
       relations: { region: true },
     });
   }
 
-  async update(id: string, updateAdminDto: UpdateAdminDto) {
+  async update(id: number, updateAdminDto: UpdateAdminDto) {
     const user = await this.findOne(id);
     if (!user) throw new BadRequestException({ message: 'admin is not found!' });
     if (user.name === 'superadmin') throw new ForbiddenException();
@@ -77,7 +77,7 @@ export class AdminService implements OnApplicationBootstrap {
     return updateUser.id;
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const user = await this.findOne(id);
     if (!user) throw new BadRequestException({ message: 'admin is not found!' });
 

@@ -13,9 +13,8 @@ export class PemuridanDto {
   book_level: BooksEnum;
 
   @ApiProperty()
-  @IsUUID()
   @IsNotEmpty()
-  lead_id: string;
+  lead_id: number;
 
   lead: JemaatEntity;
 
@@ -27,9 +26,8 @@ export class PemuridanDto {
   members: string[];
 
   @ApiProperty()
-  @IsUUID()
   @IsOptional()
-  region_id?: string;
+  region_id?: number;
 
   region?: RegionEntity;
 }

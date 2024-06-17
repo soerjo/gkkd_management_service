@@ -8,7 +8,7 @@ export class PaginationDto {
   @IsNumber()
   @Transform((val) => Number(val.value))
   @IsOptional()
-  take?: number;
+  take?: number = 10;
 
   @ApiPropertyOptional()
   @Min(0)

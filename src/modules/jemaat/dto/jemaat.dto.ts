@@ -95,15 +95,11 @@ export class JemaatDto {
   @IsOptional()
   wedding_date?: Date;
 
-  // @ApiProperty()
-  // @IsString()
-  // @IsNotEmpty()
   region_service?: string;
 
   @ApiProperty()
-  @IsUUID()
   @IsNotEmpty()
-  region_id: string;
+  region_id: number;
 
   region: RegionEntity;
 }

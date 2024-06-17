@@ -20,9 +20,8 @@ export class FilterDto extends PaginationDto {
   date_end: Date;
 
   @ApiPropertyOptional()
-  @IsUUID()
   @IsOptional()
-  lead_id: string;
+  lead_id: number;
 
   lead: JemaatEntity;
 }

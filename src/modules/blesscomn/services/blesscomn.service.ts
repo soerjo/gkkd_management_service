@@ -56,7 +56,7 @@ export class BlesscomnService {
     return this.blesscomnRepository.getAll(filter);
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     return this.blesscomnRepository.findOne({
       where: { id: id ?? IsNull() },
       relations: { region: true },
@@ -70,11 +70,11 @@ export class BlesscomnService {
     });
   }
 
-  findOneByLeadId(leadId: string) {
+  findOneByLeadId(leadId: number) {
     return this.blesscomnRepository.findOne({ where: { lead_jemaat: { id: leadId ?? IsNull() } } });
   }
 
-  async update(id: string, updateBlesscomnDto: UpdateBlesscomnDto) {
+  async update(id: number, updateBlesscomnDto: UpdateBlesscomnDto) {
     const blesscomn = await this.findOne(id);
     if (!blesscomn) throw new BadRequestException({ message: 'blesscomn is not found!' });
 
@@ -99,7 +99,7 @@ export class BlesscomnService {
     return id;
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const blesscomn = await this.findOne(id);
     if (!blesscomn) throw new BadRequestException({ message: 'blesscomn is not found!' });
 

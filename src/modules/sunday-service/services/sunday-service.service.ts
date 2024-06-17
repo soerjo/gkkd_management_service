@@ -27,19 +27,19 @@ export class SundayServiceService {
     return this.sundayServiceRepository.getAll(filter);
   }
 
-  findByName(name: string, filter: Partial<{ region_id: string }>): Promise<SundayServiceEntity> {
+  findByName(name: string, filter: Partial<{ region_id: number }>): Promise<SundayServiceEntity> {
     return this.sundayServiceRepository.findOne({ where: { name, region: { id: filter.region_id } } });
   }
 
-  async findOne(id: string, filter?: FilterDto) {
+  async findOne(id: number, filter?: FilterDto) {
     return this.sundayServiceRepository.findOne({ where: { id, region: { id: filter.region_id } } });
   }
 
-  async getOneById(id: string, region_id?: string) {
+  async getOneById(id: number, region_id?: number) {
     return this.sundayServiceRepository.findOne({ where: { id, region: { id: region_id } } });
   }
 
-  async update(id: string, dto: UpdateSundayServiceDto) {
+  async update(id: number, dto: UpdateSundayServiceDto) {
     const sundayService = await this.findOne(id);
     if (!sundayService) throw new BadRequestException('sundayService is not found!');
 
@@ -53,7 +53,7 @@ export class SundayServiceService {
     return this.sundayServiceRepository.save({ ...dto, region: region });
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const sundayService = await this.findOne(id);
     if (!sundayService) throw new BadRequestException('sundayService is not found!');
 

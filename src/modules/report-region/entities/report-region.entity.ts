@@ -19,6 +19,9 @@ export class ReportRegionEntity extends MainEntityAbstract {
   @Column()
   new: number;
 
+  // @Column({ nullable: true })
+  // sunday_service_id?: number;
+
   @ManyToOne((type) => SundayServiceEntity, (region) => region.report)
   @JoinColumn({ name: 'sunday_service_id' })
   sunday_service: SundayServiceEntity;

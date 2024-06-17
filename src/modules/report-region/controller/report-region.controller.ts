@@ -4,7 +4,7 @@ import { CreateReportRegionDto } from '../dto/create-report-region.dto';
 import { UpdateReportRegionDto } from '../dto/update-report-region.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
-import { UUIDParam } from 'src/common/decorator/uuid.decorator';
+
 import { FilterDto } from '../dto/filter.dto';
 import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
 import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
@@ -56,7 +56,7 @@ export class ReportRegionController {
   @Get(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async findOne(@UUIDParam() @Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     return {
       message: 'success',
       data: await this.reportRegionService.findOne(id),
@@ -68,7 +68,7 @@ export class ReportRegionController {
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
-    @UUIDParam() @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateReportRegionDto: UpdateReportRegionDto,
   ) {
     return {
@@ -80,7 +80,7 @@ export class ReportRegionController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
-  async remove(@UUIDParam() @Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     return {
       message: 'success',
       data: await this.reportRegionService.remove(id),

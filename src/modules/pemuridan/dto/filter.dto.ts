@@ -10,9 +10,8 @@ export class FilterDto extends PaginationDto {
   search: string;
 
   @ApiPropertyOptional()
-  @IsUUID()
   @IsOptional()
-  lead_id: string;
+  lead_id: number;
 
   lead: JemaatEntity;
 }

@@ -35,7 +35,7 @@ export class ReportRegionService {
     return this.reportRegionRepository.getAll(filter);
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     return this.reportRegionRepository.findOneBy({ id: id ?? IsNull() });
   }
 
@@ -78,7 +78,7 @@ export class ReportRegionService {
     return averagePerMonth;
   }
 
-  async update(id: string, updateReportRegionDto: UpdateReportRegionDto) {
+  async update(id: number, updateReportRegionDto: UpdateReportRegionDto) {
     const pastReportRegion = await this.findOne(id);
     if (!pastReportRegion) throw new BadRequestException({ message: 'region report is not found!' });
 
@@ -109,7 +109,7 @@ export class ReportRegionService {
     return { id };
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const pastReportRegion = await this.findOne(id);
     if (!pastReportRegion) throw new BadRequestException({ message: 'region report is not found!' });
 

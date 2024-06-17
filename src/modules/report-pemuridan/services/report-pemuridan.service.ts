@@ -33,11 +33,11 @@ export class ReportPemuridanService {
     return this.reportPemuridanRepository.getAll(filter);
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     return this.reportPemuridanRepository.findOneBy({ id: id ?? IsNull() });
   }
 
-  async update(id: string, updateReportPemuridanDto: UpdateReportPemuridanDto) {
+  async update(id: number, updateReportPemuridanDto: UpdateReportPemuridanDto) {
     const pastReportPemuridan = await this.findOne(id);
     if (!pastReportPemuridan) throw new BadRequestException({ message: 'Pemuridan report is not found!' });
 
@@ -102,7 +102,7 @@ export class ReportPemuridanService {
     return averagePerMonth;
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const pastReportPemuridan = await this.findOne(id);
     if (!pastReportPemuridan) throw new BadRequestException({ message: 'Pemuridan report is not found!' });
 

@@ -41,11 +41,11 @@ export class JemaatService {
     });
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     return this.jemaatRepository.findOne({ where: { id: id ?? IsNull() } });
   }
 
-  async update(id: string, updateJemaatDto: UpdateJemaatDto) {
+  async update(id: number, updateJemaatDto: UpdateJemaatDto) {
     const jemaat = await this.findOne(id);
     if (!jemaat) throw new BadRequestException({ message: 'jemaat is not found!' });
 
@@ -65,7 +65,7 @@ export class JemaatService {
     return jemaat.id;
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const jemaat = await this.findOne(id);
     if (!jemaat) throw new BadRequestException({ message: 'jemaat is not found!' });
 

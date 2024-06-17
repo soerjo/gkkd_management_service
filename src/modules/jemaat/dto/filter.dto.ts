@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 export class FilterDto extends PaginationDto {
@@ -9,9 +9,8 @@ export class FilterDto extends PaginationDto {
   search: string;
 
   @ApiPropertyOptional()
-  @IsUUID()
   @IsOptional()
-  region_id: string;
+  region_id: number;
 
-  region_ids?: string[];
+  region_ids?: number[];
 }
