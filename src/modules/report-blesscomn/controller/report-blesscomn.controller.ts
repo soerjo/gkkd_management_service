@@ -25,7 +25,7 @@ export class ReportBlesscomnController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createReportBlesscomnDto: CreateReportBlesscomnDto) {
     if (jwtPayload.jemaat_id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
@@ -40,9 +40,9 @@ export class ReportBlesscomnController {
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
 
     if (jwtPayload.jemaat_id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
@@ -57,9 +57,9 @@ export class ReportBlesscomnController {
 
   @Get('chart')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async getChart(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
 
     if (jwtPayload.jemaat_id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
@@ -74,7 +74,7 @@ export class ReportBlesscomnController {
 
   @Get(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findOne(@Param('id') id: number) {
     return {
       message: 'success',
@@ -84,7 +84,7 @@ export class ReportBlesscomnController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
     @Param('id') id: number,
@@ -103,7 +103,7 @@ export class ReportBlesscomnController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async remove(@Param('id') id: number) {
     return {
       message: 'success',

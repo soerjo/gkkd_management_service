@@ -32,9 +32,9 @@ export class JemaatController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateJemaatDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload?.region?.id;
 
     return {
       message: 'success',
@@ -44,9 +44,9 @@ export class JemaatController {
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
 
     return {
       message: 'success',
@@ -56,7 +56,7 @@ export class JemaatController {
 
   @Get(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN])
   async findOne(@Param('id') id: number) {
     const result = await this.jemaatService.findOne(id);
     if (!result) throw new BadRequestException({ message: 'result is not found!' });
@@ -69,9 +69,9 @@ export class JemaatController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN])
   async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number, @Body() dto: UpdateJemaatDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload?.region?.id;
 
     return {
       message: 'success',

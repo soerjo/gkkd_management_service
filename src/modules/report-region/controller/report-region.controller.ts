@@ -21,7 +21,7 @@ export class ReportRegionController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createReportRegionDto: CreateReportRegionDto) {
     return {
       message: 'success',
@@ -31,9 +31,9 @@ export class ReportRegionController {
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
 
     return {
       message: 'success',
@@ -43,9 +43,9 @@ export class ReportRegionController {
 
   @Get('chart')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async getChart(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
 
     return {
       message: 'success',
@@ -55,7 +55,7 @@ export class ReportRegionController {
 
   @Get(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN])
   async findOne(@Param('id') id: number) {
     return {
       message: 'success',
@@ -65,7 +65,7 @@ export class ReportRegionController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN])
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
     @Param('id') id: number,
@@ -79,7 +79,7 @@ export class ReportRegionController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN])
   async remove(@Param('id') id: number) {
     return {
       message: 'success',

@@ -36,7 +36,7 @@ export class ReportPemuridanController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createReportPemuridanDto: CreateReportPemuridanDto) {
     // if (jwtPayload.jemaat_id && jwtPayload.role.some((val) => val === RoleEnum.PEMBIMBING)) {
     //   const isValidLead = await this.pemuridanRepository.findOne({
@@ -56,7 +56,7 @@ export class ReportPemuridanController {
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
     if (jwtPayload.jemaat_id) filter.lead_id = jwtPayload.jemaat_id;
 
@@ -68,7 +68,7 @@ export class ReportPemuridanController {
 
   @Get('chart')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async getChart(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
     if (jwtPayload.jemaat_id) filter.lead_id = jwtPayload.jemaat_id;
 
@@ -80,7 +80,7 @@ export class ReportPemuridanController {
 
   @Get(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
     return {
       message: 'success',
@@ -90,7 +90,7 @@ export class ReportPemuridanController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
     @Param('id') id: number,
@@ -114,7 +114,7 @@ export class ReportPemuridanController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async remove(@Param('id') id: number) {
     return {
       message: 'success',

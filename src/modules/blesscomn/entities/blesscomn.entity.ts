@@ -12,15 +12,12 @@ export class BlesscomnEntity extends MainEntityAbstract {
   @Column()
   location: string;
 
-  @Column()
-  lead: string;
-
   @Column('simple-array', { select: false, default: [] })
   members: string[];
 
   @ManyToOne((type) => JemaatEntity, (jemaat) => jemaat.lead_blesscomn)
   @JoinColumn({ name: 'lead_jemaat_id' })
-  lead_jemaat: JemaatEntity;
+  lead: JemaatEntity;
 
   @ManyToOne((type) => RegionEntity, (region) => region.blesscomn)
   @JoinColumn({ name: 'region_id' })

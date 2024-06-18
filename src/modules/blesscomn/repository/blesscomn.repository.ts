@@ -11,6 +11,8 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
 
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('blesscomn');
+    queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');
+    queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
 
     filter.search &&
       queryBuilder.andWhere('(blesscomn.name ILIKE :search OR blesscomn.lead ILIKE :search)', {
@@ -18,19 +20,11 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       });
 
     if (filter.region_id) {
-      queryBuilder
-        .leftJoin('blesscomn.region', 'region')
-        .andWhere(`region.id = :region_id`, { region_id: filter.region_id });
+      queryBuilder.andWhere(`region.id = :region_id`, { region_id: filter.region_id });
     }
 
     if (filter.region_ids && filter.region_ids.length) {
-      queryBuilder
-        .leftJoin('blesscomn.region', 'region')
-        .andWhere(`region.id IN (:...region_ids)`, { region_ids: filter.region_ids });
-    }
-
-    if (!filter.region_id && !filter.region_ids) {
-      queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
+      queryBuilder.andWhere(`region.id IN (:...region_ids)`, { region_ids: filter.region_ids });
     }
 
     if (filter.take) {

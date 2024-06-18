@@ -16,23 +16,12 @@ export class BlesscomnDto {
   location: string;
 
   @ApiProperty()
-  @IsString()
-  @IsOptional()
-  lead: string;
-
-  @ApiProperty()
-  @IsUUID()
   @IsOptional()
   lead_id?: number;
 
   lead_jemaat?: JemaatEntity;
 
-  @IsAtLeastOnePropertyNotEmpty({ message: 'At least fill lead_id or lead' })
-  validationPlaceholder?: string;
-
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
   @IsOptional()
   region_id?: number;
 

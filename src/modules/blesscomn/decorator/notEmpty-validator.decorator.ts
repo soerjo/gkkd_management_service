@@ -11,13 +11,15 @@ export function IsAtLeastOnePropertyNotEmpty(validationOptions?: ValidationOptio
       options: validationOptions,
       validator: {
         validate(value: any, args: ValidationArguments) {
-          const properties = args.object as BlesscomnDto
+          const properties = args.object as BlesscomnDto;
 
-          const validateSomeProperties = []
-          validateSomeProperties.push(properties.lead)
-          validateSomeProperties.push(properties.lead_id)
+          const validateSomeProperties = [];
+          // validateSomeProperties.push(properties.lead)
+          validateSomeProperties.push(properties.lead_id);
 
-          return validateSomeProperties.some(property => property !== '' && property !== null && property !== undefined);
+          return validateSomeProperties.some(
+            (property) => property !== '' && property !== null && property !== undefined,
+          );
         },
       },
     });

@@ -32,7 +32,7 @@ export class PemuridanController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createPemuridanDto: CreatePemuridanDto) {
     if (jwtPayload.jemaat_id) createPemuridanDto.lead_id = jwtPayload.jemaat_id;
 
@@ -44,7 +44,7 @@ export class PemuridanController {
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
     if (jwtPayload.jemaat_id) filter.lead_id = jwtPayload.jemaat_id;
 
@@ -56,7 +56,7 @@ export class PemuridanController {
 
   @Get(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async findOne(@Param('id') id: number) {
     const result = await this.pemuridanService.findOne(id);
     if (!result) throw new BadRequestException({ message: 'pemuridan is not found!' });
@@ -69,7 +69,7 @@ export class PemuridanController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMBIMBING])
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
     @Param('id') id: number,
@@ -85,7 +85,7 @@ export class PemuridanController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN])
   async remove(@Param('id') id: number) {
     return {
       message: 'success',

@@ -18,14 +18,14 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get('/line-chart')
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   @UseGuards(RolesGuard)
   getLineChart(@CurrentUser() jwtPayload: IJwtPayload) {
     return this.dashboardService.findAll();
   }
 
   @Get('/progress')
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   @UseGuards(RolesGuard)
   getDoughnutChart(@CurrentUser() jwtPayload: IJwtPayload) {
     return this.dashboardService.findAll();

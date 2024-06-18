@@ -62,6 +62,6 @@ export class JemaatEntity extends MainEntityAbstract {
   @JoinColumn({ name: 'region_id' })
   region: RegionEntity;
 
-  @OneToMany((type) => BlesscomnEntity, (blesscomn) => blesscomn.lead_jemaat)
+  @OneToMany((type) => BlesscomnEntity, (blesscomn) => blesscomn.lead)
   lead_blesscomn: BlesscomnEntity[];
 }

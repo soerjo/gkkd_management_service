@@ -20,9 +20,9 @@ export class SundayServiceController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SUPERADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN, RoleEnum.ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateSundayServiceDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload?.region?.id;
 
     return {
       message: 'success',
@@ -32,7 +32,7 @@ export class SundayServiceController {
 
   @Get()
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
 
     return {
       message: 'success',
@@ -42,7 +42,7 @@ export class SundayServiceController {
 
   @Get(':id')
   async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number, filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
 
     return {
       message: 'success',
@@ -52,7 +52,7 @@ export class SundayServiceController {
 
   @Patch(':id')
   async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number, @Body() dto: UpdateSundayServiceDto) {
-    if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload.region.id;
+    if (jwtPayload.role !== RoleEnum.SUPERADMIN) dto.region_id = jwtPayload?.region?.id;
 
     return {
       message: 'success',

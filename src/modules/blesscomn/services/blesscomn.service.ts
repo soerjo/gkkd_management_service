@@ -45,7 +45,6 @@ export class BlesscomnService {
       const lead = await this.jemaatService.findOne(createBlesscomnDto.lead_id);
       if (!lead) throw new BadRequestException({ message: 'Lead is not found in jemaat' });
       createBlesscomnDto.lead_jemaat = lead;
-      createBlesscomnDto.lead = lead.name;
     }
 
     const blesscomn = this.blesscomnRepository.create(createBlesscomnDto);
@@ -64,14 +63,14 @@ export class BlesscomnService {
         id: true,
         name: true,
         location: true,
-        lead: true,
+        // lead: true,
         members: true,
       },
     });
   }
 
   findOneByLeadId(leadId: number) {
-    return this.blesscomnRepository.findOne({ where: { lead_jemaat: { id: leadId ?? IsNull() } } });
+    return this.blesscomnRepository.findOne({ where: { lead: { id: leadId ?? IsNull() } } });
   }
 
   async update(id: number, updateBlesscomnDto: UpdateBlesscomnDto) {
@@ -88,7 +87,6 @@ export class BlesscomnService {
       const lead = await this.jemaatService.findOne(updateBlesscomnDto.lead_id);
       if (!lead) throw new BadRequestException({ message: 'Lead is not found in jemaat' });
       updateBlesscomnDto.lead_jemaat = lead;
-      updateBlesscomnDto.lead = lead.name;
     }
 
     await this.blesscomnRepository.save({
