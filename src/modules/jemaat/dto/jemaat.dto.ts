@@ -54,30 +54,30 @@ export class JemaatDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  address: string;
+  @IsOptional()
+  address?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  father_name: string;
+  @IsOptional()
+  father_name?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  mother_name: string;
+  @IsOptional()
+  mother_name?: string;
 
   @ApiProperty()
   @IsNumber()
   @Min(1)
-  @IsNotEmpty()
-  birth_order: number;
+  @IsOptional()
+  birth_order?: number;
 
   @ApiProperty()
   @IsNumber()
   @Min(1)
-  @IsNotEmpty()
-  total_brother_sister: number;
+  @IsOptional()
+  total_brother_sister?: number;
 
   @ApiProperty()
   @IsBoolean()
@@ -98,8 +98,8 @@ export class JemaatDto {
   region_service?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  region_id: number;
+  @IsOptional()
+  region_id?: number;
 
   region: RegionEntity;
 }

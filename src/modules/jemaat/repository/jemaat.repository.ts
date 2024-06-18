@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 import { JemaatEntity } from '../entities/jemaat.entity';
 import { FilterDto } from '../dto/filter.dto';
 
@@ -11,17 +11,28 @@ export class JemaatRepository extends Repository<JemaatEntity> {
 
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('jemaat');
+    queryBuilder.leftJoin('jemaat.region', 'region');
 
     filter.search &&
       queryBuilder.andWhere(
-        '(jemaat.name ILIKE :search OR jemaat.email ILIKE :search OR jemaat.full_name ILIKE :search)',
-        { search: filter.search },
+        new Brackets((query) => {
+          query
+            .where('jemaat.name ILIKE :search', { search: `%${filter.search}%` })
+            .orWhere('jemaat.full_name ILIKE :search', { search: `%${filter.search}%` })
+            .orWhere('jemaat.email ILIKE :search', { search: `%${filter.search}%` });
+        }),
       );
 
-    if (filter.take) {
-      queryBuilder.take(filter?.take);
-      queryBuilder.skip((filter?.page - 1) * filter?.take);
+    filter.region_id && queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });
+
+    if (!filter.take) {
+      const entities = await queryBuilder.getMany();
+      return { entities };
     }
+
+    queryBuilder.take(filter?.take);
+    queryBuilder.orderBy(`user.created_at`, 'DESC');
+    queryBuilder.skip((filter?.page - 1) * filter?.take);
 
     queryBuilder.orderBy(`jemaat.created_at`, 'DESC');
 

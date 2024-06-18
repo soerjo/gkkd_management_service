@@ -15,15 +15,17 @@ export class JemaatService {
 
   async create(createJemaatDto: CreateJemaatDto) {
     const isJemaatExist = await this.jemaatRepository.findOne({
-      where: [{ name: createJemaatDto.name }, { full_name: createJemaatDto.full_name }],
+      where: [{ full_name: createJemaatDto.full_name }],
     });
     if (isJemaatExist) throw new BadRequestException({ message: 'Jemaat already exist' });
 
-    const region = await this.regionService.getOneById(createJemaatDto.region_id);
-    if (!region) throw new BadRequestException({ message: 'Region is not found!' });
+    if (createJemaatDto.region_id) {
+      const region = await this.regionService.getOneById(createJemaatDto.region_id);
+      if (!region) throw new BadRequestException({ message: 'Region is not found!' });
+      createJemaatDto.region = region;
+      createJemaatDto.region_service = region.name;
+    }
 
-    createJemaatDto.region = region;
-    createJemaatDto.region_service = region.name;
     const jemaat = this.jemaatRepository.create(createJemaatDto);
 
     return this.jemaatRepository.save(jemaat);
@@ -41,8 +43,11 @@ export class JemaatService {
     });
   }
 
-  findOne(id: number) {
-    return this.jemaatRepository.findOne({ where: { id: id ?? IsNull() } });
+  findOne(id: number, region_id?: number) {
+    return this.jemaatRepository.findOne({
+      where: { id: id ?? IsNull(), region: { id: region_id } },
+      relations: { region: true },
+    });
   }
 
   async update(id: number, updateJemaatDto: UpdateJemaatDto) {
@@ -65,8 +70,8 @@ export class JemaatService {
     return jemaat.id;
   }
 
-  async remove(id: number) {
-    const jemaat = await this.findOne(id);
+  async remove(id: number, region_id?: number) {
+    const jemaat = await this.findOne(id, region_id);
     if (!jemaat) throw new BadRequestException({ message: 'jemaat is not found!' });
 
     await this.jemaatRepository.softRemove(jemaat);

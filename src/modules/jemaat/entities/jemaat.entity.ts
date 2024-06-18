@@ -25,43 +25,43 @@ export class JemaatEntity extends MainEntityAbstract {
   @Column({ type: 'date', default: new Date() })
   date_birthday: Date;
 
-  @Column()
+  @Column({ nullable: true })
   phone_number: string;
 
-  @Column()
+  @Column({ nullable: true })
   address: string;
 
-  @Column()
+  @Column({ nullable: true })
   father_name: string;
 
-  @Column()
+  @Column({ nullable: true })
   mother_name: string;
 
-  @Column()
+  @Column({ nullable: true })
   birth_order: number;
 
-  @Column()
+  @Column({ nullable: true })
   total_brother_sister: number;
 
   @Column({ default: false })
   marital_status: boolean;
 
-  @Column({ default: '' })
+  @Column({ nullable: true })
   husband_wife_name: string;
 
   @Column({ nullable: true })
   wedding_date: Date;
 
-  @Column()
+  @Column({ nullable: true })
   region_service: string;
 
-  @OneToMany((type) => PemuridanEntity, (pemuridan) => pemuridan.lead)
+  @OneToMany((type) => PemuridanEntity, (pemuridan) => pemuridan.lead, { nullable: true })
   pemuridan: PemuridanEntity[];
 
-  @ManyToOne((type) => RegionEntity, (region) => region.jemaat)
+  @ManyToOne((type) => RegionEntity, (region) => region.jemaat, { nullable: true })
   @JoinColumn({ name: 'region_id' })
   region: RegionEntity;
 
-  @OneToMany((type) => BlesscomnEntity, (blesscomn) => blesscomn.lead)
+  @OneToMany((type) => BlesscomnEntity, (blesscomn) => blesscomn.lead, { nullable: true })
   lead_blesscomn: BlesscomnEntity[];
 }
