@@ -8,4 +8,5 @@ export interface IJwtPayload {
   role: RoleEnum;
   region?: RegionEntity;
   jemaat_id?: number | undefined;
+  tempPassword: boolean;
 }

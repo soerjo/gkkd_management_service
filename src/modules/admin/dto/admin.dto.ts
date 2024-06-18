@@ -34,8 +34,8 @@ export class AdminDto {
   @ApiProperty()
   @IsString()
   @MinLength(8)
-  @IsNotEmpty()
-  password: string;
+  @IsOptional()
+  password?: string;
 
   region?: RegionEntity;
 }

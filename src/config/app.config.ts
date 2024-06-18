@@ -7,7 +7,9 @@ interface IAppConfig {
   NODE_ENV: string;
   PORT: number;
   TZ: string;
-  SECRET_KEY: string;
+  JWT_SECRET_KEY: string;
+  JWT_EXPIRATION_TIME: string;
+  TEMP_PASSWORD: string;
   DATABASE_HOST: string;
   DATABASE_PORT: number;
   DATABASE_USERNAME: string;
@@ -20,7 +22,9 @@ const configs: IAppConfig = {
   NODE_ENV: configService.get(`NODE_ENV`),
   PORT: configService.get(`PORT`),
   TZ: configService.get(`TZ`),
-  SECRET_KEY: configService.get(`SECRET_KEY`),
+  TEMP_PASSWORD: configService.get(`TEMP_PASSWORD`),
+  JWT_SECRET_KEY: configService.get(`JWT_SECRET_KEY`),
+  JWT_EXPIRATION_TIME: configService.get(`JWT_EXPIRATION_TIME`),
   DATABASE_HOST: configService.get(`DATABASE_HOST`),
   DATABASE_PORT: configService.get(`DATABASE_PORT`),
   DATABASE_USERNAME: configService.get(`DATABASE_USERNAME`),
@@ -32,7 +36,9 @@ const schema = Joi.object<IAppConfig>({
   NODE_ENV: Joi.string().valid('development', 'production', 'test', 'local').required(),
   PORT: Joi.number().required(),
   TZ: Joi.string().valid('UTC').required(),
-  SECRET_KEY: Joi.string().required(),
+  TEMP_PASSWORD: Joi.string().required(),
+  JWT_SECRET_KEY: Joi.string().required(),
+  JWT_EXPIRATION_TIME: Joi.string().required(),
   DATABASE_HOST: Joi.string().optional(),
   DATABASE_PORT: Joi.number().optional(),
   DATABASE_USERNAME: Joi.string().optional(),

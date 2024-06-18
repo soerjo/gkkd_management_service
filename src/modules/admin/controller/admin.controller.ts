@@ -24,6 +24,7 @@ import { RoleEnum } from 'src/common/constant/role.constant';
 import { RolesGuard } from 'src/common/guard/role.guard';
 import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
 import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
+import { UpdatePasswordDto } from '../dto/update-password.dto';
 
 @ApiTags('Admin')
 @Controller('admin')
@@ -69,13 +70,23 @@ export class AdminController {
 
   @Get(':id')
   async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
-    const result = await this.adminService.findOne(id, jwtPayload.region.id);
+    const result = await this.adminService.findOne(id);
     if (!result) throw new BadRequestException({ message: 'admin is not found!' });
 
     return {
       message: 'success',
       data: result,
     };
+  }
+
+  @Patch('update-password')
+  async updatePassword(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: UpdatePasswordDto) {
+    const adminUser = await this.adminService.findOne(jwtPayload.id);
+    if (!adminUser) throw new BadRequestException({ message: 'admin is not found!' });
+
+    await this.adminService.updatePassword(jwtPayload.id, dto.new_password);
+
+    return { message: 'success' };
   }
 
   @Patch(':id')
@@ -105,6 +116,21 @@ export class AdminController {
       message: 'success',
       data: await this.adminService.update(id, updateAdminDto),
     };
+  }
+
+  @Patch(':id/reset-password')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.SUPERADMIN, RoleEnum.SYSTEMADMIN])
+  async resetPassword(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
+    const adminUser = await this.adminService.findOne(id, jwtPayload.region.id);
+    if (!adminUser) throw new BadRequestException({ message: 'admin is not found!' });
+
+    if (jwtPayload.role !== RoleEnum.SYSTEMADMIN && adminUser.region.id !== jwtPayload.region.id)
+      throw new BadRequestException({ message: 'admin is not found!' });
+
+    await this.adminService.resetPassword(id);
+
+    return { message: 'success' };
   }
 
   @Delete(':id')

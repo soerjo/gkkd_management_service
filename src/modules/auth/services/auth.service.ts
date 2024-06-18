@@ -18,17 +18,16 @@ export class AuthService {
       email: user.email,
       role: user.role,
       region: user.region,
+      tempPassword: user.temp_password ? true : false,
     };
-    const jwt = this.jwtService.sign(payload, {
-      secret: this.configService.get('SECRET_KEY'),
-    });
+    const jwt = this.jwtService.sign(payload);
 
     return { payload, jwt };
   }
 
   decodeJwt(jwt: string) {
     return this.jwtService.verify(jwt, {
-      secret: this.configService.get('SECRET_KEY'),
+      secret: this.configService.get('JWT_SECRET_KEY'),
     });
   }
 }

@@ -7,10 +7,12 @@ import { FilterDto } from '../dto/filter.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
 import { JemaatService } from 'src/modules/jemaat/services/jemaat.service';
 import { IsNull } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AdminService implements OnApplicationBootstrap {
   constructor(
+    private readonly configService: ConfigService,
     private readonly adminRepository: AdminRepository,
     private readonly jemaatService: JemaatService,
   ) {}
@@ -45,8 +47,7 @@ export class AdminService implements OnApplicationBootstrap {
   async create(createAdminDto: CreateAdminDto) {
     const newUser = this.adminRepository.create({
       ...createAdminDto,
-      password: encryptPassword(createAdminDto.password),
-      temp_password: '',
+      temp_password: encryptPassword(this.configService.get('TEMP_PASSWORD')),
     });
 
     return this.adminRepository.save(newUser);
@@ -63,8 +64,32 @@ export class AdminService implements OnApplicationBootstrap {
     });
   }
 
+  async updatePassword(id: number, password: string) {
+    const user = await this.findOne(id);
+    if (!user) throw new BadRequestException({ message: 'admin is not found!' });
+    if (user.name === RoleEnum.SYSTEMADMIN) throw new ForbiddenException();
+
+    await this.adminRepository.save({
+      ...user,
+      password: encryptPassword(password),
+      temp_password: null,
+    });
+  }
+
+  async resetPassword(id: number) {
+    const user = await this.findOne(id);
+    if (!user) throw new BadRequestException({ message: 'admin is not found!' });
+    if (user.name === RoleEnum.SYSTEMADMIN) throw new ForbiddenException();
+
+    await this.adminRepository.save({
+      ...user,
+      password: null,
+      temp_password: encryptPassword(this.configService.get('TEMP_PASSWORD')),
+    });
+  }
+
   async update(id: number, updateAdminDto: UpdateAdminDto) {
-    const user = await this.findOne(id, updateAdminDto.regions_id);
+    const user = await this.findOne(id);
     if (!user) throw new BadRequestException({ message: 'admin is not found!' });
     if (user.name === RoleEnum.SYSTEMADMIN) throw new ForbiddenException();
 
