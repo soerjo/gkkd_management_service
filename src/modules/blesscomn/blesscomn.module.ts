@@ -1,14 +1,8 @@
 import { Module } from '@nestjs/common';
-import { BlesscomnService } from './services/blesscomn.service';
-import { BlesscomnController } from './controller/blesscomn.controller';
-import { BlesscomnRepository } from './repository/blesscomn.repository';
-import { RegionModule } from '../region/region.module';
-import { JemaatModule } from '../jemaat/jemaat.module';
+import { ReportBlesscomnModule } from './report-blesscomn/report-blesscomn.module';
+import { OrganizationBlesscomnModule } from './organization-blesscomn/organization-blesscomn.module';
 
 @Module({
-  imports: [RegionModule, JemaatModule],
-  controllers: [BlesscomnController],
-  providers: [BlesscomnService, BlesscomnRepository],
-  exports: [BlesscomnService]
+  imports: [BlesscomnModule, ReportBlesscomnModule, OrganizationBlesscomnModule],
 })
 export class BlesscomnModule {}

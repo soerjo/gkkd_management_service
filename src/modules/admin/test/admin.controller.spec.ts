@@ -3,9 +3,9 @@ import { AdminController } from '../controller/admin.controller';
 import { AdminService } from '../services/admin.service';
 import { RegionService } from 'src/modules/region/services/region.service';
 import { AdminRepository } from '../repository/admin.repository';
-import { JemaatService } from 'src/modules/jemaat/services/jemaat.service';
+import { JemaatService } from 'src/modules/jemaat/jemaat/services/jemaat.service';
 import { RegionRepository } from 'src/modules/region/repository/region.repository';
-import { JemaatRepository } from 'src/modules/jemaat/repository/jemaat.repository';
+import { JemaatRepository } from 'src/modules/jemaat/jemaat/repository/jemaat.repository';
 
 jest.mock('../services/admin.service');
 jest.mock('../repository/admin.repository');

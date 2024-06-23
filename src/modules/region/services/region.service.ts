@@ -16,7 +16,7 @@ export class RegionService {
 
   async create(createRegionDto: CreateRegionDto) {
     const isRegionNameExist = await this.regionRepository.findOneBy({ name: createRegionDto.name });
-    if (isRegionNameExist) throw new BadRequestException({ message: 'Region already exists!' });
+    if (isRegionNameExist) throw new BadRequestException('Region already exists!');
 
     const region = this.regionRepository.create(createRegionDto);
     return this.regionRepository.save(region);
@@ -40,7 +40,7 @@ export class RegionService {
 
   async update(id: number, updateRegionDto: UpdateRegionDto) {
     const region = await this.getOneById(id);
-    if (!region) throw new BadRequestException({ message: 'regions is not found' });
+    if (!region) throw new BadRequestException('regions is not found');
 
     const updateRegion = await this.regionRepository.save({
       ...region,
@@ -52,7 +52,7 @@ export class RegionService {
 
   async remove(id: number) {
     const region = await this.getOneById(id);
-    if (!region) throw new BadRequestException({ message: 'regions is not found' });
+    if (!region) throw new BadRequestException('regions is not found');
 
     await this.regionRepository.softRemove(region);
 

@@ -6,7 +6,7 @@ export const UUIDParam = createParamDecorator((_: unknown, ctx: ExecutionContext
   const id = request.params.id;
 
   if (!id || !isUUID(id)) {
-    throw new BadRequestException({ message: 'id is not valid' });
+    throw new BadRequestException('id is not valid');
   }
 
   return id;

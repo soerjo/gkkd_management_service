@@ -29,51 +29,35 @@ export class RegionController {
   constructor(private readonly regionService: RegionService) {}
 
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SYSTEMADMIN])
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN])
   @Post()
   async create(@Body() createRegionDto: CreateRegionDto) {
-    return {
-      message: 'success',
-      data: await this.regionService.create(createRegionDto),
-    };
+    return await this.regionService.create(createRegionDto);
   }
 
   @Get()
   async findAll(@Query() filter: FilterDto) {
-    return {
-      message: 'success',
-      data: await this.regionService.getAll(filter),
-    };
+    return await this.regionService.getAll(filter);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: number) {
     const result = await this.regionService.getOneById(id);
-    if (!result) throw new BadRequestException({ message: 'region is not found!' });
-
-    return {
-      message: 'success',
-      data: result,
-    };
+    if (!result) throw new BadRequestException('region is not found!');
+    return result;
   }
 
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SYSTEMADMIN])
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN])
   @Patch(':id')
   async update(@Param('id') id: number, @Body() updateRegionDto: UpdateRegionDto) {
-    return {
-      message: 'success',
-      data: await this.regionService.update(id, updateRegionDto),
-    };
+    return await this.regionService.update(id, updateRegionDto);
   }
 
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.SYSTEMADMIN])
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN])
   @Delete(':id')
   async remove(@Param('id') id: number) {
-    return {
-      message: 'success',
-      data: await this.regionService.remove(id),
-    };
+    return await this.regionService.remove(id);
   }
 }

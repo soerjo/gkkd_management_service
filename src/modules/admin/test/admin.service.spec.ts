@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AdminService } from '../services/admin.service';
 import { AdminRepository } from '../repository/admin.repository';
-import { JemaatService } from 'src/modules/jemaat/services/jemaat.service';
-import { JemaatRepository } from 'src/modules/jemaat/repository/jemaat.repository';
+import { JemaatService } from 'src/modules/jemaat/jemaat/services/jemaat.service';
+import { JemaatRepository } from 'src/modules/jemaat/jemaat/repository/jemaat.repository';
 
 describe('AdminService', () => {
   let service: AdminService;

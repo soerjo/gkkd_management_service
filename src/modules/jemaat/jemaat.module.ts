@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
-import { JemaatService } from './services/jemaat.service';
-import { JemaatController } from './controller/jemaat.controller';
-import { JemaatRepository } from './repository/jemaat.repository';
-import { RegionModule } from '../region/region.module';
+import { BaptisanModule } from './baptisan/baptisan.module';
+import { JemaatModule } from './jemaat/jemaat.module';
+import { PenyerahanAnakModule } from './penyerahan-anak/penyerahan-anak.module';
+import { MaritalModule } from './marital/marital.module';
 
 @Module({
-  imports: [RegionModule],
-  controllers: [JemaatController],
-  providers: [JemaatService, JemaatRepository],
-  exports: [JemaatService],
+  imports: [
+    JemaatModule,
+    BaptisanModule,
+    PenyerahanAnakModule,
+    MaritalModule,
+    // other module...
+  ],
 })
-export class JemaatModule {}
+export class MainJemaatModule {}

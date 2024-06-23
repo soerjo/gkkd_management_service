@@ -1,30 +1,33 @@
-import { BadRequestException, ForbiddenException, Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { AdminRepository } from '../repository/admin.repository';
 import { encryptPassword } from 'src/utils/hashing.util';
 import { CreateAdminDto } from '../dto/create-admin.dto';
 import { RoleEnum } from 'src/common/constant/role.constant';
 import { FilterDto } from '../dto/filter.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
-import { JemaatService } from 'src/modules/jemaat/services/jemaat.service';
-import { IsNull } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AdminEntity } from '../entities/admin.entity';
 
 @Injectable()
 export class AdminService implements OnApplicationBootstrap {
   constructor(
+    @InjectRepository(AdminEntity)
+    private defaultAdminRepo: Repository<AdminEntity>,
+
     private readonly configService: ConfigService,
     private readonly adminRepository: AdminRepository,
-    private readonly jemaatService: JemaatService,
   ) {}
 
   async onApplicationBootstrap() {
-    const superadmin = await this.getByUsername('superadmin');
-    if (!superadmin) {
-      await this.create({
+    const ROLE_SUPERADMIN = await this.getByUsername('superadmin');
+    if (!ROLE_SUPERADMIN) {
+      this.defaultAdminRepo.save({
         name: 'superadmin',
         email: 'superadmin@mail.com',
-        password: 'Asdf1234.',
-        role: RoleEnum.SYSTEMADMIN,
+        password: encryptPassword('Asdf1234.'),
+        role: RoleEnum.ROLE_SYSTEMADMIN,
       });
     }
   }
@@ -66,8 +69,8 @@ export class AdminService implements OnApplicationBootstrap {
 
   async updatePassword(id: number, password: string) {
     const user = await this.findOne(id);
-    if (!user) throw new BadRequestException({ message: 'admin is not found!' });
-    if (user.name === RoleEnum.SYSTEMADMIN) throw new ForbiddenException();
+    if (!user) throw new BadRequestException('admin is not found!');
+    if (user.role === RoleEnum.ROLE_SYSTEMADMIN) throw new ForbiddenException();
 
     await this.adminRepository.save({
       ...user,
@@ -78,8 +81,8 @@ export class AdminService implements OnApplicationBootstrap {
 
   async resetPassword(id: number) {
     const user = await this.findOne(id);
-    if (!user) throw new BadRequestException({ message: 'admin is not found!' });
-    if (user.name === RoleEnum.SYSTEMADMIN) throw new ForbiddenException();
+    if (!user) throw new BadRequestException('admin is not found!');
+    if (user.role === RoleEnum.ROLE_SYSTEMADMIN) throw new ForbiddenException();
 
     await this.adminRepository.save({
       ...user,
@@ -90,8 +93,8 @@ export class AdminService implements OnApplicationBootstrap {
 
   async update(id: number, updateAdminDto: UpdateAdminDto) {
     const user = await this.findOne(id);
-    if (!user) throw new BadRequestException({ message: 'admin is not found!' });
-    if (user.name === RoleEnum.SYSTEMADMIN) throw new ForbiddenException();
+    if (!user) throw new BadRequestException('admin is not found!');
+    if (user.role === RoleEnum.ROLE_SYSTEMADMIN) throw new ForbiddenException();
 
     const updateUser = await this.adminRepository.save({
       ...user,
@@ -104,8 +107,8 @@ export class AdminService implements OnApplicationBootstrap {
 
   async remove(id: number, region_id?: number) {
     const user = await this.findOne(id);
-    if (!user) throw new BadRequestException({ message: 'admin is not found!' });
-    if (user.name === RoleEnum.SYSTEMADMIN) throw new ForbiddenException();
+    if (!user) throw new BadRequestException('admin is not found!');
+    if (user.role === RoleEnum.ROLE_SYSTEMADMIN) throw new ForbiddenException();
 
     await this.adminRepository.softRemove(user);
 

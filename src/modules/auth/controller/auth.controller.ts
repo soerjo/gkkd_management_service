@@ -17,21 +17,18 @@ export class AuthController {
   async create(@Body() createAuthDto: CreateAuthDto) {
     const user = await this.adminService.getByUsernameOrEmail(createAuthDto.usernameOrEmail);
 
-    if (!user) throw new BadRequestException({ message: 'username or email or password is not valid' });
+    if (!user) throw new BadRequestException('username or email or password is not valid');
 
-    if (!user.password && !user.temp_password) throw new BadRequestException({ message: 'user is not valid' });
+    if (!user.password && !user.temp_password) throw new BadRequestException('user is not valid');
 
     if (
       (user.password && !validatePassword(createAuthDto.password, user.password)) ||
       (user.temp_password && !validatePassword(createAuthDto.password, user.temp_password))
     )
-      throw new BadRequestException({ message: 'username or email or password is not valid' });
+      throw new BadRequestException('username or email or password is not valid');
 
     const result = this.authService.generateJwt(user);
 
-    return {
-      message: 'success',
-      data: result,
-    };
+    return result;
   }
 }

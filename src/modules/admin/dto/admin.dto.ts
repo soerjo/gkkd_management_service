@@ -12,7 +12,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { RoleEnum } from 'src/common/constant/role.constant';
 import { RegionEntity } from 'src/modules/region/entities/region.entity';
-import { JemaatEntity } from 'src/modules/jemaat/entities/jemaat.entity';
+import { JemaatEntity } from 'src/modules/jemaat/jemaat/entities/jemaat.entity';
 import { Type } from 'class-transformer';
 
 export class AdminDto {

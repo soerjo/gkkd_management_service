@@ -2,6 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { AdminEntity } from '../entities/admin.entity';
 import { FilterDto } from '../dto/filter.dto';
+import { RoleEnum } from 'src/common/constant/role.constant';
 
 @Injectable()
 export class AdminRepository extends Repository<AdminEntity> {
@@ -12,7 +13,7 @@ export class AdminRepository extends Repository<AdminEntity> {
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('user');
     queryBuilder.leftJoinAndSelect('user.region', 'region');
-    queryBuilder.where('user.name != :name', { name: 'superadmin' });
+    queryBuilder.where('user.role != :role', { role: RoleEnum.ROLE_SYSTEMADMIN });
 
     filter.search &&
       queryBuilder.andWhere('(user.name ILIKE :search OR user.email ILIKE :search)', { search: `%${filter.search}%` });
@@ -28,6 +29,7 @@ export class AdminRepository extends Repository<AdminEntity> {
     queryBuilder.orderBy(`user.created_at`, 'DESC');
     queryBuilder.skip((filter?.page - 1) * filter?.take);
 
+    console.log({ query: queryBuilder.getQuery() });
     const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getMany();
 

@@ -1,11 +1,16 @@
-import { MainEntityAbstract } from 'src/common/abstract/main-entity.abstract';
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'parameter' })
-export class ParameterEntity extends MainEntityAbstract {
+export class ParameterEntity {
+  @PrimaryColumn()
+  code: string;
+
   @Column()
   name: string;
 
   @Column()
   category: string;
+
+  @Column({ nullable: true })
+  description: string;
 }
