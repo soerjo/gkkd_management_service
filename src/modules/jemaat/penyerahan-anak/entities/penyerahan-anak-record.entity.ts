@@ -17,8 +17,16 @@ export class PenyerahanAnakEntity extends MainEntityAbstract {
   @Column()
   father_name: string;
 
+  @ManyToOne(() => JemaatEntity, (jemaat) => jemaat, { nullable: true })
+  @JoinColumn({ name: 'father_id' })
+  father: JemaatEntity;
+
   @Column()
   mother_name: string;
+
+  @ManyToOne(() => JemaatEntity, (jemaat) => jemaat, { nullable: true })
+  @JoinColumn({ name: 'mother_id' })
+  mother: JemaatEntity;
 
   @Column()
   pastor: string;
