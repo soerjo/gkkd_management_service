@@ -67,7 +67,7 @@ export class ReportPemuridanService {
         acc[month] = [];
       }
       acc[month].push({
-        total: data.total,
+        total: data.total_kehadiran_murid,
         date: data.date,
       });
       return acc;
