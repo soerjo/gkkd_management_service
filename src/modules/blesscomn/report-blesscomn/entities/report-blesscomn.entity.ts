@@ -19,7 +19,7 @@ export class ReportBlesscomnEntity extends MainEntityAbstract {
   @Column()
   new: number;
 
-  @ManyToOne((type) => BlesscomnEntity, (region) => region.report)
+  @ManyToOne((type) => BlesscomnEntity)
   @JoinColumn({ name: 'blesscomn_id' })
   blesscomn: BlesscomnEntity;
 }

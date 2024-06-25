@@ -12,7 +12,7 @@ export class BlesscomnEntity extends MainEntityAbstract {
   @Column()
   location: string;
 
-  @Column('simple-array', { select: false, default: [] })
+  @Column('simple-array', { default: [] })
   members: string[];
 
   @ManyToOne(() => JemaatEntity)
@@ -22,7 +22,4 @@ export class BlesscomnEntity extends MainEntityAbstract {
   @ManyToOne(() => RegionEntity, (region) => region.blesscomn)
   @JoinColumn({ name: 'region_id' })
   region: RegionEntity;
-
-  @OneToMany(() => ReportBlesscomnEntity, (report) => report.blesscomn)
-  report: ReportBlesscomnEntity[];
 }

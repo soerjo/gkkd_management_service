@@ -11,7 +11,7 @@ export class CermonReportEntity extends MainEntityAbstract {
   @JoinColumn({ name: 'cermon_schedule_id' })
   cermon_schedule: CermonScheduleEntity;
 
-  @Column()
+  @Column({ type: 'date' })
   date: Date;
 
   @Column()
