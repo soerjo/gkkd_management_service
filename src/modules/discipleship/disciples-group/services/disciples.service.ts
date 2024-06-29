@@ -1,18 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePemuridanDto } from '../dto/create-pemuridan.dto';
 import { UpdatePemuridanDto } from '../dto/update-pemuridan.dto';
-import { DisciplesRepository } from '../repository/disciples.repository';
+import { DisciplesGroupRepository } from '../repository/disciples.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { RegionService } from 'src/modules/region/services/region.service';
 import { JemaatService } from 'src/modules/jemaat/jemaat/services/jemaat.service';
 import { IsNull } from 'typeorm';
 
 @Injectable()
-export class DisciplesService {
+export class DisciplesGroupService {
   constructor(
-    private readonly pemuridanRepository: DisciplesRepository,
+    private readonly pemuridanRepository: DisciplesGroupRepository,
     private readonly regionService: RegionService,
-    private readonly jemaatService: JemaatService,
+    // private readonly jemaatService: JemaatService,
   ) {}
 
   async create(createPemuridanDto: CreatePemuridanDto) {

@@ -8,8 +8,8 @@ import { RoleEnum } from 'src/common/constant/role.constant';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 
-@ApiTags('Cermon Report')
-@Controller('report-cermon')
+@ApiTags('Cermon')
+@Controller('cermon/report')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 export class ReportIbadahController {

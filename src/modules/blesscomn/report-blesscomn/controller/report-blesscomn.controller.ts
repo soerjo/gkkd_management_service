@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  BadRequestException,
+} from '@nestjs/common';
 import { ReportBlesscomnService } from '../services/report-blesscomn.service';
 import { CreateReportBlesscomnDto } from '../dto/create-report-blesscomn.dto';
 import { UpdateReportBlesscomnDto } from '../dto/update-report-blesscomn.dto';
@@ -13,10 +24,10 @@ import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
 import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
 import { BlesscomnService } from 'src/modules/blesscomn/blesscomn/services/blesscomn.service';
 
-@ApiTags('Blesscomn Report')
+@ApiTags('Blesscomn')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('/report/blesscomn')
+@Controller('/blesscomn/report')
 export class ReportBlesscomnController {
   constructor(
     private readonly reportBlesscomnService: ReportBlesscomnService,
@@ -42,6 +53,7 @@ export class ReportBlesscomnController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
+    console.log('get report blesscomn !');
     if (jwtPayload.role !== RoleEnum.ROLE_SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
 
     if (jwtPayload.jemaat_id) {
@@ -76,9 +88,11 @@ export class ReportBlesscomnController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findOne(@Param('id') id: number) {
+    const result = await this.reportBlesscomnService.findOne(id);
+    if (!result) throw new BadRequestException('blesscomn report is not found!');
     return {
       message: 'success',
-      data: await this.reportBlesscomnService.findOne(id),
+      data: result,
     };
   }
 

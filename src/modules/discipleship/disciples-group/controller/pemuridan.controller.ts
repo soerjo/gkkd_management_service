@@ -20,14 +20,14 @@ import { Roles } from 'src/common/decorator/role.decorator';
 import { RolesGuard } from 'src/common/guard/role.guard';
 import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
 import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
-import { DisciplesService } from '../services/disciples.service';
+import { DisciplesGroupService } from '../services/disciples.service';
 
 @ApiTags('Pemuridan')
 @Controller('pemuridan')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-export class DisciplesController {
-  constructor(private readonly pemuridanService: DisciplesService) {}
+export class DisciplesGroupController {
+  constructor(private readonly pemuridanService: DisciplesGroupService) {}
 
   @Post()
   @UseGuards(RolesGuard)

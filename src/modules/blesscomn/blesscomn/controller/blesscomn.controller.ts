@@ -56,6 +56,7 @@ export class BlesscomnController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findOne(@Param('id') id: number) {
+    console.log('get blesscomn by id: ' + id);
     const result = await this.blesscomnService.findOne(id);
     if (!result) throw new BadRequestException('blesscomn is not found!');
 

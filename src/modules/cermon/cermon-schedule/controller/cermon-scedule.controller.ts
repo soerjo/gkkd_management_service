@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { JadwalIbadahService } from '../services/jadwal-ibadah.service';
 import { CreateJadwalIbadahDto } from '../dto/create-jadwal-ibadah.dto';
 import { UpdateJadwalIbadahDto } from '../dto/update-jadwal-ibadah.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('jadwal-ibadah')
+@ApiTags('Cermon')
+@Controller('cermon')
 export class JadwalIbadahController {
   constructor(private readonly jadwalIbadahService: JadwalIbadahService) {}
 

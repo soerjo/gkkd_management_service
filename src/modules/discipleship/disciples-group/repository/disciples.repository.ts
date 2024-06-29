@@ -4,7 +4,7 @@ import { FilterDto } from '../dto/filter.dto';
 import { DisciplesGroupEntity } from '../entities/disciples-group.entity';
 
 @Injectable()
-export class DisciplesRepository extends Repository<DisciplesGroupEntity> {
+export class DisciplesGroupRepository extends Repository<DisciplesGroupEntity> {
   constructor(private dataSource: DataSource) {
     super(DisciplesGroupEntity, dataSource.createEntityManager());
   }

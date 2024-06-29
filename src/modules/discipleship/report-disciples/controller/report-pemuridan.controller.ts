@@ -24,15 +24,12 @@ import { Roles } from 'src/common/decorator/role.decorator';
 import { RolesGuard } from 'src/common/guard/role.guard';
 import { DisciplesRepository } from 'src/modules/discipleship/disciples/repository/disciples.repository';
 
-@ApiTags('Pemuridan Report')
+@ApiTags('Pemuridan')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('/report/pemuridan')
 export class ReportPemuridanController {
-  constructor(
-    private readonly reportPemuridanService: ReportPemuridanService,
-    private readonly pemuridanRepository: DisciplesRepository,
-  ) {}
+  constructor(private readonly reportPemuridanService: ReportPemuridanService) {}
 
   @Post()
   @UseGuards(RolesGuard)

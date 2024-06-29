@@ -12,7 +12,7 @@ export class DisciplesService {
   constructor(
     private readonly pemuridanRepository: DisciplesRepository,
     private readonly regionService: RegionService,
-    private readonly jemaatService: JemaatService,
+    // private readonly jemaatService: JemaatService,
   ) {}
 
   async create(createPemuridanDto: CreatePemuridanDto) {
