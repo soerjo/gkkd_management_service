@@ -19,15 +19,6 @@ import { MainJemaatModule } from './modules/jemaat/jemaat.module';
 import { MainCermonModule } from './modules/cermon/ibadah.module';
 import { MainBlesscomnModule } from './modules/blesscomn/blesscomn.module';
 import { MainDiscipleshipModule } from './modules/discipleship/discipleship.module';
-import { MemberModule } from './modules/pastor/member/member.module';
-import { OrganizationModule } from './modules/pastor/organization/organization.module';
-import { MissionModule } from './modules/mission/mission/mission.module';
-import { MissionerModule } from './modules/mission/missioner/missioner.module';
-import { DocumentationModule } from './modules/mission/documentation/documentation.module';
-import { OrganizationModule } from './modules/mission/organization/organization.module';
-import { EmployeeModule } from './modules/office/employee/employee.module';
-import { ThinkModule } from './modules/office/think/think.module';
-import { OrganizationModule } from './modules/office/organization/organization.module';
 
 @Module({
   imports: [
@@ -51,13 +42,6 @@ import { OrganizationModule } from './modules/office/organization/organization.m
     MainCermonModule,
     MainBlesscomnModule,
     MainDiscipleshipModule,
-    MemberModule,
-    OrganizationModule,
-    MissionModule,
-    MissionerModule,
-    DocumentationModule,
-    EmployeeModule,
-    ThinkModule,
     // other module...
   ],
   providers: [

@@ -29,7 +29,6 @@ export class AdminRepository extends Repository<AdminEntity> {
     queryBuilder.orderBy(`user.created_at`, 'DESC');
     queryBuilder.skip((filter?.page - 1) * filter?.take);
 
-    console.log({ query: queryBuilder.getQuery() });
     const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getMany();
 
