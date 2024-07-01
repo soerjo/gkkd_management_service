@@ -64,6 +64,7 @@ export class AdminService implements OnApplicationBootstrap {
     return this.adminRepository.findOne({
       where: { id: id ?? IsNull(), region: { id: region_id } },
       relations: { region: true },
+      withDeleted: true,
     });
   }
 
@@ -111,6 +112,14 @@ export class AdminService implements OnApplicationBootstrap {
     if (user.role === RoleEnum.ROLE_SYSTEMADMIN) throw new ForbiddenException();
 
     await this.adminRepository.softRemove(user);
+
+    return user.id;
+  }
+
+  async restore(id: number) {
+    const user = await this.findOne(id);
+    if (!user) throw new BadRequestException('regions is not found');
+    await this.adminRepository.recover(user);
 
     return user.id;
   }

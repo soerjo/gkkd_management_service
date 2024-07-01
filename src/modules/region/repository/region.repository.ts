@@ -11,6 +11,8 @@ export class RegionRepository extends Repository<RegionEntity> {
 
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('region');
+    queryBuilder.leftJoinAndSelect('region.parent', 'parent');
+    queryBuilder.withDeleted();
 
     filter.search &&
       queryBuilder.andWhere('(region.name ILIKE :search OR region.alt_name ILIKE :search)', {
@@ -21,7 +23,22 @@ export class RegionRepository extends Repository<RegionEntity> {
     queryBuilder.orderBy(`region.created_at`, 'DESC');
     queryBuilder.skip((filter?.page - 1) * filter?.take);
 
-    const entities = await queryBuilder.getMany();
+    queryBuilder.select([
+      'region.id as id',
+      'region.name as name',
+      'region.alt_name as alt_name',
+      'region.location as location',
+      'region.parent_id as parent_id',
+      'parent.name as parent',
+      `
+      CASE 
+        WHEN region.deleted_at IS NULL THEN TRUE 
+        ELSE FALSE 
+      END AS status
+      `,
+    ]);
+
+    const entities = await queryBuilder.getRawMany();
     const itemCount = await queryBuilder.getCount();
 
     const meta = {
@@ -32,5 +49,29 @@ export class RegionRepository extends Repository<RegionEntity> {
     };
 
     return { entities, meta };
+  }
+
+  async getOneById(id: number) {
+    const queryBuilder = this.createQueryBuilder('region');
+    queryBuilder.leftJoinAndSelect('region.parent', 'parent');
+    queryBuilder.withDeleted();
+
+    queryBuilder.select([
+      'region.id as id',
+      'region.name as name',
+      'region.alt_name as alt_name',
+      'region.location as location',
+      'region.parent_id as parent_id',
+      'parent.name as parent',
+      `
+      CASE 
+        WHEN region.deleted_at IS NULL THEN TRUE 
+        ELSE FALSE 
+      END AS status
+      `,
+    ]);
+
+    const entities = await queryBuilder.getRawOne();
+    return entities;
   }
 }

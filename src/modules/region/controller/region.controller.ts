@@ -60,4 +60,11 @@ export class RegionController {
   async remove(@Param('id') id: number) {
     return await this.regionService.remove(id);
   }
+
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN])
+  @Post('/restore/:id')
+  async restore(@Param('id') id: number) {
+    return await this.regionService.restore(id);
+  }
 }

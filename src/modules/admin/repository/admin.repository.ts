@@ -14,6 +14,7 @@ export class AdminRepository extends Repository<AdminEntity> {
     const queryBuilder = this.createQueryBuilder('user');
     queryBuilder.leftJoinAndSelect('user.region', 'region');
     queryBuilder.where('user.role != :role', { role: RoleEnum.ROLE_SYSTEMADMIN });
+    queryBuilder.withDeleted();
 
     filter.search &&
       queryBuilder.andWhere('(user.name ILIKE :search OR user.email ILIKE :search)', { search: `%${filter.search}%` });
@@ -29,8 +30,29 @@ export class AdminRepository extends Repository<AdminEntity> {
     queryBuilder.orderBy(`user.created_at`, 'DESC');
     queryBuilder.skip((filter?.page - 1) * filter?.take);
 
+    queryBuilder.select([
+      'user.id as id',
+      'user.name as name',
+      'user.email as email',
+      'user.phone as phone',
+      'user.role as role',
+      // 'region.name: as region',
+      `
+      json_build_object(
+        'id', region.id,
+        'name', region.name
+      ) AS region
+      `,
+      `
+      CASE 
+        WHEN user.deleted_at IS NULL THEN TRUE 
+        ELSE FALSE 
+      END AS status
+      `,
+    ]);
+
+    const entities = await queryBuilder.getRawMany();
     const itemCount = await queryBuilder.getCount();
-    const entities = await queryBuilder.getMany();
 
     const meta = {
       page: filter?.page || 0,

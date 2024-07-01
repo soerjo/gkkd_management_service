@@ -3,13 +3,14 @@ dotenv.config();
 
 import { ConfigService, registerAs } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
+
 const configService = new ConfigService();
 
-const config = {
+const config: DataSourceOptions = {
   url: configService.get(`DATABASE_URL`),
-  type: configService.get(`DATABASE_TYPE`),
+  type: 'postgres',
   entities: [__dirname + '/../modules/**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+  synchronize: configService.get(`NODE_ENV`) === 'development' || false,
 };
 
 export default registerAs('typeorm', () => config);

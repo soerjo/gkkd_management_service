@@ -14,23 +14,37 @@ export class RegionService {
     return false;
   }
 
-  async create(createRegionDto: CreateRegionDto) {
-    const isRegionNameExist = await this.regionRepository.findOneBy({ name: createRegionDto.name });
-    if (isRegionNameExist) throw new BadRequestException('Region already exists!');
+  async create(dto: CreateRegionDto) {
+    const existRegion = await this.regionRepository.findOne({
+      where: { name: dto.name },
+      withDeleted: true,
+    });
+    if (existRegion) throw new BadRequestException('Region already exists!');
 
-    const region = this.regionRepository.create(createRegionDto);
+    if (dto.parent_id) {
+      if (dto.parent_id === existRegion.id) throw new BadRequestException('can not set it self as a parent');
+      const parentRegion = await this.regionRepository.findOne({
+        where: { id: dto.parent_id },
+      });
+      if (!parentRegion) throw new BadRequestException('Prent region not found!');
+    }
+
+    const region = this.regionRepository.create(dto);
     return this.regionRepository.save(region);
   }
 
   getOneById(id: number) {
-    return this.regionRepository.findOneBy({ id: id ?? IsNull() });
+    return this.regionRepository.findOne({
+      where: { id: id ?? IsNull() },
+      relations: { parent: true },
+      withDeleted: true,
+    });
   }
 
   getManyByIds(ids: number[]) {
     return this.regionRepository.find({
-      where: {
-        id: In(ids),
-      },
+      where: { id: In(ids) },
+      withDeleted: true,
     });
   }
 
@@ -38,13 +52,23 @@ export class RegionService {
     return this.regionRepository.getAll(filter);
   }
 
-  async update(id: number, updateRegionDto: UpdateRegionDto) {
-    const region = await this.getOneById(id);
-    if (!region) throw new BadRequestException('regions is not found');
+  async update(id: number, dto: UpdateRegionDto) {
+    const existRegion = await this.getOneById(id);
+    if (!existRegion) throw new BadRequestException('regions is not found');
+
+    if (dto.parent_id === existRegion.id) throw new BadRequestException('can not set it self as a parent');
+    const parentRegion = await this.regionRepository.findOne({
+      where: { id: dto.parent_id },
+    });
+    if (!parentRegion) throw new BadRequestException('Prent region not found!');
+    if (!dto.parent_id) {
+      existRegion.parent_id = null;
+      existRegion.parent = null;
+    }
 
     const updateRegion = await this.regionRepository.save({
-      ...region,
-      ...updateRegionDto,
+      ...existRegion,
+      ...dto,
     });
 
     return updateRegion.id;
@@ -55,6 +79,15 @@ export class RegionService {
     if (!region) throw new BadRequestException('regions is not found');
 
     await this.regionRepository.softRemove(region);
+
+    return region.id;
+  }
+
+  async restore(id: number) {
+    const region = await this.getOneById(id);
+    if (!region) throw new BadRequestException('regions is not found');
+
+    await this.regionRepository.recover(region);
 
     return region.id;
   }

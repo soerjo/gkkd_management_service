@@ -129,4 +129,15 @@ export class AdminController {
 
     return await this.adminService.remove(id);
   }
+
+  @Post('/restore/:id')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SYSTEMADMIN])
+  async restore(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
+    const user = await this.adminService.findOne(id, jwtPayload?.region?.id);
+    if (!user) throw new BadRequestException('admin is not found!');
+    if (user.id === jwtPayload.id) throw new ForbiddenException();
+
+    return await this.adminService.restore(id);
+  }
 }

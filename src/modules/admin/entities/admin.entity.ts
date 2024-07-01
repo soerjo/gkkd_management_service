@@ -13,10 +13,13 @@ export class AdminEntity extends MainEntityAbstract {
   @Column({ unique: false })
   email: string;
 
+  @Column({ nullable: true })
+  phone?: string;
+
   @Column({ enum: RoleEnum, nullable: true })
   role: RoleEnum;
 
-  @ManyToOne((type) => RegionEntity, (region) => region.admin)
+  @ManyToOne(() => RegionEntity, (region) => region.admin)
   @JoinColumn({ name: 'region_id' })
   region: RegionEntity;
 

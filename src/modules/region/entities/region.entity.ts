@@ -14,6 +14,9 @@ export class RegionEntity extends MainEntityAbstract {
   @Column()
   location: string;
 
+  @Column({ nullable: true })
+  parent_id?: number;
+
   @ManyToOne(() => RegionEntity, { nullable: true })
   @JoinColumn({ name: 'parent_id' })
   parent: RegionEntity;
