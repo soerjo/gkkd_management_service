@@ -19,6 +19,7 @@ import { MainJemaatModule } from './modules/jemaat/jemaat.module';
 import { MainCermonModule } from './modules/cermon/ibadah.module';
 import { MainBlesscomnModule } from './modules/blesscomn/blesscomn.module';
 import { MainDiscipleshipModule } from './modules/discipleship/discipleship.module';
+import { ExampleModule } from './modules/example/example.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { MainDiscipleshipModule } from './modules/discipleship/discipleship.modu
     MainCermonModule,
     MainBlesscomnModule,
     MainDiscipleshipModule,
+    ExampleModule,
     // other module...
   ],
   providers: [
