@@ -2,14 +2,13 @@ import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
 import typeormConfig from 'src/config/typeorm.config';
 import appConfig from 'src/config/app.config';
 
 import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/auth/auth.module';
 
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { FilesModule } from './modules/files/files.module';
 import { ParameterModule } from './modules/parameter/parameter.module';
 import { RegionModule } from './modules/region/region.module';
