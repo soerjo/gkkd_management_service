@@ -34,7 +34,7 @@ const configs: IAppConfig = {
 
 const schema = Joi.object<IAppConfig>({
   NODE_ENV: Joi.string().valid('development', 'production', 'test', 'local').required(),
-  PORT: Joi.number().required(),
+  PORT: Joi.number().optional(),
   TZ: Joi.string().optional(),
   TEMP_PASSWORD: Joi.string().required(),
   JWT_SECRET_KEY: Joi.string().required(),
