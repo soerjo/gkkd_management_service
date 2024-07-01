@@ -1,19 +1,7 @@
-import {
-  IsArray,
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-  MinLength,
-  ValidateNested,
-} from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { RoleEnum } from 'src/common/constant/role.constant';
-import { RegionEntity } from 'src/modules/region/entities/region.entity';
-import { JemaatEntity } from 'src/modules/jemaat/jemaat/entities/jemaat.entity';
-import { Type } from 'class-transformer';
+import { RoleEnum } from '../../../common/constant/role.constant';
+import { RegionEntity } from '../../../modules/region/entities/region.entity';
 
 export class AdminDto {
   @ApiProperty()

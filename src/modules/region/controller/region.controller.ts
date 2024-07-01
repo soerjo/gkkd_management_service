@@ -15,11 +15,11 @@ import { CreateRegionDto } from '../dto/create-region.dto';
 import { UpdateRegionDto } from '../dto/update-region.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../common/guard/jwt-auth.guard';
 import { FilterDto } from '../dto/filter.dto';
-import { RolesGuard } from 'src/common/guard/role.guard';
-import { RoleEnum } from 'src/common/constant/role.constant';
-import { Roles } from 'src/common/decorator/role.decorator';
+import { RolesGuard } from '../../../common/guard/role.guard';
+import { RoleEnum } from '../../../common/constant/role.constant';
+import { Roles } from '../../../common/decorator/role.decorator';
 
 @ApiTags('Region')
 @ApiBearerAuth()

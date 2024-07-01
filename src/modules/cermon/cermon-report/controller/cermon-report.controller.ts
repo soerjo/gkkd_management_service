@@ -2,11 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { ReportIbadahService } from '../services/cermon-report.service';
 import { CreateReportIbadahDto } from '../dto/create-report-ibadah.dto';
 import { UpdateReportIbadahDto } from '../dto/update-report-ibadah.dto';
-import { RolesGuard } from 'src/common/guard/role.guard';
-import { Roles } from 'src/common/decorator/role.decorator';
-import { RoleEnum } from 'src/common/constant/role.constant';
+import { RolesGuard } from '../../../../common/guard/role.guard';
+import { Roles } from '../../../../common/decorator/role.decorator';
+import { RoleEnum } from '../../../../common/constant/role.constant';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
 
 @ApiTags('Cermon')
 @Controller('cermon/report')

@@ -1,5 +1,5 @@
-import { MainEntityAbstract } from 'src/common/abstract/main-entity.abstract';
-import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
+import { RegionEntity } from '../../../../modules/region/entities/region.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'cermon_schedule' })

@@ -1,7 +1,7 @@
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
-import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { GenderEnum } from '../../../../common/constant/gender.constant';
-import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { RegionEntity } from '../../../../modules/region/entities/region.entity';
 
 @Entity({ name: 'jemaat' })
 export class JemaatEntity extends MainEntityAbstract {

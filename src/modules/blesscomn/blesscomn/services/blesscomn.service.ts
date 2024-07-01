@@ -3,8 +3,8 @@ import { CreateBlesscomnDto } from '../dto/create-blesscomn.dto';
 import { UpdateBlesscomnDto } from '../dto/update-blesscomn.dto';
 import { BlesscomnRepository } from '../repository/blesscomn.repository';
 import { FilterDto } from '../dto/filter.dto';
-import { RegionService } from 'src/modules/region/services/region.service';
-import { JemaatService } from 'src/modules/jemaat/jemaat/services/jemaat.service';
+import { RegionService } from '../../../../modules/region/services/region.service';
+import { JemaatService } from '../../../../modules/jemaat/jemaat/services/jemaat.service';
 import { IsNull } from 'typeorm';
 
 export interface IPercobaan {

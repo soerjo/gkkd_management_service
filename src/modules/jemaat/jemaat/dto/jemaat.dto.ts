@@ -10,11 +10,9 @@ import {
   IsNumberString,
   IsOptional,
   IsString,
-  IsUUID,
   Min,
 } from 'class-validator';
 import { GenderEnum } from 'src/common/constant/gender.constant';
-import { RegionEntity } from 'src/modules/region/entities/region.entity';
 
 export class JemaatDto {
   @ApiProperty()

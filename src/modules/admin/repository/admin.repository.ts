@@ -2,7 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { AdminEntity } from '../entities/admin.entity';
 import { FilterDto } from '../dto/filter.dto';
-import { RoleEnum } from 'src/common/constant/role.constant';
+import { RoleEnum } from '../../../common/constant/role.constant';
 
 @Injectable()
 export class AdminRepository extends Repository<AdminEntity> {

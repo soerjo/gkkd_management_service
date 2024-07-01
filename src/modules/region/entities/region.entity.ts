@@ -1,6 +1,6 @@
 import { MainEntityAbstract } from '../../../common/abstract/main-entity.abstract';
 import { AdminEntity } from '../../admin/entities/admin.entity';
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BlesscomnEntity } from '../../blesscomn/blesscomn/entities/blesscomn.entity';
 
 @Entity({ name: 'region' })

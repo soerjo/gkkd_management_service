@@ -1,4 +1,4 @@
-import { MainEntityAbstract } from 'src/common/abstract/main-entity.abstract';
+import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { DisciplesGroupEntity } from '../../disciples-group/entities/disciples-group.entity';
 

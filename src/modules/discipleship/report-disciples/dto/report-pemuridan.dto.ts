@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsDateString, IsNotEmpty, IsNumber, IsString, IsUUID, Min } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
 export class ReportPemuridanDto {
   @ApiProperty()

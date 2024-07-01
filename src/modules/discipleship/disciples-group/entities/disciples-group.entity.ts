@@ -1,5 +1,5 @@
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { DisciplesEntity } from '../../disciples/entities/disciples.entity';
 
 @Entity({ name: 'disciples_group' })

@@ -14,15 +14,15 @@ import { ReportBlesscomnService } from '../services/report-blesscomn.service';
 import { CreateReportBlesscomnDto } from '../dto/create-report-blesscomn.dto';
 import { UpdateReportBlesscomnDto } from '../dto/update-report-blesscomn.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
 
 import { FilterDto } from '../dto/filter.dto';
-import { RolesGuard } from 'src/common/guard/role.guard';
-import { Roles } from 'src/common/decorator/role.decorator';
-import { RoleEnum } from 'src/common/constant/role.constant';
-import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
-import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
-import { BlesscomnService } from 'src/modules/blesscomn/blesscomn/services/blesscomn.service';
+import { RolesGuard } from '../../../../common/guard/role.guard';
+import { Roles } from '../../../../common/decorator/role.decorator';
+import { RoleEnum } from '../../../../common/constant/role.constant';
+import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface';
+import { CurrentUser } from '../../../../common/decorator/jwt-payload.decorator';
+import { BlesscomnService } from '../../../../modules/blesscomn/blesscomn/services/blesscomn.service';
 
 @ApiTags('Blesscomn')
 @ApiBearerAuth()

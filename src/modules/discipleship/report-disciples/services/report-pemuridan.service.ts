@@ -4,8 +4,8 @@ import { UpdateReportPemuridanDto } from '../dto/update-report-pemuridan.dto';
 import { ReportPemuridanRepository } from '../repository/report-pemuridan.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { IsNull } from 'typeorm';
-import { getWeeksInMonth } from 'src/utils/week-in-month.utils';
-import { PemuridanStatusEnum } from 'src/common/constant/pemuridan-status.constant';
+import { getWeeksInMonth } from '../../../../utils/week-in-month.utils';
+import { PemuridanStatusEnum } from '../../../../common/constant/pemuridan-status.constant';
 import { DisciplesService } from '../../disciples/services/disciples.service';
 
 @Injectable()

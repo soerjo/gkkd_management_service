@@ -2,8 +2,8 @@ import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import typeormConfig from 'src/config/typeorm.config';
-import appConfig from 'src/config/app.config';
+import typeormConfig from './config/typeorm.config';
+import appConfig from './config/app.config';
 
 import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/auth/auth.module';

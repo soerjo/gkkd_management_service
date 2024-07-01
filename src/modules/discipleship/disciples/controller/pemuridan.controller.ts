@@ -13,13 +13,13 @@ import {
 import { CreatePemuridanDto } from '../dto/create-pemuridan.dto';
 import { UpdatePemuridanDto } from '../dto/update-pemuridan.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
 import { FilterDto } from '../dto/filter.dto';
-import { RoleEnum } from 'src/common/constant/role.constant';
-import { Roles } from 'src/common/decorator/role.decorator';
-import { RolesGuard } from 'src/common/guard/role.guard';
-import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
-import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
+import { RoleEnum } from '../../../../common/constant/role.constant';
+import { Roles } from '../../../../common/decorator/role.decorator';
+import { RolesGuard } from '../../../../common/guard/role.guard';
+import { CurrentUser } from '../../../../common/decorator/jwt-payload.decorator';
+import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface';
 import { DisciplesService } from '../services/disciples.service';
 
 @ApiTags('Pemuridan')

@@ -1,4 +1,4 @@
-import { MainEntityAbstract } from 'src/common/abstract/main-entity.abstract';
+import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { JemaatEntity } from '../../jemaat/entities/jemaat.entity';
 

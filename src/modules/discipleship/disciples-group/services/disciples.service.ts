@@ -4,8 +4,6 @@ import { UpdatePemuridanDto } from '../dto/update-pemuridan.dto';
 import { DisciplesGroupRepository } from '../repository/disciples.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { RegionService } from 'src/modules/region/services/region.service';
-import { JemaatService } from 'src/modules/jemaat/jemaat/services/jemaat.service';
-import { IsNull } from 'typeorm';
 
 @Injectable()
 export class DisciplesGroupService {

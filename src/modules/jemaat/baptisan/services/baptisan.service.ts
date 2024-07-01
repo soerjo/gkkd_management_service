@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateBaptisanDto } from '../dto/create-baptisan.dto';
 import { UpdateBaptisanDto } from '../dto/update-baptisan.dto';
 import { JemaatService } from '../../jemaat/services/jemaat.service';

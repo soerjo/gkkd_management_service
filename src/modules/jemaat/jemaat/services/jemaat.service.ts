@@ -4,7 +4,7 @@ import { UpdateJemaatDto } from '../dto/update-jemaat.dto';
 import { JemaatRepository } from '../repository/jemaat.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { In, IsNull } from 'typeorm';
-import { RegionService } from 'src/modules/region/services/region.service';
+import { RegionService } from '../../../../modules/region/services/region.service';
 
 @Injectable()
 export class JemaatService {

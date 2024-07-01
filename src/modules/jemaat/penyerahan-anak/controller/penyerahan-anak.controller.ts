@@ -14,13 +14,13 @@ import { PenyerahanAnakService } from '../services/penyerahan-anak.service';
 import { CreatePenyerahanAnakDto } from '../dto/create-penyerahan-anak.dto';
 import { UpdatePenyerahanAnakDto } from '../dto/update-penyerahan-anak.dto';
 import { FilterDto } from '../dto/filter.dto';
-import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
-import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
-import { RolesGuard } from 'src/common/guard/role.guard';
-import { Roles } from 'src/common/decorator/role.decorator';
-import { RoleEnum } from 'src/common/constant/role.constant';
+import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface';
+import { CurrentUser } from '../../../../common/decorator/jwt-payload.decorator';
+import { RolesGuard } from '../../../../common/guard/role.guard';
+import { Roles } from '../../../../common/decorator/role.decorator';
+import { RoleEnum } from '../../../../common/constant/role.constant';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
 
 @ApiTags('Penyerahan Anak')
 @Controller('penyerahan-anak')

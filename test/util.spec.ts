@@ -1,4 +1,4 @@
-import { getWeeksInMonth } from 'src/utils/week-in-month.utils';
+import { getWeeksInMonth } from '../src/utils/week-in-month.utils';
 
 describe('AppController (e2e)', () => {
   it('get week in month func', () => {

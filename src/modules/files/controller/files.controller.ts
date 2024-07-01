@@ -1,8 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { CreateFileDto } from '../dto/create-file.dto';
-import { UpdateFileDto } from '../dto/update-file.dto';
+import { Controller, Get, Param, Delete, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../common/guard/jwt-auth.guard';
 import { FilesService } from '../services/files.service';
 
 @ApiTags('Files')

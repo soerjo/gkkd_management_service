@@ -1,7 +1,6 @@
 import { RegionEntity } from '../../../region/entities/region.entity';
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { ReportBlesscomnEntity } from '../../report-blesscomn/entities/report-blesscomn.entity';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { JemaatEntity } from '../../../jemaat/jemaat/entities/jemaat.entity';
 
 @Entity({ name: 'blesscomn' })

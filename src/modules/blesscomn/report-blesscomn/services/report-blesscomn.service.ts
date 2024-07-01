@@ -3,7 +3,7 @@ import { CreateReportBlesscomnDto } from '../dto/create-report-blesscomn.dto';
 import { UpdateReportBlesscomnDto } from '../dto/update-report-blesscomn.dto';
 import { ReportBlesscomnRepository } from '../repository/report-blesscomn.repository';
 import { FilterDto } from '../dto/filter.dto';
-import { BlesscomnService } from 'src/modules/blesscomn/blesscomn/services/blesscomn.service';
+import { BlesscomnService } from '../../../../modules/blesscomn/blesscomn/services/blesscomn.service';
 
 @Injectable()
 export class ReportBlesscomnService {

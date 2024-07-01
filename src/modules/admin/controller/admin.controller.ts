@@ -10,21 +10,20 @@ import {
   BadRequestException,
   UseGuards,
   ForbiddenException,
-  SerializeOptions,
 } from '@nestjs/common';
 import { AdminService } from '../services/admin.service';
 import { CreateAdminDto } from '../dto/create-admin.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
 
 import { FilterDto } from '../dto/filter.dto';
-import { RegionService } from 'src/modules/region/services/region.service';
+import { RegionService } from '../../../modules/region/services/region.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
-import { Roles } from 'src/common/decorator/role.decorator';
-import { RoleEnum } from 'src/common/constant/role.constant';
-import { RolesGuard } from 'src/common/guard/role.guard';
-import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
-import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
+import { JwtAuthGuard } from '../../../common/guard/jwt-auth.guard';
+import { Roles } from '../../../common/decorator/role.decorator';
+import { RoleEnum } from '../../../common/constant/role.constant';
+import { RolesGuard } from '../../../common/guard/role.guard';
+import { IJwtPayload } from '../../../common/interface/jwt-payload.interface';
+import { CurrentUser } from '../../../common/decorator/jwt-payload.decorator';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 
 @ApiTags('Admin')

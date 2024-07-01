@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMinSize, IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { BooksEnum } from 'src/common/constant/books.constant';
-import { JemaatEntity } from 'src/modules/jemaat/jemaat/entities/jemaat.entity';
-import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { ArrayMinSize, IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { BooksEnum } from '../../../../common/constant/books.constant';
+import { JemaatEntity } from '../../../../modules/jemaat/jemaat/entities/jemaat.entity';
+import { RegionEntity } from '../../../../modules/region/entities/region.entity';
 
 export class PemuridanDto {
   name?: string;

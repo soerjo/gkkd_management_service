@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { JemaatEntity } from 'src/modules/jemaat/jemaat/entities/jemaat.entity';
+import { IsOptional, IsString } from 'class-validator';
+import { PaginationDto } from '../../../../common/dto/pagination.dto';
+import { JemaatEntity } from '../../../../modules/jemaat/jemaat/entities/jemaat.entity';
 
 export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()

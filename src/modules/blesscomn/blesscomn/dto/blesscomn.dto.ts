@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { JemaatEntity } from 'src/modules/jemaat/jemaat/entities/jemaat.entity';
-import { RegionEntity } from 'src/modules/region/entities/region.entity';
-import { IsAtLeastOnePropertyNotEmpty } from '../decorator/notEmpty-validator.decorator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { JemaatEntity } from '../../../../modules/jemaat/jemaat/entities/jemaat.entity';
+import { RegionEntity } from '../../../../modules/region/entities/region.entity';
 
 export class BlesscomnDto {
   @ApiProperty()

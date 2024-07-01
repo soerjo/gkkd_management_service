@@ -2,8 +2,8 @@ import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { CreateAuthDto } from '../dto/create-auth.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { validatePassword } from 'src/utils/hashing.util';
-import { AdminService } from 'src/modules/admin/services/admin.service';
+import { validatePassword } from '../../../utils/hashing.util';
+import { AdminService } from '../../../modules/admin/services/admin.service';
 
 @ApiTags('Auth')
 @Controller('auth')

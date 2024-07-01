@@ -13,14 +13,14 @@ import {
 import { MaritalService } from '../services/marital.service';
 import { CreateMaritalDto } from '../dto/create-marital.dto';
 import { UpdateMaritalDto } from '../dto/update-marital.dto';
-import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
+import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface';
 import { FilterDto } from '../dto/filter.dto';
-import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
-import { RolesGuard } from 'src/common/guard/role.guard';
-import { RoleEnum } from 'src/common/constant/role.constant';
-import { Roles } from 'src/common/decorator/role.decorator';
+import { CurrentUser } from '../../../../common/decorator/jwt-payload.decorator';
+import { RolesGuard } from '../../../../common/guard/role.guard';
+import { RoleEnum } from '../../../../common/constant/role.constant';
+import { Roles } from '../../../../common/decorator/role.decorator';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
 
 @ApiTags('Marital')
 @Controller('marital')
