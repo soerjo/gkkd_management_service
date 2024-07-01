@@ -4,8 +4,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { SwaggerTheme, SwaggerThemeName } from 'swagger-themes';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
-import * as compression from 'compression';
-import * as morgan from 'morgan';
 import { AdvancedFilterPlugin } from './utils/swagger-plugin.util';
 
 async function bootstrap() {
@@ -22,8 +20,6 @@ async function bootstrap() {
   app.enableCors({
     credentials: true,
   });
-  app.use(compression());
-  app.use(morgan('tiny'));
 
   const theme = new SwaggerTheme();
   const document = SwaggerModule.createDocument(app, config);
