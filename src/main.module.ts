@@ -27,6 +27,7 @@ import { ExampleModule } from './modules/example/example.module';
       load: [appConfig, typeormConfig],
     }),
     TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => configService.get('typeorm'),
     }),
