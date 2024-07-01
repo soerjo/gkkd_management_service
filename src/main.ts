@@ -21,7 +21,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: [configService.get('APP_URL'), configService.get('WEB_URL')],
+    // origin: [configService.get('APP_URL'), configService.get('WEB_URL')],
     credentials: true,
   });
   app.use(compression());
