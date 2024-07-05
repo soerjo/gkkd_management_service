@@ -14,19 +14,17 @@ export class PenyerahanAnakEntity extends MainEntityAbstract {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   father_name: string;
 
-  @ManyToOne(() => JemaatEntity, (jemaat) => jemaat, { nullable: true })
-  @JoinColumn({ name: 'father_id' })
-  father: JemaatEntity;
+  @Column({ nullable: true })
+  father_nij: string;
 
-  @Column()
+  @Column({ nullable: true })
   mother_name: string;
 
-  @ManyToOne(() => JemaatEntity, (jemaat) => jemaat, { nullable: true })
-  @JoinColumn({ name: 'mother_id' })
-  mother: JemaatEntity;
+  @Column({ nullable: true })
+  mother_nij: string;
 
   @Column()
   pastor: string;
@@ -55,9 +53,15 @@ export class PenyerahanAnakEntity extends MainEntityAbstract {
     const year = new Date().getFullYear().toString().slice(-2); // last two digits of the year
     const month = ('0' + (new Date().getMonth() + 1)).slice(-2); // zero-padded month
     const date = ('0' + (new Date().getDate() + 1)).slice(-2); // zero-padded month
-    const lastMarital = await this.createQueryBuilder('penyerahan_anak').orderBy('penyerahan_anak.id', 'DESC').getOne();
-    const incrementId = lastMarital ? lastMarital.id + 1 : 1;
+    const lastChildDedication = await this.createQueryBuilder('penyerahan_anak')
+      .orderBy('penyerahan_anak.id', 'DESC')
+      .withDeleted()
+      .getOne();
+    console.log({ lastChildDedication });
+    const incrementId = lastChildDedication ? lastChildDedication.id + 1 : 1;
     const incrementIdStr = ('0000' + incrementId).slice(-4); // zero-padded increment id
+
+    console.log({ id: `${year}${month}${date}${incrementIdStr}` });
 
     return `${year}${month}${date}${incrementIdStr}`;
   }

@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { JemaatService } from '../../jemaat/services/jemaat.service';
 import { PenyerahanAnakRepository } from '../repository/penyerahan-anak.repository';
 import { FilterDto } from '../dto/filter.dto';
+import { RegionService } from '../../../../modules/region/services/region.service';
 
 @Injectable()
 export class PenyerahanAnakService {
@@ -15,9 +16,13 @@ export class PenyerahanAnakService {
     private readonly penyerahanRecord: Repository<PenyerahanAnakEntity>,
     private readonly customPenyerahanRecord: PenyerahanAnakRepository,
     private readonly jemaatService: JemaatService,
+    private readonly regionService: RegionService,
   ) {}
 
   async create(dto: CreatePenyerahanAnakDto) {
+    const region = await this.regionService.getOneById(dto.region_id);
+    if (!region) throw new BadRequestException('region is not found');
+
     const isExist = await this.penyerahanRecord.findOne({ where: { full_name: dto.full_name } });
 
     const jemaatFather = await this.jemaatService.findOne(dto.nijFather, dto.region_id);
@@ -26,14 +31,16 @@ export class PenyerahanAnakService {
       throw new BadRequestException('father or mother data jemaat is not found');
     }
 
-    if (isExist && isExist.father_name === dto.father_name && isExist.mother_name === dto.mother_name) {
+    if (isExist && (isExist.father_nij === dto.nijFather || isExist.mother_nij == dto.nijMother)) {
       throw new BadRequestException('data is already exist');
     }
 
     const penyerahanAnak = this.penyerahanRecord.create({
       ...dto,
       father_name: jemaatFather?.full_name ?? dto?.father_name,
+      father_nij: jemaatFather?.nij,
       mother_name: jemaatMother?.full_name ?? dto?.mother_name,
+      mother_nij: jemaatMother?.nij,
     });
 
     return this.penyerahanRecord.save(penyerahanAnak);

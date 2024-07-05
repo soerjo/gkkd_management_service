@@ -90,6 +90,7 @@ export class JemaatEntity extends MainEntityAbstract {
     const latestJemaat = await this.createQueryBuilder('jemaat')
       .where('jemaat.region_id = :region_id', { region_id })
       .orderBy('jemaat.id', 'DESC')
+      .withDeleted()
       .getOne();
 
     const incrementId = latestJemaat ? latestJemaat.id + 1 : 1;

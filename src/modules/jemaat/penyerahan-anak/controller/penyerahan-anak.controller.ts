@@ -63,7 +63,6 @@ export class PenyerahanAnakController {
   remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
     let region_id: number;
     if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) region_id = jwtPayload?.region?.id;
-    if (!region_id) throw new BadRequestException('region is not found');
 
     return this.penyerahanAnakService.remove(id, region_id);
   }

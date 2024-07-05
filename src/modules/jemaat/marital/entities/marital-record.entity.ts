@@ -51,7 +51,10 @@ export class MaritalRecordEntity extends MainEntityAbstract {
     const year = new Date().getFullYear().toString().slice(-2); // last two digits of the year
     const month = ('0' + (new Date().getMonth() + 1)).slice(-2); // zero-padded month
     const date = ('0' + (new Date().getDate() + 1)).slice(-2); // zero-padded month
-    const lastMarital = await this.createQueryBuilder('marital_record').orderBy('marital_record.id', 'DESC').getOne();
+    const lastMarital = await this.createQueryBuilder('marital_record')
+      .withDeleted()
+      .orderBy('marital_record.id', 'DESC')
+      .getOne();
     const incrementId = lastMarital ? lastMarital.id + 1 : 1;
     const incrementIdStr = ('0000' + incrementId).slice(-4); // zero-padded increment id
     const incrementRegionId = ('0000' + region_id).slice(-4); // zero-padded increment id

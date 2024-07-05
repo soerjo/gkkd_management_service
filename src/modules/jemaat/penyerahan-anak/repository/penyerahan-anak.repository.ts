@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PenyerahanAnakEntity } from '../entities/penyerahan-anak-record.entity';
 import { Brackets, Repository } from 'typeorm';
 import { FilterDto } from '../dto/filter.dto';
+import { JemaatEntity } from '../../jemaat/entities/jemaat.entity';
 
 export class PenyerahanAnakRepository {
   constructor(
@@ -11,8 +12,8 @@ export class PenyerahanAnakRepository {
 
   async getAll(filter: FilterDto) {
     const queryBuilder = this.penyerahanRepo.createQueryBuilder('penyerahan_anak');
-    queryBuilder.leftJoin('penyerahan_anak.father', 'father');
-    queryBuilder.leftJoin('penyerahan_anak.mother', 'mother');
+    queryBuilder.leftJoin(JemaatEntity, 'father', 'father.nij = penyerahan_anak.father_nij');
+    queryBuilder.leftJoin(JemaatEntity, 'mother', 'mother.nij = penyerahan_anak.mother_nij');
 
     if (filter.search) {
       queryBuilder.andWhere(

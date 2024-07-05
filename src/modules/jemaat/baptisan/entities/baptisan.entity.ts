@@ -50,7 +50,10 @@ export class BaptismRecordEntity extends MainEntityAbstract {
     const year = new Date().getFullYear().toString().slice(-2); // last two digits of the year
     const month = ('0' + (new Date().getMonth() + 1)).slice(-2); // zero-padded month
     const date = ('0' + (new Date().getDate() + 1)).slice(-2); // zero-padded month
-    const latestBaptism = await this.createQueryBuilder('baptism_record').orderBy('baptism_record.id', 'DESC').getOne();
+    const latestBaptism = await this.createQueryBuilder('baptism_record')
+      .withDeleted()
+      .orderBy('baptism_record.id', 'DESC')
+      .getOne();
 
     const incrementId = latestBaptism ? latestBaptism.id + 1 : 1;
     const incrementIdStr = ('0000' + incrementId).slice(-4); // zero-padded increment id

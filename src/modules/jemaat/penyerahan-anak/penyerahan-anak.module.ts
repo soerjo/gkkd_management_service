@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PenyerahanAnakEntity } from './entities/penyerahan-anak-record.entity';
 import { JemaatModule } from '../jemaat/jemaat.module';
 import { PenyerahanAnakRepository } from './repository/penyerahan-anak.repository';
+import { RegionModule } from '../../../modules/region/region.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PenyerahanAnakEntity]), JemaatModule],
+  imports: [TypeOrmModule.forFeature([PenyerahanAnakEntity]), JemaatModule, RegionModule],
   controllers: [PenyerahanAnakController],
   providers: [PenyerahanAnakService, PenyerahanAnakRepository],
 })
