@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BlesscomnService } from '../services/blesscomn.service';
 import { BlesscomnRepository } from '../repository/blesscomn.repository';
-import { RegionRepository } from 'src/modules/region/repository/region.repository';
-import { RegionService } from 'src/modules/region/services/region.service';
-import { JemaatService } from 'src/modules/jemaat/jemaat/services/jemaat.service';
-import { JemaatRepository } from 'src/modules/jemaat/jemaat/repository/jemaat.repository';
-import { RegionEntity } from 'src/modules/region/entities/region.entity';
-import { JemaatEntity } from 'src/modules/jemaat/jemaat/entities/jemaat.entity';
+import { RegionRepository } from '@src/modules/region/repository/region.repository';
+import { RegionService } from '@src/modules/region/services/region.service';
+import { JemaatService } from '@src/modules/jemaat/jemaat/services/jemaat.service';
+import { JemaatRepository } from '@src/modules/jemaat/jemaat/repository/jemaat.repository';
+import { RegionEntity } from '@src/modules/region/entities/region.entity';
+import { JemaatEntity } from '@src/modules/jemaat/jemaat/entities/jemaat.entity';
 import { BlesscomnEntity } from '../entities/blesscomn.entity';
 import { CreateBlesscomnDto } from '../dto/create-blesscomn.dto';
-import { CreateReportBlesscomnDto } from 'src/modules/blesscomn/report-blesscomn/dto/create-report-blesscomn.dto';
+import { CreateReportBlesscomnDto } from '@src/modules/blesscomn/report-blesscomn/dto/create-report-blesscomn.dto';
 
 jest.mock('../services/blesscomn.service');
 jest.mock('../repository/blesscomn.repository');

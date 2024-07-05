@@ -12,7 +12,7 @@ import {
   IsString,
   Min,
 } from 'class-validator';
-import { GenderEnum } from 'src/common/constant/gender.constant';
+import { GenderEnum } from '../../../../common/constant/gender.constant';
 
 export class JemaatDto {
   @ApiProperty()

@@ -3,7 +3,7 @@ import { CreatePemuridanDto } from '../dto/create-pemuridan.dto';
 import { UpdatePemuridanDto } from '../dto/update-pemuridan.dto';
 import { DisciplesGroupRepository } from '../repository/disciples.repository';
 import { FilterDto } from '../dto/filter.dto';
-import { RegionService } from 'src/modules/region/services/region.service';
+import { RegionService } from '../../../../modules/region/services/region.service';
 
 @Injectable()
 export class DisciplesGroupService {

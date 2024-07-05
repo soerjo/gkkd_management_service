@@ -26,6 +26,7 @@ export class RegionService {
       const parentRegion = await this.regionRepository.findOne({
         where: { id: dto.parent_id },
       });
+      console.log({ parentRegion });
       if (!parentRegion) throw new BadRequestException('Prent region not found!');
     }
 

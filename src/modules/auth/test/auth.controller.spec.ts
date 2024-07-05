@@ -3,7 +3,7 @@ import { AuthController } from '../controller/auth.controller';
 import { AuthService } from '../services/auth.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AdminService } from 'src/modules/admin/services/admin.service';
+import { AdminService } from '@src/modules/admin/services/admin.service';
 
 describe('AuthController', () => {
   let controller: AuthController;

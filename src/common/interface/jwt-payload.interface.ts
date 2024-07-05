@@ -1,4 +1,4 @@
-import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { RegionEntity } from '../../modules/region/entities/region.entity';
 import { RoleEnum } from '../constant/role.constant';
 
 export interface IJwtPayload {

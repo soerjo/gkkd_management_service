@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { JemaatModule } from 'src/modules/jemaat/jemaat/jemaat.module';
-import { RegionModule } from 'src/modules/region/region.module';
+import { JemaatModule } from '../../../modules/jemaat/jemaat/jemaat.module';
+import { RegionModule } from '../../../modules/region/region.module';
 import { BlesscomnController } from './controller/blesscomn.controller';
 import { BlesscomnService } from './services/blesscomn.service';
 import { BlesscomnRepository } from './repository/blesscomn.repository';

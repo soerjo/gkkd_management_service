@@ -2,10 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ReportPemuridanController } from '../controller/report-pemuridan.controller';
 import { ReportPemuridanService } from '../services/report-pemuridan.service';
 import { ReportPemuridanRepository } from '../repository/report-pemuridan.repository';
-import { PemuridanService } from 'src/modules/discipleship/disciples/services/pemuridan.service';
+import { PemuridanService } from '@src/modules/discipleship/disciples/services/pemuridan.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { PemuridanRepository } from 'src/modules/discipleship/disciples/repository/pemuridan.repository';
+import { PemuridanRepository } from '@src/modules/discipleship/disciples/repository/pemuridan.repository';
 
 describe('ReportPemuridanController', () => {
   let controller: ReportPemuridanController;

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReportPemuridanService } from '../services/report-pemuridan.service';
 import { ReportPemuridanRepository } from '../repository/report-pemuridan.repository';
-import { PemuridanService } from 'src/modules/discipleship/disciples/services/pemuridan.service';
+import { PemuridanService } from '@src/modules/discipleship/disciples/services/pemuridan.service';
 
 describe('ReportPemuridanService', () => {
   let service: ReportPemuridanService;

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JemaatService } from '../services/jemaat.service';
-import { RegionService } from 'src/modules/region/services/region.service';
-import { RegionRepository } from 'src/modules/region/repository/region.repository';
+import { RegionService } from '@src/modules/region/services/region.service';
+import { RegionRepository } from '@src/modules/region/repository/region.repository';
 import { JemaatRepository } from '../repository/jemaat.repository';
 
 jest.mock('../services/jemaat.service');

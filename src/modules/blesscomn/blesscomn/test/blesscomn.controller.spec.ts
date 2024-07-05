@@ -2,15 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BlesscomnController } from '../controller/blesscomn.controller';
 import { BlesscomnService } from '../services/blesscomn.service';
 import { BlesscomnRepository } from '../repository/blesscomn.repository';
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '@src/common/guard/jwt-auth.guard';
 import { CreateBlesscomnDto } from '../dto/create-blesscomn.dto';
 import { BlesscomnEntity } from '../entities/blesscomn.entity';
-import { JemaatEntity } from 'src/modules/jemaat/jemaat/entities/jemaat.entity';
-import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { JemaatEntity } from '@src/modules/jemaat/jemaat/entities/jemaat.entity';
+import { RegionEntity } from '@src/modules/region/entities/region.entity';
 
 jest.mock('../services/blesscomn.service');
 jest.mock('../repository/blesscomn.repository');
-jest.mock('src/common/guard/jwt-auth.guard');
+jest.mock('@src/common/guard/jwt-auth.guard');
 
 describe('BlesscomnController', () => {
   let controller: BlesscomnController;
