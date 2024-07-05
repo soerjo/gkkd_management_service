@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreatePenyerahanAnakDto {
   @ApiPropertyOptional()
@@ -52,6 +52,7 @@ export class CreatePenyerahanAnakDto {
 
   @ApiPropertyOptional()
   @IsNumber()
+  @Min(1)
   @IsOptional()
   region_id?: number;
 }

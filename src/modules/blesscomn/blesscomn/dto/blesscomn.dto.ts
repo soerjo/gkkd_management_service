@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { JemaatEntity } from '../../../../modules/jemaat/jemaat/entities/jemaat.entity';
 import { RegionEntity } from '../../../../modules/region/entities/region.entity';
 
@@ -21,6 +21,8 @@ export class BlesscomnDto {
   lead_jemaat?: JemaatEntity;
 
   @ApiProperty()
+  @IsNumber()
+  @Min(1)
   @IsOptional()
   region_id?: number;
 

@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDateString, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateMaritalDto {
   @ApiPropertyOptional()
@@ -61,6 +62,8 @@ export class CreateMaritalDto {
 
   @ApiPropertyOptional()
   @IsNumber()
+  @Min(1)
+  @Type(() => Number)
   @IsOptional()
   region_id: number;
 }

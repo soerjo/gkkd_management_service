@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  BadRequestException,
+  Query,
+} from '@nestjs/common';
 import { ReportIbadahService } from '../services/cermon-report.service';
 import { CreateReportIbadahDto } from '../dto/create-report-ibadah.dto';
 import { UpdateReportIbadahDto } from '../dto/update-report-ibadah.dto';
@@ -7,45 +18,50 @@ import { Roles } from '../../../../common/decorator/role.decorator';
 import { RoleEnum } from '../../../../common/constant/role.constant';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
+import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
+import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
+import { FilterReportDto } from '../dto/filter.dto';
 
 @ApiTags('Cermon')
 @Controller('cermon/report')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
+@UseGuards(RolesGuard)
+@Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
 export class ReportIbadahController {
-  constructor(
-    private readonly reportIbadahService: ReportIbadahService,
-    // private readonly
-  ) {}
+  constructor(private readonly reportIbadahService: ReportIbadahService) {}
 
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
-  create(@Body() createReportIbadahDto: CreateReportIbadahDto) {
-    return this.reportIbadahService.create(createReportIbadahDto);
+  create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateReportIbadahDto) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
+    // if (!dto.region_id) throw new BadRequestException('region is not found!');
+
+    return this.reportIbadahService.create(dto);
   }
 
   @Get()
-  findAll() {
-    return this.reportIbadahService.findAll();
+  findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterReportDto) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
+    // if (!dto.region_id) throw new BadRequestException('region is not found!');
+
+    return this.reportIbadahService.findAll(dto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reportIbadahService.findOne(+id);
+  findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
+    return this.reportIbadahService.findOne(+id, jwtPayload?.region?.id);
   }
 
   @Patch(':id')
-  @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
-  update(@Param('id') id: string, @Body() updateReportIbadahDto: UpdateReportIbadahDto) {
-    return this.reportIbadahService.update(+id, updateReportIbadahDto);
+  update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string, @Body() dto: UpdateReportIbadahDto) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
+    if (!dto.region_id) throw new BadRequestException('region is not found!');
+
+    return this.reportIbadahService.update(+id, dto);
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
-  remove(@Param('id') id: string) {
-    return this.reportIbadahService.remove(+id);
+  remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
+    return this.reportIbadahService.remove(+id, jwtPayload?.region?.id);
   }
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMinSize, IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ArrayMinSize, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { BooksEnum } from '../../../../common/constant/books.constant';
 import { JemaatEntity } from '../../../../modules/jemaat/jemaat/entities/jemaat.entity';
 import { RegionEntity } from '../../../../modules/region/entities/region.entity';
@@ -26,6 +26,8 @@ export class PemuridanDto {
   members: string[];
 
   @ApiProperty()
+  @IsNumber()
+  @Min(1)
   @IsOptional()
   region_id?: number;
 

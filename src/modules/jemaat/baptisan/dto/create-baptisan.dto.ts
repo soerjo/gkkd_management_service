@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateBaptisanDto {
   @ApiProperty()
@@ -35,6 +36,8 @@ export class CreateBaptisanDto {
 
   @ApiPropertyOptional()
   @IsNumber()
+  @Min(1)
+  @Type(() => Number)
   @IsOptional()
   region_id: number;
 }

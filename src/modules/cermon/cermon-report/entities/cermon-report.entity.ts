@@ -7,9 +7,12 @@ export class CermonReportEntity extends MainEntityAbstract {
   @Column()
   cermon_schedule_id: number;
 
+  @Column()
+  region_id: number;
+
   @ManyToOne(() => CermonScheduleEntity, { nullable: true })
-  @JoinColumn({ name: 'cermon_schedule_id' })
-  cermon_schedule: CermonScheduleEntity;
+  @JoinColumn({ name: 'cermon_id' })
+  cermon: CermonScheduleEntity;
 
   @Column({ type: 'date' })
   date: Date;

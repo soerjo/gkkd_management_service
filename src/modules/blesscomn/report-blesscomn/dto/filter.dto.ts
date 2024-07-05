@@ -1,7 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { PaginationDto } from '../../../../common/dto/pagination.dto';
 import { BlesscomnEntity } from '../../../../modules/blesscomn/blesscomn/entities/blesscomn.entity';
+import { Type } from 'class-transformer';
 
 export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
@@ -20,6 +21,9 @@ export class FilterDto extends PaginationDto {
   date_end: Date;
 
   @ApiPropertyOptional()
+  @IsNumber()
+  @Min(1)
+  @Type(() => Number)
   @IsOptional()
   region_id: number;
 
