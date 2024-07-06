@@ -11,6 +11,6 @@ export class ParameterService {
   ) {}
 
   findOne(category: string) {
-    return this.paramRepo.find({ where: { category } });
+    return this.paramRepo.find({ where: { category, is_public: true } });
   }
 }

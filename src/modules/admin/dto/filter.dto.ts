@@ -15,4 +15,6 @@ export class FilterDto extends PaginationDto {
   @Type(() => Number)
   @IsOptional()
   region_id: number;
+
+  region_ids: number[] = [];
 }

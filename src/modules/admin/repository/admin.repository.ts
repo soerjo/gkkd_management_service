@@ -14,12 +14,15 @@ export class AdminRepository extends Repository<AdminEntity> {
     const queryBuilder = this.createQueryBuilder('user');
     queryBuilder.leftJoinAndSelect('user.region', 'region');
     queryBuilder.where('user.role != :role', { role: RoleEnum.ROLE_SYSTEMADMIN });
+    if (filter.region_ids) {
+      queryBuilder.andWhere('user.region_id in (:...region_ids)', { region_ids: filter.region_ids });
+    }
     queryBuilder.withDeleted();
 
     filter.search &&
       queryBuilder.andWhere('(user.name ILIKE :search OR user.email ILIKE :search)', { search: `%${filter.search}%` });
 
-    filter.region_id && queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });
+    // filter.region_id && queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });
 
     if (!filter.take) {
       const entities = await queryBuilder.getMany();

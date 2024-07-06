@@ -9,6 +9,7 @@ import { IsNull, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdminEntity } from '../entities/admin.entity';
+import { RegionService } from '../../../modules/region/services/region.service';
 
 @Injectable()
 export class AdminService implements OnApplicationBootstrap {
@@ -17,6 +18,7 @@ export class AdminService implements OnApplicationBootstrap {
     private defaultAdminRepo: Repository<AdminEntity>,
 
     private readonly configService: ConfigService,
+    private readonly regionService: RegionService,
     private readonly adminRepository: AdminRepository,
   ) {}
 
@@ -56,7 +58,9 @@ export class AdminService implements OnApplicationBootstrap {
     return this.adminRepository.save(newUser);
   }
 
-  getAll(filter: FilterDto) {
+  async getAll(filter: FilterDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_id });
+    filter.region_ids = regions.entities.map((data) => data.id);
     return this.adminRepository.getAll(filter);
   }
 

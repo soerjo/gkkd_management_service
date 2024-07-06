@@ -20,6 +20,8 @@ import { FilterDto } from '../dto/filter.dto';
 import { RolesGuard } from '../../../common/guard/role.guard';
 import { RoleEnum } from '../../../common/constant/role.constant';
 import { Roles } from '../../../common/decorator/role.decorator';
+import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
+import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
 
 @ApiTags('Region')
 @ApiBearerAuth()
@@ -28,15 +30,18 @@ import { Roles } from '../../../common/decorator/role.decorator';
 export class RegionController {
   constructor(private readonly regionService: RegionService) {}
 
-  @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SYSTEMADMIN])
   @Post()
-  async create(@Body() createRegionDto: CreateRegionDto) {
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN])
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createRegionDto: CreateRegionDto) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) createRegionDto.parent_id = jwtPayload?.region?.id;
     return await this.regionService.create(createRegionDto);
   }
 
   @Get()
-  async findAll(@Query() filter: FilterDto) {
+  async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filter.region_id = jwtPayload?.region?.id;
+
     return await this.regionService.getAll(filter);
   }
 
@@ -47,23 +52,28 @@ export class RegionController {
     return result;
   }
 
-  @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SYSTEMADMIN])
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateRegionDto: UpdateRegionDto) {
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN])
+  async update(
+    @CurrentUser() jwtPayload: IJwtPayload,
+    @Param('id') id: number,
+    @Body() updateRegionDto: UpdateRegionDto,
+  ) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) updateRegionDto.parent_id = jwtPayload?.region?.id;
     return await this.regionService.update(id, updateRegionDto);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SYSTEMADMIN])
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN])
   async remove(@Param('id') id: number) {
     return await this.regionService.remove(id);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SYSTEMADMIN])
   @Post('/restore/:id')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN])
   async restore(@Param('id') id: number) {
     return await this.regionService.restore(id);
   }

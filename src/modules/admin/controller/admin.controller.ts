@@ -40,7 +40,7 @@ export class AdminController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createAdminDto: CreateAdminDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) createAdminDto.regions_id = jwtPayload?.region?.id;
+    if (!createAdminDto.regions_id) createAdminDto.regions_id = jwtPayload?.region?.id;
     const region = await this.regionService.getOneById(createAdminDto.regions_id);
 
     const isUsernameExist = await this.adminService.getByUsername(createAdminDto.name);
@@ -88,7 +88,7 @@ export class AdminController {
     @Param('id') id: number,
     @Body() updateAdminDto: UpdateAdminDto,
   ) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) updateAdminDto.regions_id = jwtPayload?.region?.id;
+    if (!updateAdminDto.regions_id) updateAdminDto.regions_id = jwtPayload?.region?.id;
     const isUsernameExist = await this.adminService.getByUsername(updateAdminDto?.name);
     if (isUsernameExist && id != isUsernameExist.id && isUsernameExist.name === updateAdminDto.name)
       throw new BadRequestException('username already exist');

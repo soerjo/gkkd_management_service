@@ -11,6 +11,9 @@ export class ParameterEntity {
   @Column()
   category: string;
 
+  @Column({ default: false })
+  is_public: boolean;
+
   @Column({ nullable: true })
   description: string;
 }

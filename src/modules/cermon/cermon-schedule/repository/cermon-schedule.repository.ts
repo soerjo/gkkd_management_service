@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Brackets, DataSource, Repository } from 'typeorm';
 import { CermonScheduleEntity } from '../entities/cermon-schedule.entity';
 import { FilterJadwalIbadahDto } from '../dto/filter.dto';
-import { RegionEntity } from 'src/modules/region/entities/region.entity';
+import { RegionEntity } from '../../../../modules/region/entities/region.entity';
 
 @Injectable()
 export class CermonScheduleRepository extends Repository<CermonScheduleEntity> {

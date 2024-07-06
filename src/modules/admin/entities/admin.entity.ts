@@ -19,6 +19,9 @@ export class AdminEntity extends MainEntityAbstract {
   @Column({ enum: RoleEnum, nullable: true })
   role: RoleEnum;
 
+  @Column({ nullable: true })
+  region_id: number;
+
   @ManyToOne(() => RegionEntity, (region) => region.admin)
   @JoinColumn({ name: 'region_id' })
   region: RegionEntity;

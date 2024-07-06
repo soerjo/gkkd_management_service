@@ -13,16 +13,16 @@ export class MainEntityAbstract extends BaseEntity {
   id: number;
 
   @Exclude()
-  @Column({ default: '', nullable: true })
-  created_by: string;
+  @Column({ nullable: true })
+  created_by: number;
 
   @Exclude()
-  @Column({ default: '', nullable: true })
-  updated_by: string;
+  @Column({ nullable: true })
+  updated_by: number;
 
   @Exclude()
-  @Column({ default: '', nullable: true })
-  deleted_by: string;
+  @Column({ nullable: true })
+  deleted_by: number;
 
   @Exclude()
   @CreateDateColumn()
