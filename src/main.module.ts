@@ -51,10 +51,10 @@ import { ExampleModule } from './modules/example/example.module';
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: HttpExceptionFilter,
+    // },
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,

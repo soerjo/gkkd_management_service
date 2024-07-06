@@ -30,8 +30,8 @@ export class RegionRepository extends Repository<RegionEntity> {
     `;
 
     if (filter.region_id) {
-      params.push(filter.region_id);
       query += ` and parent_id  = $${params.length + 1} `;
+      params.push(filter.region_id);
     } else {
       query += ` and parent_id is null `;
     }
@@ -98,8 +98,8 @@ export class RegionRepository extends Repository<RegionEntity> {
     `;
 
     if (filter.region_id) {
-      params.push(filter.region_id);
       query += ` and parent_id  = $${params.length + 1} `;
+      params.push(filter.region_id);
     } else {
       query += ` and parent_id is null `;
     }
