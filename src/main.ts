@@ -19,7 +19,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.enableCors({ credentials: true });
-  app.use(morgan('tiny'));
+  // app.use(morgan('tiny'));
 
   const theme = new SwaggerTheme();
   const document = SwaggerModule.createDocument(app, config);
