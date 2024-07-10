@@ -39,25 +39,26 @@ export class AdminController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
-  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createAdminDto: CreateAdminDto) {
-    if (!createAdminDto.regions_id) createAdminDto.regions_id = jwtPayload?.region?.id;
-    const region = await this.regionService.getOneById(createAdminDto.regions_id);
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateAdminDto) {
+    dto.regions_id = dto.regions_id ?? jwtPayload?.region?.id;
+    const region = await this.regionService.getOneById(dto.regions_id);
 
-    const isUsernameExist = await this.adminService.getByUsername(createAdminDto.name);
+    const isUsernameExist = await this.adminService.getByUsername(dto.name);
     if (isUsernameExist) throw new BadRequestException('username already exist');
 
-    const isEmailExist = await this.adminService.getByEmail(createAdminDto.email);
+    const isEmailExist = await this.adminService.getByEmail(dto.email);
     if (isEmailExist) throw new BadRequestException('email already exist');
 
-    createAdminDto.region = region;
-    return await this.adminService.create(createAdminDto);
+    dto.region = region;
+    return await this.adminService.create(dto);
   }
 
   @Get()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filterDto: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filterDto.region_id = jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN)
+      filterDto.region_id = filterDto.region_id ?? jwtPayload?.region?.id;
 
     return await this.adminService.getAll(filterDto);
   }
@@ -76,8 +77,6 @@ export class AdminController {
     if (!adminUser) throw new BadRequestException('admin is not found!');
 
     await this.adminService.updatePassword(jwtPayload.id, dto.new_password);
-
-    // return { message: 'success' };
   }
 
   @Patch(':id')
@@ -112,6 +111,8 @@ export class AdminController {
   async resetPassword(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
     const adminUser = await this.adminService.findOne(id, jwtPayload?.region?.id);
     if (!adminUser) throw new BadRequestException('admin is not found!');
+
+    if (jwtPayload.id === id) throw new ForbiddenException();
 
     if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN && adminUser.region.id !== jwtPayload?.region?.id)
       throw new BadRequestException('admin is not found!');

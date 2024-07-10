@@ -50,7 +50,6 @@ export class RegionService {
 
   getAll(filter: FilterDto) {
     return this.getByHierarchy(filter);
-    // return this.regionRepository.getAll(filter);
   }
 
   async getByHierarchy(filter: FilterDto) {

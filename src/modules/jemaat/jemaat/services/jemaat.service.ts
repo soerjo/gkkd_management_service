@@ -27,7 +27,10 @@ export class JemaatService {
     return this.jemaatRepository.save(jemaat);
   }
 
-  findAll(filter: FilterDto) {
+  async findAll(filter: FilterDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_id });
+    filter.region_ids = regions.entities.map((data) => data.id);
+
     return this.jemaatRepository.getAll(filter);
   }
 
@@ -39,7 +42,7 @@ export class JemaatService {
     });
   }
 
-  findOne(nij: string, region_id: number) {
+  findOne(nij: string, region_id?: number) {
     return this.jemaatRepository.findOne({
       where: { nij: nij ?? IsNull(), region_id: region_id },
       relations: { region: true },
@@ -47,7 +50,7 @@ export class JemaatService {
   }
 
   async update(nij: string, updateJemaatDto: UpdateJemaatDto) {
-    const jemaat = await this.findOne(nij, updateJemaatDto.region_id);
+    const jemaat = await this.findOne(nij);
     if (!jemaat) throw new BadRequestException('jemaat is not found!');
 
     const region = await this.regionService.getOneById(updateJemaatDto.region_id);
@@ -56,6 +59,8 @@ export class JemaatService {
     await this.jemaatRepository.save({
       ...jemaat,
       ...updateJemaatDto,
+      region: region,
+      region_id: region.id,
     });
 
     return jemaat.nij;

@@ -33,14 +33,14 @@ export class RegionController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN])
-  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createRegionDto: CreateRegionDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) createRegionDto.parent_id = jwtPayload?.region?.id;
-    return await this.regionService.create(createRegionDto);
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateRegionDto) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.parent_id = dto.parent_id ?? jwtPayload?.region?.id;
+    return await this.regionService.create(dto);
   }
 
   @Get()
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filter.region_id = jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filter.region_id = filter.region_id ?? jwtPayload?.region?.id;
 
     return await this.regionService.getAll(filter);
   }
@@ -55,13 +55,9 @@ export class RegionController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN])
-  async update(
-    @CurrentUser() jwtPayload: IJwtPayload,
-    @Param('id') id: number,
-    @Body() updateRegionDto: UpdateRegionDto,
-  ) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) updateRegionDto.parent_id = jwtPayload?.region?.id;
-    return await this.regionService.update(id, updateRegionDto);
+  async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number, @Body() dto: UpdateRegionDto) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.parent_id = dto.parent_id ?? jwtPayload?.region?.id;
+    return await this.regionService.update(id, dto);
   }
 
   @Delete(':id')

@@ -64,6 +64,7 @@ export class RegionRepository extends Repository<RegionEntity> {
       FROM region_hierarchy rh
       left join region e on rh.parent_id = e.id
     `;
+
     if (filter.search) {
       query += ` where rh.name ILIKE $${params.length + 1} `;
       params.push(`%${filter.search}%`);

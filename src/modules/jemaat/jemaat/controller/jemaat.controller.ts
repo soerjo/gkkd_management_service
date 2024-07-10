@@ -43,7 +43,7 @@ export class JemaatController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filter.region_id = jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filter.region_id = filter.region_id ?? jwtPayload?.region?.id;
 
     return await this.jemaatService.findAll(filter);
   }
@@ -52,7 +52,7 @@ export class JemaatController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
   async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('nij') nij: string) {
-    const jemaat = await this.jemaatService.findOne(nij, jwtPayload?.region?.id);
+    const jemaat = await this.jemaatService.findOne(nij);
     if (!jemaat) throw new BadRequestException('jemaat is not found!');
 
     return jemaat;
@@ -62,8 +62,7 @@ export class JemaatController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
   async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('nij') nij: string, @Body() dto: UpdateJemaatDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
-
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
     return await this.jemaatService.update(nij, dto);
   }
 
