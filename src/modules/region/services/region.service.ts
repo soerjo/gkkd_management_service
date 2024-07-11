@@ -51,20 +51,15 @@ export class RegionService {
     });
   }
 
-  getAll(filter: FilterDto) {
-    return this.getByHierarchy(filter);
+  async getAll(filter: FilterDto) {
+    const regions = await this.getByHierarchy({ region_id: filter?.region_id });
+    filter.region_ids = regions.map((data) => data.id);
+    return this.regionRepository.getAll(filter);
   }
 
   async getByHierarchy(filter: FilterDto) {
     const entities = await this.regionRepository.getByHirarcy(filter);
-    const itemCount = await this.regionRepository.getCountByHirarcy(filter);
-    const meta = {
-      page: filter?.page || 0,
-      offset: filter?.take || 0,
-      itemCount: itemCount || 0,
-      pageCount: Math.ceil(itemCount / filter?.take) ? Math.ceil(itemCount / filter?.take) : 0,
-    };
-    return { entities, meta };
+    return entities;
   }
 
   async update(id: number, dto: UpdateRegionDto) {

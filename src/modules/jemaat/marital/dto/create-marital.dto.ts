@@ -1,37 +1,37 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsDateString, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsDateString, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateMaritalDto {
-  @ApiPropertyOptional()
+  @ApiProperty()
   @IsString()
   @IsOptional()
   nijHusban: string;
 
-  @ApiPropertyOptional()
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  nikHusban: string;
+
+  @ApiProperty()
   @IsString()
   @IsOptional()
   nijWife: string;
 
   @ApiProperty()
   @IsString()
-  unique_code: string;
+  @IsNotEmpty()
+  nikWife: string;
 
   @ApiProperty()
   @IsString()
+  @Transform((e) => String(e.value).toLowerCase())
   husband_name: string;
 
   @ApiProperty()
   @IsString()
-  husban_id: string;
-
-  @ApiProperty()
-  @IsString()
+  @Transform((e) => String(e.value).toLowerCase())
   wife_name: string;
-
-  @ApiProperty()
-  @IsString()
-  wife_id: string;
 
   @ApiProperty()
   @IsDateString()
@@ -39,14 +39,17 @@ export class CreateMaritalDto {
 
   @ApiProperty()
   @IsString()
+  @Transform((e) => String(e.value).toLowerCase())
   pastor: string;
 
   @ApiProperty()
   @IsString()
+  @Transform((e) => String(e.value).toLowerCase())
   witness_1: string;
 
   @ApiProperty()
   @IsString()
+  @Transform((e) => String(e.value).toLowerCase())
   witness_2: string;
 
   @ApiPropertyOptional()
@@ -60,10 +63,8 @@ export class CreateMaritalDto {
   @IsOptional()
   document_url?: string;
 
-  @ApiPropertyOptional()
+  @ApiProperty()
   @IsNumber()
-  @Min(1)
-  @Type(() => Number)
   @IsOptional()
   region_id: number;
 }

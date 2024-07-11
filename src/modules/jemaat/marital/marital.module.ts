@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MaritalRecordEntity } from './entities/marital-record.entity';
 import { JemaatModule } from '../jemaat/jemaat.module';
 import { MaritalRepository } from './repository/marital.repository';
+import { RegionModule } from '../../../modules/region/region.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MaritalRecordEntity]), JemaatModule],
+  imports: [TypeOrmModule.forFeature([MaritalRecordEntity]), JemaatModule, RegionModule],
   controllers: [MaritalController],
   providers: [MaritalService, MaritalRepository],
 })

@@ -62,7 +62,7 @@ export class AdminService implements OnApplicationBootstrap {
 
   async getAll(filter: FilterDto) {
     const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_id });
-    filter.region_ids = regions.entities.map((data) => data.id);
+    filter.region_ids = regions.map((data) => data.id);
     return this.adminRepository.getAll(filter);
   }
 

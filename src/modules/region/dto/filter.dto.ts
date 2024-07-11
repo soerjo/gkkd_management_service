@@ -9,4 +9,5 @@ export class FilterDto extends PaginationDto {
   search?: string;
 
   region_id: number;
+  region_ids?: number[];
 }

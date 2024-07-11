@@ -1,6 +1,5 @@
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { JemaatEntity } from '../../jemaat/entities/jemaat.entity';
 
 @Entity({ name: 'marital_record' })
 export class MaritalRecordEntity extends MainEntityAbstract {
@@ -10,16 +9,20 @@ export class MaritalRecordEntity extends MainEntityAbstract {
   @Column({ nullable: true })
   husband_name: string;
 
-  @ManyToOne(() => JemaatEntity, (jemaat) => jemaat, { nullable: true })
-  @JoinColumn({ name: 'husban_id' })
-  husban: JemaatEntity;
+  @Column({ nullable: true })
+  husband_nij: string;
+
+  @Column({ nullable: true })
+  husband_nik: string;
 
   @Column({ nullable: true })
   wife_name: string;
 
-  @ManyToOne(() => JemaatEntity, (jemaat) => jemaat, { nullable: true })
-  @JoinColumn({ name: 'wife_id' })
-  wife: JemaatEntity;
+  @Column({ nullable: true })
+  wife_nij: string;
+
+  @Column({ nullable: true })
+  wife_nik: string;
 
   @Column({ nullable: true })
   wedding_date: Date;
@@ -33,10 +36,10 @@ export class MaritalRecordEntity extends MainEntityAbstract {
   @Column()
   witness_2: string;
 
-  @Column()
+  @Column({ nullable: true })
   photo_url: string; // url foto
 
-  @Column()
+  @Column({ nullable: true })
   document_url: string; // url sertifikat
 
   @Column()

@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { RegionEntity } from '../entities/region.entity';
 import { FilterDto } from '../dto/filter.dto';
@@ -64,17 +64,6 @@ export class RegionRepository extends Repository<RegionEntity> {
       FROM region_hierarchy rh
       left join region e on rh.parent_id = e.id
     `;
-
-    if (filter.search) {
-      query += ` where rh.name ILIKE $${params.length + 1} `;
-      params.push(`%${filter.search}%`);
-    }
-
-    if (filter.take) {
-      params.push(filter.take);
-      params.push((filter?.page - 1) * filter?.take);
-      query += ` LIMIT $${params.length - 1} OFFSET $${params.length};`;
-    }
 
     return await this.query(query, params);
   }
@@ -142,6 +131,15 @@ export class RegionRepository extends Repository<RegionEntity> {
       queryBuilder.andWhere('(region.name ILIKE :search OR region.alt_name ILIKE :search)', {
         search: `%${filter.search}%`,
       });
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('region.id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('region.id = :region_id', { region_id: filter.region_id });
+      }),
+    );
 
     queryBuilder.take(filter?.take);
     queryBuilder.orderBy(`region.created_at`, 'DESC');

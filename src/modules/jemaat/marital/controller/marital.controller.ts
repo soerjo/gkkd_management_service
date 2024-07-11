@@ -33,7 +33,7 @@ export class MaritalController {
 
   @Post()
   create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateMaritalDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
     if (!dto.region_id) throw new BadRequestException('region is not found');
 
     return this.maritalService.create(dto);
@@ -41,37 +41,31 @@ export class MaritalController {
 
   @Get()
   findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filter.region_id = jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filter.region_id = filter.region_id ?? jwtPayload?.region?.id;
     if (!filter.region_id) throw new BadRequestException('region is not found');
 
     return this.maritalService.findAll(filter);
   }
 
-  @Get(':id')
-  findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
-    let region_id: number;
-
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) region_id = jwtPayload?.region?.id;
-    if (!region_id) throw new BadRequestException('region is not found');
-
-    return this.maritalService.findOne(id, region_id);
+  @Get(':unique_code')
+  findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('unique_code') unique_code: string) {
+    return this.maritalService.findOne(unique_code);
   }
 
-  @Patch(':id')
-  update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string, @Body() dto: UpdateMaritalDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
+  @Patch(':unique_code')
+  update(
+    @CurrentUser() jwtPayload: IJwtPayload,
+    @Param('unique_code') unique_code: string,
+    @Body() dto: UpdateMaritalDto,
+  ) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
     if (!dto.region_id) throw new BadRequestException('region is not found');
 
-    return this.maritalService.update(id, dto);
+    return this.maritalService.update(unique_code, dto);
   }
 
-  @Delete(':id')
-  remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
-    let region_id: number;
-
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) region_id = jwtPayload?.region?.id;
-    if (!region_id) throw new BadRequestException('region is not found');
-
-    return this.maritalService.remove(id, region_id);
+  @Delete(':unique_code')
+  remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('unique_code') unique_code: string) {
+    return this.maritalService.remove(unique_code);
   }
 }

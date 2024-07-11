@@ -2,7 +2,8 @@ with recursive region_hierarchy as (
 select
 	 id,
 	 name,
-	 parent_id,
+	
+ parent_id,
 	 alt_name,
 	 location,
 	 case
@@ -14,11 +15,12 @@ from
 	region
 where
 	region.id is not null 
-	and parent_id is null 
+	and parent_id = $1 
 union ALL
 select
 	 e.id,
-	 e.name,
+	
+e.name,
 	 e.parent_id,
 	 e.alt_name,
 	 e.location,
@@ -32,9 +34,16 @@ from
 inner join region_hierarchy eh on
 	e.parent_id = eh.id )
 select
-	count(*)
+	 rh.id,
+	 rh.name,
+	 rh.parent_id,
+	 rh.alt_name,
+	 rh.location,
+	 rh.status,
+	 e.name as parent,
+	 level
 from
 	region_hierarchy rh
 left join region e on
 	rh.parent_id = e.id
-limit $1 offset $2;
+limit $2 offset $3;

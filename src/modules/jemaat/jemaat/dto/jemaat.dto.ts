@@ -16,18 +16,26 @@ import { GenderEnum } from '../../../../common/constant/gender.constant';
 
 export class JemaatDto {
   @ApiProperty()
+  @IsNumberString()
+  @IsOptional()
+  nik: string;
+
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Transform((e) => String(e.value).toLowerCase())
   full_name: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Transform((e) => String(e.value).toLowerCase())
   name: string;
 
   @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
+  @Transform((e) => String(e.value).toLowerCase())
   email: string;
 
   @ApiProperty({ enum: GenderEnum })
@@ -58,11 +66,13 @@ export class JemaatDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  @Transform((e) => String(e.value).toLowerCase())
   father_name?: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
+  @Transform((e) => String(e.value).toLowerCase())
   mother_name?: string;
 
   @ApiProperty()
@@ -86,19 +96,17 @@ export class JemaatDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  @Transform((e) => String(e.value).toLowerCase())
   husband_wife_name?: string;
 
   @ApiProperty()
   @IsDateString()
   @IsOptional()
+  @Transform((e) => String(e.value).toLowerCase())
   wedding_date?: Date;
-
-  // region_service?: string;
 
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   region_id: number;
-
-  // region: RegionEntity;
 }

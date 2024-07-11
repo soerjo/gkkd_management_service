@@ -29,7 +29,7 @@ export class JemaatService {
 
   async findAll(filter: FilterDto) {
     const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_id });
-    filter.region_ids = regions.entities.map((data) => data.id);
+    filter.region_ids = regions.map((data) => data.id);
 
     return this.jemaatRepository.getAll(filter);
   }

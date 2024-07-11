@@ -8,13 +8,13 @@ export class AdminDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Transform((name) => name.value.toLocaleLowerCase())
+  @Transform((e) => String(e.value).toLowerCase())
   name: string;
 
   @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
-  @Transform((name) => name.value.toLocaleLowerCase())
+  @Transform((e) => String(e.value).toLowerCase())
   email: string;
 
   @ApiProperty()

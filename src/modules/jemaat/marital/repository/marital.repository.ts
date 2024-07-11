@@ -6,7 +6,7 @@ import { FilterDto } from '../dto/filter.dto';
 export class MaritalRepository {
   constructor(
     @InjectRepository(MaritalRecordEntity)
-    private readonly maritalRepo: Repository<MaritalRepository>,
+    private readonly maritalRepo: Repository<MaritalRecordEntity>,
   ) {}
 
   async getAll(filter: FilterDto) {
@@ -23,12 +23,19 @@ export class MaritalRepository {
         }),
       );
 
-    filter.region_id && queryBuilder.andWhere('marital.region_id = :region_id', { region_id: filter.region_id });
-
     if (!filter.take) {
       const entities = await queryBuilder.getMany();
       return { entities };
     }
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('marital.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('marital.region_id = :region_id', { region_id: filter.region_id });
+      }),
+    );
 
     queryBuilder.take(filter?.take);
     queryBuilder.skip((filter?.page - 1) * filter?.take);
