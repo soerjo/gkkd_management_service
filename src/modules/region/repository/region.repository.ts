@@ -130,12 +130,6 @@ export class RegionRepository extends Repository<RegionEntity> {
       params.push(`%${filter.search}%`);
     }
 
-    if (filter.take) {
-      params.push(filter.take);
-      params.push((filter?.page - 1) * filter?.take);
-      query += ` LIMIT $${params.length - 1} OFFSET $${params.length};`;
-    }
-
     return (await this.query(query, params))[0].count;
   }
 

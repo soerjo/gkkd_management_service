@@ -1,0 +1,50 @@
+{
+    "responseCode": "200",
+    "message": "",
+    "data": {
+        "entities": [
+            {
+                "id": 5,
+                "name": "gkkd Jakarta",
+                "parent_id": null,
+                "level": 1
+            },
+            {
+                "id": 10,
+                "name": "gkkd bandung",
+                "parent_id": null,
+                "level": 1
+            },
+            {
+                "id": 2,
+                "name": "gkkd timur 1",
+                "parent_id": null,
+                "level": 1
+            },
+            {
+                "id": 1,
+                "name": "gkkd bandung timur",
+                "parent_id": 10,
+                "level": 2
+            },
+            {
+                "id": 4,
+                "name": "gkkd ciledug",
+                "parent_id": 5,
+                "level": 2
+            },
+            {
+                "id": 3,
+                "name": "gkkd serpong",
+                "parent_id": 4,
+                "level": 3
+            }
+        ],
+        "meta": {
+            "page": 1,
+            "offset": 10,
+            "itemCount": "6",
+            "pageCount": 1
+        }
+    }
+}

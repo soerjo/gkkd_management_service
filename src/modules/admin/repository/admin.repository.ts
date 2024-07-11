@@ -11,8 +11,6 @@ export class AdminRepository extends Repository<AdminEntity> {
   }
 
   async getAll(filter: FilterDto) {
-    console.log({ filter });
-
     const queryBuilder = this.createQueryBuilder('user');
     queryBuilder.leftJoinAndSelect('user.region', 'region');
     queryBuilder.where('user.role != :role', { role: RoleEnum.ROLE_SYSTEMADMIN });
@@ -30,9 +28,6 @@ export class AdminRepository extends Repository<AdminEntity> {
     if (filter.search) {
       queryBuilder.andWhere('(user.name ILIKE :search OR user.email ILIKE :search)', { search: `%${filter.search}%` });
     }
-
-    // if (filter.region_id) {
-    // }
 
     if (!filter.take) {
       const entities = await queryBuilder.getMany();
@@ -64,7 +59,6 @@ export class AdminRepository extends Repository<AdminEntity> {
       `,
     ]);
 
-    console.log({ query: queryBuilder.getQuery() });
     const entities = await queryBuilder.getRawMany();
     const itemCount = await queryBuilder.getCount();
 

@@ -29,7 +29,10 @@ export class RegionService {
       if (!parentRegion) throw new BadRequestException('Prent region not found!');
     }
 
-    const region = this.regionRepository.create(dto);
+    const region = this.regionRepository.create({
+      ...dto,
+      name: dto.name.toUpperCase(),
+    });
     return this.regionRepository.save(region);
   }
 

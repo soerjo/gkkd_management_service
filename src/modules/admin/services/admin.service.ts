@@ -49,9 +49,11 @@ export class AdminService implements OnApplicationBootstrap {
     });
   }
 
-  async create(createAdminDto: CreateAdminDto) {
+  async create(dto: CreateAdminDto) {
     const newUser = this.adminRepository.create({
-      ...createAdminDto,
+      ...dto,
+      name: dto.name.toLowerCase(),
+      email: dto.email.toLowerCase(),
       temp_password: encryptPassword(this.configService.get('TEMP_PASSWORD')),
     });
 
@@ -96,15 +98,17 @@ export class AdminService implements OnApplicationBootstrap {
     });
   }
 
-  async update(id: number, updateAdminDto: UpdateAdminDto) {
+  async update(id: number, dto: UpdateAdminDto) {
     const user = await this.findOne(id);
     if (!user) throw new BadRequestException('admin is not found!');
     if (user.role === RoleEnum.ROLE_SYSTEMADMIN) throw new ForbiddenException();
 
     const updateUser = await this.adminRepository.save({
       ...user,
-      ...updateAdminDto,
-      password: updateAdminDto.password ? encryptPassword(updateAdminDto.password) : user.password,
+      ...dto,
+      name: dto.name.toLowerCase() ?? user.name.toLowerCase(),
+      email: dto.email.toLowerCase() ?? user.email.toLowerCase(),
+      password: user.password,
     });
 
     return updateUser.id;
