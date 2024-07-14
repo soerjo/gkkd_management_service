@@ -98,10 +98,19 @@ export class AdminService implements OnApplicationBootstrap {
     });
   }
 
-  async update(id: number, dto: UpdateAdminDto) {
+  async update(id: number, dto: UpdateAdminDto, user_region_id: number) {
     const user = await this.findOne(id);
     if (!user) throw new BadRequestException('admin is not found!');
     if (user.role === RoleEnum.ROLE_SYSTEMADMIN) throw new ForbiddenException();
+
+    const regions = await this.regionService.getByHierarchy({ region_id: user_region_id });
+    dto.region_ids = regions.map((data) => data.id);
+
+    const isInParent = user.region_id === user_region_id;
+    const isInHeiracy = dto.region_ids.includes(user.region_id);
+    if (!isInParent && !isInHeiracy) throw new ForbiddenException();
+
+    delete user.region;
 
     const updateUser = await this.adminRepository.save({
       ...user,

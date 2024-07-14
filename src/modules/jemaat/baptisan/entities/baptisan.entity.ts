@@ -1,6 +1,7 @@
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { JemaatEntity } from '../../jemaat/entities/jemaat.entity';
+import { RegionEntity } from '../../../region/entities/region.entity';
 
 @Entity({ name: 'baptism_record' })
 export class BaptismRecordEntity extends MainEntityAbstract {
@@ -18,6 +19,10 @@ export class BaptismRecordEntity extends MainEntityAbstract {
 
   @Column()
   region_id: number;
+
+  @ManyToOne(() => RegionEntity, (region) => region, { nullable: true })
+  @JoinColumn({ name: 'region_id' })
+  region: RegionEntity;
 
   @ManyToOne(() => JemaatEntity, (jemaat) => jemaat, { nullable: true })
   @JoinColumn({ name: 'jemaat_id' })

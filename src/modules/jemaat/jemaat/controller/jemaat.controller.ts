@@ -63,7 +63,7 @@ export class JemaatController {
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
   async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('nij') nij: string, @Body() dto: UpdateJemaatDto) {
     if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
-    return await this.jemaatService.update(nij, dto);
+    return await this.jemaatService.update(nij, dto, jwtPayload?.region?.id);
   }
 
   @Delete(':nij')

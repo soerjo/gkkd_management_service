@@ -1,4 +1,6 @@
 import { PartialType } from '@nestjs/swagger';
 import { CreateJemaatDto } from './create-jemaat.dto';
 
-export class UpdateJemaatDto extends PartialType(CreateJemaatDto) {}
+export class UpdateJemaatDto extends PartialType(CreateJemaatDto) {
+  region_ids: number[];
+}

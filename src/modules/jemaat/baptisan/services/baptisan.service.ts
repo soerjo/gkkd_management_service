@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateBaptisanDto } from '../dto/create-baptisan.dto';
 import { UpdateBaptisanDto } from '../dto/update-baptisan.dto';
 import { JemaatService } from '../../jemaat/services/jemaat.service';
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { BaptismRecordEntity } from '../entities/baptisan.entity';
 import { FilterDto } from '../dto/filter.dto';
 import { BaptismRepository } from '../repository/baptism.repository';
+import { RegionService } from '../../../region/services/region.service';
 
 @Injectable()
 export class BaptisanService {
@@ -15,10 +16,11 @@ export class BaptisanService {
     private baptismRepo: Repository<BaptismRecordEntity>,
     private customBaptismRepo: BaptismRepository,
     private readonly jemaatService: JemaatService,
+    private readonly regionService: RegionService,
   ) {}
 
   async create(dto: CreateBaptisanDto) {
-    const jemaat = await this.jemaatService.findOne(dto.nij, dto.region_id);
+    const jemaat = await this.jemaatService.findOne(dto.nij);
     if (!jemaat) throw new BadRequestException('jemaat is not found');
 
     const baptismRecord = this.baptismRepo.create({
@@ -32,17 +34,32 @@ export class BaptisanService {
     return await this.baptismRepo.save(baptismRecord);
   }
 
-  findAll(filter: FilterDto) {
+  async findAll(filter: FilterDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_id });
+    filter.region_ids = regions.map((data) => data.id);
+
     return this.customBaptismRepo.getAll(filter);
   }
 
-  findOne(id: string, region_id: number) {
-    return this.baptismRepo.findOne({ where: { uniq_code: id, region_id }, relations: { jemaat: true } });
+  async findOne(uniq_code: string, region_id?: number) {
+    return this.baptismRepo.findOne({
+      where: { uniq_code: uniq_code, region_id },
+      relations: { jemaat: true, region: true },
+    });
   }
 
-  async update(id: string, dto: UpdateBaptisanDto) {
-    const baptismRecord = await this.findOne(id, dto.region_id);
+  async update(uniq_code: string, dto: UpdateBaptisanDto, user_region_id: number) {
+    const baptismRecord = await this.findOne(uniq_code);
     if (!baptismRecord) throw new BadRequestException('baptism record is not found');
+
+    const regions = await this.regionService.getByHierarchy({ region_id: user_region_id });
+    dto.region_ids = regions.map((data) => data.id);
+
+    const isInParent = baptismRecord.region_id === user_region_id;
+    const isInHeiracy = dto.region_ids.includes(baptismRecord.region_id);
+    if (!isInParent && !isInHeiracy) throw new ForbiddenException();
+
+    delete baptismRecord.region;
 
     await this.baptismRepo.save({
       ...baptismRecord,
@@ -52,8 +69,8 @@ export class BaptisanService {
     return baptismRecord.uniq_code;
   }
 
-  async remove(id: string, region_id: number) {
-    const baptismRecord = await this.findOne(id, region_id);
+  async remove(uniq_code: string, region_id: number) {
+    const baptismRecord = await this.findOne(uniq_code, region_id);
     if (!baptismRecord) throw new BadRequestException('baptism record is not found');
 
     await this.baptismRepo.softRemove(baptismRecord);

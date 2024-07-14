@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateJemaatDto } from '../dto/create-jemaat.dto';
 import { UpdateJemaatDto } from '../dto/update-jemaat.dto';
 import { JemaatRepository } from '../repository/jemaat.repository';
@@ -49,18 +49,21 @@ export class JemaatService {
     });
   }
 
-  async update(nij: string, updateJemaatDto: UpdateJemaatDto) {
+  async update(nij: string, dto: UpdateJemaatDto, user_region_id: number) {
     const jemaat = await this.findOne(nij);
     if (!jemaat) throw new BadRequestException('jemaat is not found!');
 
-    const region = await this.regionService.getOneById(updateJemaatDto.region_id);
-    if (!region) throw new BadRequestException('Region is not found!');
+    const regions = await this.regionService.getByHierarchy({ region_id: user_region_id });
+    dto.region_ids = regions.map((data) => data.id);
 
+    const isInParent = jemaat.region_id === user_region_id;
+    const isInHeiracy = dto.region_ids.includes(jemaat.region_id);
+    if (!isInParent && !isInHeiracy) throw new ForbiddenException();
+
+    delete jemaat.region;
     await this.jemaatRepository.save({
       ...jemaat,
-      ...updateJemaatDto,
-      region: region,
-      region_id: region.id,
+      ...dto,
     });
 
     return jemaat.nij;

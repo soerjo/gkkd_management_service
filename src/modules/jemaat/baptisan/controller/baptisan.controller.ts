@@ -34,7 +34,7 @@ export class BaptisanController {
 
   @Post()
   create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateBaptisanDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
 
     return this.baptisanService.create(dto);
   }
@@ -46,41 +46,36 @@ export class BaptisanController {
     return this.baptisanService.findAll(filter);
   }
 
-  @Get(':id')
-  async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
-    let region_id: number;
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) region_id = jwtPayload?.region?.id;
-    if (region_id) throw new BadRequestException('region is not found ');
-
-    const baptism = await this.baptisanService.findOne(id, region_id);
-    return baptism;
+  @Get(':uniq_code')
+  async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('uniq_code') uniq_code: string) {
+    return await this.baptisanService.findOne(uniq_code);
   }
 
-  @Patch(':id')
-  async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string, @Body() dto: UpdateBaptisanDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
+  @Patch(':uniq_code')
+  async update(
+    @CurrentUser() jwtPayload: IJwtPayload,
+    @Param('uniq_code') uniq_code: string,
+    @Body() dto: UpdateBaptisanDto,
+  ) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
 
-    const baptismRecord = await this.baptisanService.findOne(id, dto.region_id);
+    const baptismRecord = await this.baptisanService.findOne(uniq_code);
+    if (!baptismRecord) throw new BadRequestException('baptism record is not found');
+
+    return this.baptisanService.update(uniq_code, dto, jwtPayload?.region?.id);
+  }
+
+  @Delete(':uniq_code')
+  async remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('uniq_code') uniq_code: string) {
+    let region_id: number;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) region_id = jwtPayload?.region?.id;
+
+    const baptismRecord = await this.baptisanService.findOne(uniq_code, region_id);
     if (!baptismRecord) throw new BadRequestException('baptism record is not found');
 
     if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN && baptismRecord.jemaat.region_id !== jwtPayload.region.id) {
       throw new ForbiddenException();
     }
-
-    return this.baptisanService.update(id, dto);
-  }
-
-  @Delete(':id')
-  async remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
-    let region_id: number;
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) region_id = jwtPayload?.region?.id;
-
-    const baptismRecord = await this.baptisanService.findOne(id, region_id);
-    if (!baptismRecord) throw new BadRequestException('baptism record is not found');
-
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN && baptismRecord.jemaat.region_id !== jwtPayload.region.id) {
-      throw new ForbiddenException();
-    }
-    return this.baptisanService.remove(id, region_id);
+    return this.baptisanService.remove(uniq_code, region_id);
   }
 }

@@ -12,7 +12,7 @@ export class BaptismRepository {
   async getAll(filter: FilterDto) {
     const queryBuilder = this.baptismRepo.createQueryBuilder('baptism');
     queryBuilder.leftJoin('baptism.jemaat', 'jemaat');
-    queryBuilder.leftJoin('jemaat.region', 'region');
+    queryBuilder.leftJoin('baptism.region', 'region');
 
     filter.search &&
       queryBuilder.andWhere(
@@ -23,7 +23,14 @@ export class BaptismRepository {
         }),
       );
 
-    filter.region_id && queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('baptism.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('baptism.region_id = :region_id', { region_id: filter.region_id });
+      }),
+    );
 
     if (!filter.take) {
       const entities = await queryBuilder.getMany();

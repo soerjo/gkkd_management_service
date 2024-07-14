@@ -18,6 +18,7 @@ export class JemaatRepository extends Repository<JemaatEntity> {
         new Brackets((query) => {
           query
             .where('jemaat.name ILIKE :search', { search: `%${filter.search}%` })
+            .orWhere('jemaat.nij ILIKE :search', { search: `%${filter.search}%` })
             .orWhere('jemaat.full_name ILIKE :search', { search: `%${filter.search}%` })
             .orWhere('jemaat.email ILIKE :search', { search: `%${filter.search}%` });
         }),
@@ -28,7 +29,7 @@ export class JemaatRepository extends Repository<JemaatEntity> {
         if (filter.region_ids.length) {
           qb.where('jemaat.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
         }
-        qb.orWhere('region.id = :region_id', { region_id: filter.region_id });
+        qb.orWhere('jemaat.region_id = :region_id', { region_id: filter.region_id });
       }),
     );
 

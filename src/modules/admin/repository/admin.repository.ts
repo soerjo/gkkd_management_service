@@ -21,7 +21,7 @@ export class AdminRepository extends Repository<AdminEntity> {
         if (filter.region_ids.length) {
           qb.where('user.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
         }
-        qb.orWhere('region.id = :region_id', { region_id: filter.region_id });
+        qb.orWhere('user.region_id = :region_id', { region_id: filter.region_id });
       }),
     );
 
