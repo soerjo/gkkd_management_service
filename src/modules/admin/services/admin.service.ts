@@ -123,10 +123,18 @@ export class AdminService implements OnApplicationBootstrap {
     return updateUser.id;
   }
 
-  async remove(id: number, region_id?: number) {
+  async remove(id: number, user_region_id?: number) {
     const user = await this.findOne(id);
     if (!user) throw new BadRequestException('admin is not found!');
     if (user.role === RoleEnum.ROLE_SYSTEMADMIN) throw new ForbiddenException();
+
+    let region_ids: number[] = [];
+    const regions = await this.regionService.getByHierarchy({ region_id: user_region_id });
+    region_ids = regions.map((data) => data.id);
+
+    const isInParent = user.region_id === user_region_id;
+    const isInHeiracy = region_ids.includes(user.region_id);
+    if (!isInParent && !isInHeiracy) throw new ForbiddenException();
 
     await this.adminRepository.softRemove(user);
 

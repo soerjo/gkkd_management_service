@@ -14,8 +14,8 @@ export class BaptismRecordEntity extends MainEntityAbstract {
   @Column()
   name: string;
 
-  @Column()
-  jemaat_id: number;
+  @Column({ type: 'date', default: new Date() })
+  date_baptism: Date;
 
   @Column()
   region_id: number;

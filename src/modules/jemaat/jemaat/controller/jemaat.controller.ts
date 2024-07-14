@@ -53,7 +53,7 @@ export class JemaatController {
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
   async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('nij') nij: string) {
     const jemaat = await this.jemaatService.findOne(nij);
-    if (!jemaat) throw new BadRequestException('jemaat is not found!');
+    if (!jemaat) throw new BadRequestException('data is not found!');
 
     return jemaat;
   }

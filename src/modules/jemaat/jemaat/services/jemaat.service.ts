@@ -69,9 +69,17 @@ export class JemaatService {
     return jemaat.nij;
   }
 
-  async remove(nij: string, region_id?: number) {
-    const jemaat = await this.findOne(nij, region_id);
+  async remove(nij: string, user_region_id?: number) {
+    const jemaat = await this.findOne(nij);
     if (!jemaat) throw new BadRequestException('jemaat is not found!');
+
+    let region_ids: number[] = [];
+    const regions = await this.regionService.getByHierarchy({ region_id: user_region_id });
+    region_ids = regions.map((data) => data.id);
+
+    const isInParent = jemaat.region_id === user_region_id;
+    const isInHeiracy = region_ids.includes(jemaat.region_id);
+    if (!isInParent && !isInHeiracy) throw new ForbiddenException();
 
     await this.jemaatRepository.softRemove(jemaat);
 

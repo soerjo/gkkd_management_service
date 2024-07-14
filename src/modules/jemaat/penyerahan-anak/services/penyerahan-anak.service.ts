@@ -50,13 +50,19 @@ export class PenyerahanAnakService {
     return this.customPenyerahanRecord.getAll(filter);
   }
 
-  findOne(unique_code: string, region_id: number) {
+  findOne(unique_code: string, region_id?: number) {
     return this.penyerahanRecord.findOne({ where: { unique_code, region_id } });
   }
 
   async update(unique_code: string, dto: UpdatePenyerahanAnakDto) {
     const recordPenyerahan = await this.findOne(unique_code, dto.region_id);
     if (!recordPenyerahan) throw new BadRequestException('record is not found');
+
+    const jemaatFather = await this.jemaatService.findOne(dto.nijFather, dto.region_id);
+    const jemaatMother = await this.jemaatService.findOne(dto.nijMother, dto.region_id);
+    if (!jemaatMother && !jemaatFather) {
+      throw new BadRequestException('father or mother data jemaat is not found');
+    }
 
     await this.penyerahanRecord.save({ ...recordPenyerahan, ...dto });
     return recordPenyerahan.unique_code;

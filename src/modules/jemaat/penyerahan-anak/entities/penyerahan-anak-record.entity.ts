@@ -14,6 +14,12 @@ export class PenyerahanAnakEntity extends MainEntityAbstract {
   @Column()
   name: string;
 
+  @Column({ type: 'date', default: new Date() })
+  date_child_dedication: Date;
+
+  @Column({ type: 'date', default: new Date() })
+  date_birthday: Date;
+
   @Column({ nullable: true })
   father_name: string;
 

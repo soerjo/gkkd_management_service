@@ -102,7 +102,7 @@ export class AdminController {
       updateAdminDto.region = region;
     }
 
-    return await this.adminService.update(id, updateAdminDto);
+    return await this.adminService.update(id, updateAdminDto, jwtPayload?.region?.id);
   }
 
   @Patch(':id/reset-password')

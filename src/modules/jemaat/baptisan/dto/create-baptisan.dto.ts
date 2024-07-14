@@ -1,11 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateBaptisanDto {
   @ApiProperty()
   @IsString()
   nij: string;
+
+  @ApiProperty()
+  @IsDateString()
+  date_baptism: Date;
 
   @ApiProperty()
   @IsString()

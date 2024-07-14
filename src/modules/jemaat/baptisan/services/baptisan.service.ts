@@ -27,7 +27,6 @@ export class BaptisanService {
       full_name: jemaat.full_name,
       name: jemaat.name,
       jemaat: jemaat,
-      jemaat_id: jemaat.id,
       region_id: jemaat.region_id,
       ...dto,
     });
@@ -69,9 +68,17 @@ export class BaptisanService {
     return baptismRecord.uniq_code;
   }
 
-  async remove(uniq_code: string, region_id: number) {
-    const baptismRecord = await this.findOne(uniq_code, region_id);
+  async remove(uniq_code: string, user_region_id: number) {
+    const baptismRecord = await this.findOne(uniq_code);
     if (!baptismRecord) throw new BadRequestException('baptism record is not found');
+
+    let region_ids: number[] = [];
+    const regions = await this.regionService.getByHierarchy({ region_id: user_region_id });
+    region_ids = regions.map((data) => data.id);
+
+    const isInParent = baptismRecord.region_id === user_region_id;
+    const isInHeiracy = region_ids.includes(baptismRecord.region_id);
+    if (!isInParent && !isInHeiracy) throw new ForbiddenException();
 
     await this.baptismRepo.softRemove(baptismRecord);
 

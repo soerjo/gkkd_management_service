@@ -47,8 +47,10 @@ export class MaritalController {
   }
 
   @Get(':unique_code')
-  findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('unique_code') unique_code: string) {
-    return this.maritalService.findOne(unique_code);
+  async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('unique_code') unique_code: string) {
+    const data = await this.maritalService.findOne(unique_code);
+    if (!data) throw new BadRequestException('data is not found!');
+    return data;
   }
 
   @Patch(':unique_code')

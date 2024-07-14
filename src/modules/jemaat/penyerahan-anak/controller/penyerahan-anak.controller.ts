@@ -44,12 +44,10 @@ export class PenyerahanAnakController {
   }
 
   @Get(':id')
-  findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
-    let region_id: number;
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) region_id = jwtPayload?.region?.id;
-    if (!region_id) throw new BadRequestException('region is not found');
-
-    return this.penyerahanAnakService.findOne(id, region_id);
+  async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
+    const data = await this.penyerahanAnakService.findOne(id);
+    if (!data) throw new BadRequestException('data is not found!');
+    return data;
   }
 
   @Patch(':id')
