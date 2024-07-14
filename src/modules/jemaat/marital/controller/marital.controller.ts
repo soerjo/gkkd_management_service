@@ -41,7 +41,6 @@ export class MaritalController {
 
   @Get()
   findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    console.log({ payload: jwtPayload, filter });
     if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filter.region_id = filter.region_id ?? jwtPayload?.region?.id;
 
     return this.maritalService.findAll(filter);
