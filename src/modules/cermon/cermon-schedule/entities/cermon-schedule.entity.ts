@@ -1,20 +1,24 @@
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
 import { Column, Entity } from 'typeorm';
+import { DayEnum } from '../dto/create-jadwal-ibadah.dto';
 
 @Entity({ name: 'cermon_schedule' })
 export class CermonScheduleEntity extends MainEntityAbstract {
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   time: string;
 
-  @Column()
+  @Column({ nullable: true })
+  day: string;
+
+  @Column({ nullable: true })
   region_id: number;
 
-  @Column()
-  segement: string;
+  @Column({ nullable: true })
+  segment: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 }

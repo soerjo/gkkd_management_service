@@ -1,5 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, Max } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, Matches, Max } from 'class-validator';
+
+const timeFormatRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+
+export enum DayEnum {
+  SENIN = 'Senin',
+  SELASA = 'Selasa',
+  RABU = 'Rabu',
+  KAMIS = 'Kamis',
+  JUMAT = 'Jumat',
+  SABTU = 'Sabtu',
+  MINGGU = 'Minggu',
+}
 
 export class CreateJadwalIbadahDto {
   @ApiProperty()
@@ -8,18 +20,21 @@ export class CreateJadwalIbadahDto {
 
   @ApiProperty()
   @IsString()
+  @Matches(timeFormatRegex, { message: 'Time must be in the format hh:mm' })
   time: string;
-  // regex time format Day, HH:MM
+
+  @ApiProperty({ enum: DayEnum })
+  @IsEnum(DayEnum)
+  day: DayEnum;
 
   @ApiProperty()
   @IsNumber()
-  @Max(1)
   @IsOptional()
-  region_id: number;
+  region_id?: number;
 
   @ApiProperty()
   @IsString()
-  segement: string;
+  segment: string;
 
   @ApiPropertyOptional()
   @IsString()

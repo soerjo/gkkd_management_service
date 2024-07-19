@@ -19,13 +19,7 @@ export class JadwalIbadahService {
     const isExist = await this.findByName(dto.name, dto.region_id);
     if (isExist) throw new BadRequestException('cermon already exist');
 
-    this.jadwalRepository.save({
-      ...dto,
-      name: dto.name,
-      time: dto.time,
-      description: dto?.description,
-      segement: dto.segement,
-    });
+    this.jadwalRepository.save(dto);
   }
 
   findByName(name: string, region_id: number) {

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, Max, IsOptional, Min, IsDateString } from 'class-validator';
+import { IsNumber, Max, IsOptional, Min, IsDateString, ValidateIf } from 'class-validator';
 
 export class CreateReportIbadahDto {
   region_id: number;
@@ -29,7 +29,16 @@ export class CreateReportIbadahDto {
   total_new_male: number;
 
   @ApiProperty()
-  @IsNumber()
-  @Min(0)
+  // @IsNumber()
+  // @Min(0)
+  @ValidateIf(
+    (ob) => {
+      console.log({ isvalid: ob.total_female > ob.total_new_female });
+      return ob.total_female > ob.total_new_female;
+    },
+    {
+      always: true,
+    },
+  )
   total_new_female: number;
 }
