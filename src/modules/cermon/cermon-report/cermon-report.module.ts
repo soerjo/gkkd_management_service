@@ -4,11 +4,11 @@ import { ReportIbadahController } from './controller/cermon-report.controller';
 import { CermonReportRepository } from './repository/cermon-report.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CermonReportEntity } from './entities/cermon-report.entity';
-import { RegionModule } from 'src/modules/region/region.module';
 import { JadwalIbadahModule } from '../cermon-schedule/cermon-schedule.module';
+import { RegionModule } from '../../region/region.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CermonReportEntity]), JadwalIbadahModule],
+  imports: [TypeOrmModule.forFeature([CermonReportEntity]), JadwalIbadahModule, RegionModule],
   controllers: [ReportIbadahController],
   providers: [ReportIbadahService, CermonReportRepository],
 })

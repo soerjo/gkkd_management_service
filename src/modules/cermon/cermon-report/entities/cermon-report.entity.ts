@@ -4,8 +4,8 @@ import { CermonScheduleEntity } from '../../cermon-schedule/entities/cermon-sche
 
 @Entity({ name: 'cermon_report' })
 export class CermonReportEntity extends MainEntityAbstract {
-  @Column()
-  cermon_schedule_id: number;
+  @Column({ nullable: true })
+  cermon_id: number;
 
   @Column()
   region_id: number;

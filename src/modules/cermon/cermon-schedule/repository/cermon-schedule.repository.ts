@@ -45,19 +45,22 @@ export class CermonScheduleRepository extends Repository<CermonScheduleEntity> {
         }),
       );
 
-    filter.segment && queryBuilder.andWhere('cermon-schedule.segment = :segment', { segment: filter.segment });
-
-    filter.region_id &&
-      queryBuilder.andWhere('cermon-schedule.region_id = :region_id', { region_id: filter.region_id });
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('cermon-schedule.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('cermon-schedule.region_id = :region_id', { region_id: filter.region_id });
+      }),
+    );
 
     if (!filter.take) {
       const entities = await queryBuilder.getMany();
       return { entities };
     }
 
-    queryBuilder.take(filter?.take);
-    queryBuilder.skip((filter?.page - 1) * filter?.take);
-
+    queryBuilder.limit(filter?.take);
+    queryBuilder.offset((filter?.page - 1) * filter?.take);
     queryBuilder.orderBy(`cermon-schedule.created_at`, 'DESC');
 
     queryBuilder.select([
@@ -71,6 +74,7 @@ export class CermonScheduleRepository extends Repository<CermonScheduleEntity> {
       'region.name as region_name',
     ]);
 
+    console.log(queryBuilder.getQueryAndParameters());
     const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getRawMany();
 

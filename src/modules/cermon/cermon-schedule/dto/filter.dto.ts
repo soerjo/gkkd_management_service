@@ -20,4 +20,6 @@ export class FilterJadwalIbadahDto extends PaginationDto {
   @Type(() => Number)
   @IsOptional()
   region_id: number;
+
+  region_ids: number[];
 }

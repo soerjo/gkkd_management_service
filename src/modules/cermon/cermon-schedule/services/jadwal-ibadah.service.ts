@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CermonScheduleEntity } from '../entities/cermon-schedule.entity';
 import { CermonScheduleRepository } from '../repository/cermon-schedule.repository';
+import { RegionService } from '../../../region/services/region.service';
 
 @Injectable()
 export class JadwalIbadahService {
@@ -13,6 +14,7 @@ export class JadwalIbadahService {
     @InjectRepository(CermonScheduleEntity)
     private readonly jadwalRepository: Repository<CermonScheduleEntity>,
     private readonly customCermonRepo: CermonScheduleRepository,
+    private readonly regionService: RegionService,
   ) {}
 
   async create(dto: CreateJadwalIbadahDto) {
@@ -26,11 +28,14 @@ export class JadwalIbadahService {
     return this.jadwalRepository.findOne({ where: { name, region_id } });
   }
 
-  findAll(dto: FilterJadwalIbadahDto) {
+  async findAll(dto: FilterJadwalIbadahDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: dto?.region_id });
+    dto.region_ids = regions.map((data) => data.id);
+
     return this.customCermonRepo.getAll(dto);
   }
 
-  findOne(id: number, region_id: number) {
+  findOne(id: number, region_id?: number) {
     return this.customCermonRepo.getOne(id, region_id);
   }
 

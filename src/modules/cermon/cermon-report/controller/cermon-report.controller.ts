@@ -33,17 +33,12 @@ export class ReportIbadahController {
 
   @Post()
   create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateReportIbadahDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
-    // if (!dto.region_id) throw new BadRequestException('region is not found!');
-
     return this.reportIbadahService.create(dto);
   }
 
   @Get()
   findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterReportDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
-    // if (!dto.region_id) throw new BadRequestException('region is not found!');
-
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
     return this.reportIbadahService.findAll(dto);
   }
 
@@ -54,9 +49,6 @@ export class ReportIbadahController {
 
   @Patch(':id')
   update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string, @Body() dto: UpdateReportIbadahDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
-    if (!dto.region_id) throw new BadRequestException('region is not found!');
-
     return this.reportIbadahService.update(+id, dto);
   }
 

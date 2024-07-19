@@ -7,7 +7,7 @@ export class CreateReportIbadahDto {
   @ApiProperty()
   @IsNumber()
   @Min(0)
-  cermon_schedule_id: number;
+  cermon_id: number;
 
   @ApiProperty()
   @IsDateString()

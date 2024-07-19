@@ -9,6 +9,28 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
     super(CermonReportEntity, dataSource.createEntityManager());
   }
 
+  async getOne(id: number, region_id?: number) {
+    const queryBuilder = this.createQueryBuilder('cermon-report');
+    queryBuilder.leftJoin('cermon-report.cermon', 'cermon');
+    queryBuilder.andWhere('cermon-report.id = :id', { id });
+    if (region_id) {
+      queryBuilder.andWhere('cermon-report.region_id = :region_id', { region_id });
+    }
+
+    queryBuilder.select([
+      'cermon-report.id as id',
+      'cermon-report.date as date',
+      'cermon-report.total_male as total_male',
+      'cermon-report.total_female as total_female',
+      'cermon-report.total_new_male as total_new_male',
+      'cermon-report.total_new_female as total_new_female',
+      'cermon.id as cermon_id',
+      'cermon.name as cermon_name',
+    ]);
+
+    return queryBuilder.getRawOne();
+  }
+
   async getAll(filter: FilterReportDto) {
     const queryBuilder = this.createQueryBuilder('cermon-report');
     queryBuilder.leftJoin('cermon-report.cermon', 'cermon');
@@ -22,22 +44,46 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
         }),
       );
 
-    filter.segment && queryBuilder.andWhere('cermon-report.segment = :segment', { segment: filter.segment });
-
-    filter.region_id && queryBuilder.andWhere('cermon-report.region_id = :region_id', { region_id: filter.region_id });
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('cermon-report.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('cermon-report.region_id = :region_id', { region_id: filter.region_id });
+      }),
+    );
 
     if (!filter.take) {
       const entities = await queryBuilder.getMany();
       return { entities };
     }
 
-    queryBuilder.take(filter?.take);
-    queryBuilder.skip((filter?.page - 1) * filter?.take);
+    if (filter.date_to) {
+      queryBuilder.andWhere(`cermon-report.date <= :date_to`, { date_to: filter.date_to });
+    }
 
-    queryBuilder.orderBy(`cermon-report.created_at`, 'DESC');
+    if (filter.date_from) {
+      queryBuilder.andWhere(`cermon-report.date >= :date_from`, { date_from: filter.date_from });
+    }
+
+    queryBuilder.limit(filter?.take);
+    queryBuilder.offset((filter?.page - 1) * filter?.take);
+    queryBuilder.addOrderBy(`cermon-report.date`, 'DESC');
+    queryBuilder.addOrderBy(`cermon-report.created_at`, 'DESC');
+
+    queryBuilder.select([
+      'cermon-report.id as id',
+      'cermon-report.date as date',
+      'cermon-report.total_male as total_male',
+      'cermon-report.total_female as total_female',
+      'cermon-report.total_new_male as total_new_male',
+      'cermon-report.total_new_female as total_new_female',
+      'cermon.id as cermon_id',
+      'cermon.name as cermon_name',
+    ]);
 
     const itemCount = await queryBuilder.getCount();
-    const entities = await queryBuilder.getMany();
+    const entities = await queryBuilder.getRawMany();
 
     const meta = {
       page: filter?.page || 0,

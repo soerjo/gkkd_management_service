@@ -4,9 +4,10 @@ import { JadwalIbadahController } from './controller/cermon-scedule.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CermonScheduleEntity } from './entities/cermon-schedule.entity';
 import { CermonScheduleRepository } from './repository/cermon-schedule.repository';
+import { RegionModule } from '../../region/region.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CermonScheduleEntity])],
+  imports: [TypeOrmModule.forFeature([CermonScheduleEntity]), RegionModule],
   controllers: [JadwalIbadahController],
   providers: [JadwalIbadahService, CermonScheduleRepository],
   exports: [JadwalIbadahService],

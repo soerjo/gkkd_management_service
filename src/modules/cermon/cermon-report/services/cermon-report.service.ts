@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CermonReportEntity } from '../entities/cermon-report.entity';
 import { FilterReportDto } from '../dto/filter.dto';
-import { RegionService } from 'src/modules/region/services/region.service';
+import { RegionService } from '../../../region/services/region.service';
 import { CermonReportRepository } from '../repository/cermon-report.repository';
 import { JadwalIbadahService } from '../../cermon-schedule/services/jadwal-ibadah.service';
 
@@ -16,34 +16,45 @@ export class ReportIbadahService {
     private readonly reportRepository: Repository<CermonReportEntity>,
     private readonly customReportRepository: CermonReportRepository,
     private readonly cermonService: JadwalIbadahService,
+    private readonly regionService: RegionService,
   ) {}
 
   async create(dto: CreateReportIbadahDto) {
-    const cermon = await this.cermonService.findOne(dto.cermon_schedule_id, dto.region_id);
+    const cermon = await this.cermonService.findOne(dto.cermon_id);
     if (!cermon) throw new BadRequestException('cermon is not found!');
 
-    const isExist = await this.reportRepository.findOne({ where: { cermon_schedule_id: cermon.id, date: dto.date } });
+    const isExist = await this.reportRepository.findOne({ where: { cermon_id: cermon.id, date: dto.date } });
     if (isExist) throw new BadRequestException('data report already exist');
 
     this.reportRepository.save({ ...dto, region_id: cermon.region_id });
   }
 
-  findAll(dto: FilterReportDto) {
+  async findAll(dto: FilterReportDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: dto?.region_id });
+    dto.region_ids = regions.map((data) => data.id);
+
     return this.customReportRepository.getAll(dto);
   }
 
   findOne(id: number, region_id?: number) {
-    return this.reportRepository.findOne({ where: { id, region_id } });
+    return this.customReportRepository.getOne(id, region_id);
   }
 
   async update(id: number, dto: UpdateReportIbadahDto) {
-    const report = await this.findOne(id, dto.region_id);
+    const report = await this.findOne(id);
     if (!report) throw new BadRequestException('report is not found!');
 
-    this.reportRepository.save({ ...report, ...dto });
+    console.log({});
+    const cermon = await this.cermonService.findOne(dto.cermon_id);
+    if (!cermon) throw new BadRequestException('cermon is not found!');
+
+    const isExist = await this.reportRepository.findOne({ where: { cermon_id: cermon.id, date: dto.date } });
+    if (isExist && isExist.id !== report.id) throw new BadRequestException('data report already exist');
+
+    this.reportRepository.save({ ...report, ...dto, cermon: cermon, region_id: cermon.region_id });
   }
 
-  async remove(id: number, region_id: number) {
+  async remove(id: number, region_id?: number) {
     const report = await this.findOne(id, region_id);
     if (!report) throw new BadRequestException('report is not found!');
 
