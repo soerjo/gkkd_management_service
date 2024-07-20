@@ -48,7 +48,7 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
     if (filter.region_id) {
       queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });
     }
-    console.log({ filter });
+
     if (filter.date_to) {
       queryBuilder.andWhere(`blesscomn_report.date <= :date_to`, { date_to: filter.date_to });
     }

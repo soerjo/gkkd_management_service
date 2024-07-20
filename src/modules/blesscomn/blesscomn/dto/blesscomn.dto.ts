@@ -26,7 +26,7 @@ export class BlesscomnDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   location: string;
 
   @ApiProperty()

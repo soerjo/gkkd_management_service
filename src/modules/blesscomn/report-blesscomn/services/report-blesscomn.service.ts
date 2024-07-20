@@ -14,9 +14,7 @@ export class ReportBlesscomnService {
   ) {}
 
   async create(dto: CreateReportBlesscomnDto) {
-    console.log({ dto });
     const blesscomn = await this.blesscomnService.findOne(dto.blesscomn_id);
-    console.log({ blesscomn });
     if (!blesscomn) throw new BadRequestException('Blesscomn is not found!');
     dto.blesscomn = blesscomn;
 
@@ -27,8 +25,8 @@ export class ReportBlesscomnService {
 
     const reportBlesscomn = this.reportBlesscomnRepository.create({
       ...dto,
-      total: dto.total_female + dto.total_male,
       new: dto.new_male + dto.new_female,
+      total: dto.total_female + dto.total_male + dto.new_male + dto.new_female,
     });
 
     return this.reportBlesscomnRepository.save(reportBlesscomn);
@@ -100,7 +98,9 @@ export class ReportBlesscomnService {
 
     dto.total_female = dto.total_female ?? lastDataBlesscomn.total_female;
     dto.total_male = dto.total_male ?? lastDataBlesscomn.total_male;
-    dto.total = dto.total_female + dto.total_male;
+    dto.new_female = dto.new_female ?? lastDataBlesscomn.new_female;
+    dto.new_male = dto.new_male ?? lastDataBlesscomn.new_male;
+    dto.total = dto.total_female + dto.total_male + dto.new_female + dto.new_male;
     dto.new = dto.new_female + dto.new_male;
 
     await this.reportBlesscomnRepository.save({
