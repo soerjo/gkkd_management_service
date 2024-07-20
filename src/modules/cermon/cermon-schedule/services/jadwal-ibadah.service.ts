@@ -29,8 +29,9 @@ export class JadwalIbadahService {
   }
 
   async findAll(dto: FilterJadwalIbadahDto) {
-    const regions = await this.regionService.getByHierarchy({ region_id: dto?.region_id });
+    const regions = await this.regionService.getByHierarchy({ region_id: dto?.region_tree_id });
     dto.region_ids = regions.map((data) => data.id);
+    dto.region_ids.push(dto.region_tree_id);
 
     return this.customCermonRepo.getAll(dto);
   }

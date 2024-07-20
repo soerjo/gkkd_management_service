@@ -18,5 +18,6 @@ export class FilterDto extends PaginationDto {
 
   user_region_id: number;
 
+  region_tree_id: number;
   region_ids: number[] = [];
 }

@@ -54,6 +54,10 @@ export class CermonScheduleRepository extends Repository<CermonScheduleEntity> {
       }),
     );
 
+    if (filter.region_id) {
+      queryBuilder.andWhere('cermon-schedule.region_id = :region_id', { region_id: filter.region_id });
+    }
+
     if (!filter.take) {
       const entities = await queryBuilder.getMany();
       return { entities };

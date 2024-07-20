@@ -19,6 +19,8 @@ import { MainCermonModule } from './modules/cermon/ibadah.module';
 import { MainBlesscomnModule } from './modules/blesscomn/blesscomn.module';
 import { MainDiscipleshipModule } from './modules/discipleship/discipleship.module';
 import { ExampleModule } from './modules/example/example.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -30,6 +32,13 @@ import { ExampleModule } from './modules/example/example.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => configService.get('typeorm'),
+      async dataSourceFactory(options) {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+
+        return addTransactionalDataSource(new DataSource(options));
+      },
     }),
     JwtModule.register({
       global: true,

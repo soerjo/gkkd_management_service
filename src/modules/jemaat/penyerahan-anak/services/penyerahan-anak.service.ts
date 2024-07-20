@@ -46,7 +46,11 @@ export class PenyerahanAnakService {
     return this.penyerahanRecord.save(penyerahanAnak);
   }
 
-  findAll(filter: FilterDto) {
+  async findAll(filter: FilterDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_tree_id });
+    filter.region_ids = regions.map((data) => data.id);
+    filter.region_ids.push(filter.region_tree_id);
+
     return this.customPenyerahanRecord.getAll(filter);
   }
 

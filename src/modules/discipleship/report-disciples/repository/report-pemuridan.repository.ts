@@ -31,8 +31,8 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
     }
 
     if (filter.take) {
-      queryBuilder.take(filter?.take);
-      queryBuilder.skip((filter?.page - 1) * filter?.take);
+      queryBuilder.limit(filter?.take);
+      queryBuilder.offset((filter?.page - 1) * filter?.take);
     }
 
     queryBuilder.orderBy(`pemuridan_report.created_at`, 'DESC');

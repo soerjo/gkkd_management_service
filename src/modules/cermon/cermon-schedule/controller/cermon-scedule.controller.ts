@@ -41,7 +41,7 @@ export class JadwalIbadahController {
 
   @Get()
   findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterJadwalIbadahDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_tree_id = dto.region_id ?? jwtPayload?.region?.id;
     return this.jadwalIbadahService.findAll(dto);
   }
 
@@ -49,7 +49,6 @@ export class JadwalIbadahController {
   async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
     const cermon = await this.jadwalIbadahService.findOne(+id, jwtPayload?.region?.id);
     if (!cermon) throw new BadRequestException('cermon is not found!');
-    console.log({ cermon });
     return cermon;
   }
 

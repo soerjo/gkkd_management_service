@@ -8,7 +8,8 @@ import {
   Delete,
   UseGuards,
   Query,
-  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import { BlesscomnService } from '../services/blesscomn.service';
 import { CreateBlesscomnDto } from '../dto/create-blesscomn.dto';
@@ -22,6 +23,7 @@ import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface'
 import { RolesGuard } from '../../../../common/guard/role.guard';
 import { Roles } from '../../../../common/decorator/role.decorator';
 import { RoleEnum } from '../../../../common/constant/role.constant';
+import { CreateAdminBlesscomnDto } from '../dto/create-admin-blesscomn.dto';
 
 @ApiTags('Blesscomn')
 @Controller('blesscomn')
@@ -30,30 +32,79 @@ import { RoleEnum } from '../../../../common/constant/role.constant';
 export class BlesscomnController {
   constructor(private readonly blesscomnService: BlesscomnService) {}
 
+  @Patch('admin')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
+  async createAdminBlesscom(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateAdminBlesscomnDto) {
+    switch (jwtPayload.role) {
+      case RoleEnum.ROLE_SYSTEMADMIN:
+        break;
+
+      case RoleEnum.ROLE_SUPERADMIN:
+        dto.region_id = jwtPayload?.region?.id;
+        break;
+
+      default:
+        throw new ForbiddenException();
+    }
+
+    return this.blesscomnService.createAdminBlesscomn(dto);
+  }
+
   @Post()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
-  async create(@Body() createBlesscomnDto: CreateBlesscomnDto) {
-    return {
-      message: 'success',
-      data: await this.blesscomnService.create(createBlesscomnDto),
-    };
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateBlesscomnDto) {
+    switch (jwtPayload.role) {
+      case RoleEnum.ROLE_SYSTEMADMIN:
+        break;
+
+      case RoleEnum.ROLE_SUPERADMIN:
+        dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
+        break;
+
+      case RoleEnum.LEADER:
+        dto.region_id = jwtPayload?.region?.id;
+        dto.admin_id = jwtPayload.id;
+        break;
+
+      default:
+        throw new ForbiddenException();
+    }
+
+    return this.blesscomnService.create(dto);
   }
 
   @Get()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.LEADER])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
-    return await this.blesscomnService.findAll(filter);
+    switch (jwtPayload.role) {
+      case RoleEnum.ROLE_SYSTEMADMIN:
+        break;
+
+      case RoleEnum.ROLE_SUPERADMIN:
+        filter.region_tree_id = filter.region_id ?? jwtPayload?.region?.id;
+        break;
+
+      case RoleEnum.LEADER:
+        filter.region_id = jwtPayload?.region?.id;
+        filter.admin_id = jwtPayload.id;
+        break;
+
+      default:
+        throw new ForbiddenException();
+    }
+
+    return this.blesscomnService.findAll(filter);
   }
 
   @Get(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.LEADER])
-  async findOne(@Param('id') id: number) {
+  async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
     const result = await this.blesscomnService.findOne(id);
-    if (!result) throw new BadRequestException('blesscomn is not found!');
+    if (!result) throw new NotFoundException('blesscomn is not found!');
 
     return result;
   }
@@ -61,14 +112,31 @@ export class BlesscomnController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.LEADER])
-  async update(@Param('id') id: number, @Body() updateBlesscomnDto: UpdateBlesscomnDto) {
-    return await this.blesscomnService.update(id, updateBlesscomnDto);
+  async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number, @Body() dto: UpdateBlesscomnDto) {
+    switch (jwtPayload.role) {
+      case RoleEnum.ROLE_SYSTEMADMIN:
+        break;
+
+      case RoleEnum.ROLE_SUPERADMIN:
+        dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
+        break;
+
+      case RoleEnum.LEADER:
+        dto.region_id = jwtPayload?.region?.id;
+        dto.admin_id = jwtPayload.id;
+        break;
+
+      default:
+        throw new ForbiddenException();
+    }
+
+    await this.blesscomnService.update(id, dto);
   }
 
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
-  async remove(@Param('id') id: number) {
-    return await this.blesscomnService.remove(id);
+  async remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
+    return this.blesscomnService.remove(id);
   }
 }

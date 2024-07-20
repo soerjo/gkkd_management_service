@@ -21,9 +21,12 @@ export class AdminRepository extends Repository<AdminEntity> {
         if (filter.region_ids.length) {
           qb.where('user.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
         }
-        qb.orWhere('user.region_id = :region_id', { region_id: filter.region_id });
       }),
     );
+
+    if (filter.region_id) {
+      queryBuilder.andWhere('(user.region_id = :region_id)', { region_id: filter.region_id });
+    }
 
     if (filter.search) {
       queryBuilder.andWhere('(user.name ILIKE :search OR user.email ILIKE :search)', { search: `%${filter.search}%` });

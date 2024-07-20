@@ -35,10 +35,7 @@ export class DisciplesController {
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createPemuridanDto: CreatePemuridanDto) {
     if (jwtPayload.jemaat_id) createPemuridanDto.lead_id = jwtPayload.jemaat_id;
 
-    return {
-      message: 'success',
-      data: await this.pemuridanService.create(createPemuridanDto),
-    };
+    return this.pemuridanService.create(createPemuridanDto);
   }
 
   @Get()
@@ -47,10 +44,7 @@ export class DisciplesController {
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
     if (jwtPayload.jemaat_id) filter.lead_id = jwtPayload.jemaat_id;
 
-    return {
-      message: 'success',
-      data: await this.pemuridanService.findAll(filter),
-    };
+    return this.pemuridanService.findAll(filter);
   }
 
   @Get(':id')
@@ -60,10 +54,7 @@ export class DisciplesController {
     const result = await this.pemuridanService.findOne(id);
     if (!result) throw new BadRequestException('pemuridan is not found!');
 
-    return {
-      message: 'success',
-      data: result,
-    };
+    return result;
   }
 
   @Patch(':id')
@@ -76,19 +67,13 @@ export class DisciplesController {
   ) {
     if (jwtPayload.jemaat_id) updatePemuridanDto.lead_id = jwtPayload.jemaat_id;
 
-    return {
-      message: 'success',
-      data: await this.pemuridanService.update(id, updatePemuridanDto),
-    };
+    await this.pemuridanService.update(id, updatePemuridanDto);
   }
 
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async remove(@Param('id') id: number) {
-    return {
-      message: 'success',
-      data: await this.pemuridanService.remove(id),
-    };
+    await this.pemuridanService.remove(id);
   }
 }

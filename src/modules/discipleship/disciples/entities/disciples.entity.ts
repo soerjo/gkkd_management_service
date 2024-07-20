@@ -3,6 +3,7 @@ import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOn
 import { JemaatEntity } from '../../../jemaat/jemaat/entities/jemaat.entity';
 import { DisciplesGroupEntity } from '../../disciples-group/entities/disciples-group.entity';
 import { RegionEntity } from '../../../region/entities/region.entity';
+import { AdminEntity } from '../../../admin/entities/admin.entity';
 
 @Entity({ name: 'disciples' })
 export class DisciplesEntity extends MainEntityAbstract {
@@ -23,6 +24,13 @@ export class DisciplesEntity extends MainEntityAbstract {
 
   @Column({ nullable: true })
   disciple_group_id: string;
+
+  @Column({ nullable: true })
+  admin_id: string;
+
+  @OneToOne(() => AdminEntity)
+  @JoinColumn({ name: 'admin_id' })
+  admin: AdminEntity;
 
   @OneToOne(() => JemaatEntity, { nullable: true })
   @JoinColumn({ name: 'jemaat_id' })

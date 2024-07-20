@@ -34,8 +34,9 @@ export class BaptisanService {
   }
 
   async findAll(filter: FilterDto) {
-    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_id });
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_tree_id });
     filter.region_ids = regions.map((data) => data.id);
+    filter.region_ids.push(filter.region_tree_id);
 
     return this.customBaptismRepo.getAll(filter);
   }

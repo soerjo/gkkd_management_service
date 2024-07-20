@@ -16,5 +16,8 @@ export class FilterDto extends PaginationDto {
   @IsOptional()
   region_id: number;
 
-  region_ids: string[];
+  region_ids: number[];
+  region_tree_id: number;
+
+  admin_id: number;
 }

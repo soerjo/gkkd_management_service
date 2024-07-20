@@ -41,7 +41,8 @@ export class BaptisanController {
 
   @Get()
   findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filter.region_id = filter.region_id ?? jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN)
+      filter.region_tree_id = filter.region_id ?? jwtPayload?.region?.id;
     return this.baptisanService.findAll(filter);
   }
 

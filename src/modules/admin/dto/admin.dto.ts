@@ -15,7 +15,7 @@ export class AdminDto {
   @IsEmail()
   @IsNotEmpty()
   @Transform((e) => String(e.value).toLowerCase())
-  email: string;
+  email?: string;
 
   @ApiProperty()
   @IsNumberString()

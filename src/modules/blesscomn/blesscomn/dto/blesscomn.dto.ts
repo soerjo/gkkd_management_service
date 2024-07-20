@@ -47,4 +47,6 @@ export class BlesscomnDto {
   @IsString({ each: true })
   @IsOptional()
   members?: string[];
+
+  admin_id: number;
 }

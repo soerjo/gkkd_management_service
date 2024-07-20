@@ -7,11 +7,11 @@ import { RoleEnum } from '../../../common/constant/role.constant';
 
 @Entity({ name: 'admin' })
 export class AdminEntity extends MainEntityAbstract {
-  @Column()
+  @Column({ unique: true })
   name: string;
 
-  @Column({ unique: false })
-  email: string;
+  @Column({ nullable: true, unique: false })
+  email?: string;
 
   @Column({ nullable: true })
   phone?: string;

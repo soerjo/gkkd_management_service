@@ -21,5 +21,6 @@ export class FilterJadwalIbadahDto extends PaginationDto {
   @IsOptional()
   region_id: number;
 
+  region_tree_id: number;
   region_ids: number[];
 }

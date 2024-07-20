@@ -57,8 +57,7 @@ export class AdminController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filterDto: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN)
-      filterDto.region_id = filterDto.region_id ?? jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filterDto.region_tree_id = jwtPayload?.region?.id;
 
     return await this.adminService.getAll(filterDto);
   }
@@ -109,15 +108,9 @@ export class AdminController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async resetPassword(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
-    const adminUser = await this.adminService.findOne(id, jwtPayload?.region?.id);
-    if (!adminUser) throw new BadRequestException('admin is not found!');
-
     if (jwtPayload.id === id) throw new ForbiddenException();
 
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN && adminUser.region.id !== jwtPayload?.region?.id)
-      throw new BadRequestException('admin is not found!');
-
-    await this.adminService.resetPassword(id);
+    await this.adminService.resetPassword(id, jwtPayload.region.id);
   }
 
   @Delete(':id')

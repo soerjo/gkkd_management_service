@@ -61,8 +61,10 @@ export class AdminService implements OnApplicationBootstrap {
   }
 
   async getAll(filter: FilterDto) {
-    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_id });
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_tree_id });
     filter.region_ids = regions.map((data) => data.id);
+    filter.region_ids.push(filter.region_tree_id);
+
     return this.adminRepository.getAll(filter);
   }
 
@@ -86,10 +88,19 @@ export class AdminService implements OnApplicationBootstrap {
     });
   }
 
-  async resetPassword(id: number) {
+  async resetPassword(id: number, user_region_id: number) {
     const user = await this.findOne(id);
     if (!user) throw new BadRequestException('admin is not found!');
     if (user.role === RoleEnum.ROLE_SYSTEMADMIN) throw new ForbiddenException();
+
+    let region_ids: number[] = [];
+    const regions = await this.regionService.getByHierarchy({ region_id: user_region_id });
+    region_ids = regions.map((data) => data.id);
+    region_ids.push(user_region_id);
+
+    const isInParent = user.region_id === user_region_id;
+    const isInHeiracy = region_ids.includes(user.region_id);
+    if (!isInParent && !isInHeiracy) throw new ForbiddenException();
 
     await this.adminRepository.save({
       ...user,
@@ -105,6 +116,7 @@ export class AdminService implements OnApplicationBootstrap {
 
     const regions = await this.regionService.getByHierarchy({ region_id: user_region_id });
     dto.region_ids = regions.map((data) => data.id);
+    dto.region_ids.push(user_region_id);
 
     const isInParent = user.region_id === user_region_id;
     const isInHeiracy = dto.region_ids.includes(user.region_id);
@@ -131,6 +143,7 @@ export class AdminService implements OnApplicationBootstrap {
     let region_ids: number[] = [];
     const regions = await this.regionService.getByHierarchy({ region_id: user_region_id });
     region_ids = regions.map((data) => data.id);
+    region_ids.push(user_region_id);
 
     const isInParent = user.region_id === user_region_id;
     const isInHeiracy = region_ids.includes(user.region_id);

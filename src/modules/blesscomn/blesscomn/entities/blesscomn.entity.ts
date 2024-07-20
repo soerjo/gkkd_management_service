@@ -1,7 +1,8 @@
 import { RegionEntity } from '../../../region/entities/region.entity';
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { JemaatEntity } from '../../../jemaat/jemaat/entities/jemaat.entity';
+import { BlesscomnAdminEntity } from './blesscomn-admin.entity';
 
 @Entity({ name: 'blesscomn' })
 export class BlesscomnEntity extends MainEntityAbstract {
@@ -36,4 +37,7 @@ export class BlesscomnEntity extends MainEntityAbstract {
   @ManyToOne(() => RegionEntity, (region) => region.blesscomn)
   @JoinColumn({ name: 'region_id' })
   region: RegionEntity;
+
+  @OneToMany(() => BlesscomnAdminEntity, (admin) => admin.blesscomn, { nullable: true })
+  admin: BlesscomnAdminEntity[];
 }

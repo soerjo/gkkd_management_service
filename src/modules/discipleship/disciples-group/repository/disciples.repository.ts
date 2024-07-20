@@ -24,9 +24,9 @@ export class DisciplesGroupRepository extends Repository<DisciplesGroupEntity> {
       });
 
     if (filter.take) {
-      queryBuilder.take(filter?.take);
+      queryBuilder.limit(filter?.take);
+      queryBuilder.offset((filter?.page - 1) * filter?.take);
       queryBuilder.orderBy(`pemuridan.created_at`, 'DESC');
-      queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
 
     const itemCount = await queryBuilder.getCount();

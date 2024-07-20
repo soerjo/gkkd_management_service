@@ -5,9 +5,12 @@ import { SwaggerTheme, SwaggerThemeName } from 'swagger-themes';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { AdvancedFilterPlugin } from './utils/swagger-plugin.util';
-// import * as morgan from 'morgan';
+import { initializeTransactionalContext } from 'typeorm-transactional';
+import * as morgan from 'morgan';
 
 async function bootstrap() {
+  initializeTransactionalContext();
+
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const config = new DocumentBuilder()
@@ -19,7 +22,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.enableCors({ credentials: true });
-  // app.use(morgan('tiny'));
+  app.use(morgan('tiny'));
 
   const theme = new SwaggerTheme();
   const document = SwaggerModule.createDocument(app, config);

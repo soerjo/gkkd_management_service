@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { RegionRepository } from '../repository/region.repository';
 import { CreateRegionDto } from '../dto/create-region.dto';
 import { UpdateRegionDto } from '../dto/update-region.dto';
@@ -8,11 +8,6 @@ import { FilterDto } from '../dto/filter.dto';
 @Injectable()
 export class RegionService {
   constructor(private readonly regionRepository: RegionRepository) {}
-
-  async percobaan(name: string) {
-    if (typeof name === 'string') return true;
-    return false;
-  }
 
   async create(dto: CreateRegionDto) {
     const existRegion = await this.regionRepository.findOne({
@@ -26,13 +21,14 @@ export class RegionService {
         where: { id: dto.parent_id },
       });
 
-      if (!parentRegion) throw new BadRequestException('Prent region not found!');
+      if (!parentRegion) throw new BadRequestException('Parent region not found!');
     }
 
     const region = this.regionRepository.create({
       ...dto,
       name: dto.name.toUpperCase(),
     });
+
     return this.regionRepository.save(region);
   }
 
@@ -52,8 +48,17 @@ export class RegionService {
   }
 
   async getAll(filter: FilterDto) {
-    const regions = await this.getByHierarchy({ region_id: filter?.region_id });
+    const regions = await this.getByHierarchy({ region_id: filter?.region_tree_id });
     filter.region_ids = regions.map((data) => data.id);
+    filter.region_ids.push(filter.region_tree_id);
+    return this.regionRepository.getList(filter);
+  }
+
+  async getTable(filter: FilterDto) {
+    const regions = await this.getByHierarchy({ region_id: filter?.region_tree_id });
+    filter.region_ids = regions.map((data) => data.id);
+    // filter.region_ids.push(filter.region_tree_id);
+
     return this.regionRepository.getAll(filter);
   }
 
@@ -67,6 +72,16 @@ export class RegionService {
     if (!existRegion) throw new BadRequestException('regions is not found');
     existRegion.parent = null;
 
+    if (dto.parent_id === existRegion.id) {
+      throw new ForbiddenException();
+    }
+
+    const regions = await this.getByHierarchy({ region_id: dto.region_id });
+    dto.region_ids = regions.map((data) => data.id);
+
+    const isInHeiracy = dto.region_ids.includes(existRegion.id);
+    if (!isInHeiracy) throw new ForbiddenException();
+
     const existName = await this.regionRepository.findOne({
       where: { name: dto.name },
       withDeleted: true,
@@ -74,10 +89,6 @@ export class RegionService {
 
     if (existName && existRegion.id !== existName.id) {
       throw new BadRequestException('name already exist');
-    }
-
-    if (dto.parent_id === existRegion.id) {
-      throw new BadRequestException('can not set it self as a parent');
     }
 
     const parentRegion = await this.regionRepository.findOne({ where: { id: dto.parent_id } });

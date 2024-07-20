@@ -4,24 +4,37 @@ import { UpdatePemuridanDto } from '../dto/update-pemuridan.dto';
 import { DisciplesRepository } from '../repository/disciples.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { RegionService } from '../../../../modules/region/services/region.service';
+import { AdminService } from '../../../admin/services/admin.service';
+import { RoleEnum } from '../../../../common/constant/role.constant';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class DisciplesService {
   constructor(
     private readonly pemuridanRepository: DisciplesRepository,
     private readonly regionService: RegionService,
+    private readonly adminService: AdminService,
     // private readonly jemaatService: JemaatService,
   ) {}
 
-  async create(createPemuridanDto: CreatePemuridanDto) {
-    if (createPemuridanDto.region_id) {
-      const region = await this.regionService.getOneById(createPemuridanDto.region_id);
+  @Transactional()
+  async create(dto: CreatePemuridanDto) {
+    if (dto.region_id) {
+      const region = await this.regionService.getOneById(dto.region_id);
       if (!region) throw new BadRequestException('Region is not found!');
-      createPemuridanDto.region = region;
+      dto.region = region;
     }
 
-    const pemuridan = this.pemuridanRepository.create(createPemuridanDto);
-    return this.pemuridanRepository.save(pemuridan);
+    const admin = await this.adminService.create({
+      name: dto.name,
+      role: RoleEnum.DISCIPLES,
+    });
+    const pemuridan = this.pemuridanRepository.create({
+      ...dto,
+      admin: admin,
+    });
+
+    await this.pemuridanRepository.save(pemuridan);
   }
 
   async findAll(filter: FilterDto) {

@@ -38,11 +38,19 @@ export class RegionController {
     return await this.regionService.create(dto);
   }
 
-  @Get()
+  @Get('table')
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filter.region_id = filter.region_id ?? jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN)
+      filter.region_tree_id = filter.region_id ?? jwtPayload?.region?.id;
 
     return await this.regionService.getAll(filter);
+  }
+
+  @Get()
+  async findTable(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN)
+      filter.region_tree_id = filter.region_id ?? jwtPayload?.region?.id;
+    return await this.regionService.getTable(filter);
   }
 
   @Get(':id')

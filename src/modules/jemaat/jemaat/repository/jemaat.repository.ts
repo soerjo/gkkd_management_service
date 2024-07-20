@@ -33,6 +33,10 @@ export class JemaatRepository extends Repository<JemaatEntity> {
       }),
     );
 
+    if (filter.region_id) {
+      queryBuilder.andWhere('jemaat.region_id = :region_id', { region_id: filter.region_id });
+    }
+
     if (!filter.take) {
       const entities = await queryBuilder.getMany();
       return { entities };

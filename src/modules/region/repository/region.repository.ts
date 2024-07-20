@@ -132,18 +132,24 @@ export class RegionRepository extends Repository<RegionEntity> {
         search: `%${filter.search}%`,
       });
 
+    if (filter.region_id) {
+      queryBuilder.andWhere('region.parent_id = :region_id', { region_id: filter.region_id });
+    }
+
     queryBuilder.andWhere(
       new Brackets((qb) => {
         if (filter.region_ids.length) {
           qb.where('region.id in ( :...region_ids )', { region_ids: filter.region_ids });
+        } else {
+          qb.where('region.id in ( :...region_ids )', { region_ids: [0] });
         }
-        qb.orWhere('region.id = :region_id', { region_id: filter.region_id });
       }),
     );
 
     queryBuilder.limit(filter?.take);
     queryBuilder.offset((filter?.page - 1) * filter?.take);
-    queryBuilder.orderBy(`region.created_at`, 'DESC');
+    queryBuilder.addOrderBy('region.deleted_at', 'DESC');
+    queryBuilder.addOrderBy('region.updated_at', 'DESC');
 
     queryBuilder.select([
       'region.id as id',
@@ -159,6 +165,44 @@ export class RegionRepository extends Repository<RegionEntity> {
       END AS status
       `,
     ]);
+
+    const entities: IRegion[] = await queryBuilder.getRawMany();
+    const itemCount = await queryBuilder.getCount();
+
+    const meta = {
+      page: filter?.page || 0,
+      offset: filter?.take || 0,
+      itemCount: itemCount || 0,
+      pageCount: Math.ceil(itemCount / filter?.take) ? Math.ceil(itemCount / filter?.take) : 0,
+    };
+
+    return { entities, meta };
+  }
+
+  async getList(filter: FilterDto) {
+    const queryBuilder = this.createQueryBuilder('region');
+    queryBuilder.leftJoinAndSelect('region.parent', 'parent');
+    queryBuilder.withDeleted();
+
+    filter.search &&
+      queryBuilder.andWhere('(region.name ILIKE :search OR region.alt_name ILIKE :search)', {
+        search: `%${filter.search}%`,
+      });
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('region.id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('region.id = :region_id', { region_id: filter.region_id });
+      }),
+    );
+
+    queryBuilder.limit(filter?.take);
+    queryBuilder.offset((filter?.page - 1) * filter?.take);
+    queryBuilder.orderBy(`region.created_at`, 'DESC');
+
+    queryBuilder.select(['region.id as id', 'region.name as name']);
 
     const entities: IRegion[] = await queryBuilder.getRawMany();
     const itemCount = await queryBuilder.getCount();
