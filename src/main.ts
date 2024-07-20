@@ -5,7 +5,7 @@ import { SwaggerTheme, SwaggerThemeName } from 'swagger-themes';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { AdvancedFilterPlugin } from './utils/swagger-plugin.util';
-import * as morgan from 'morgan';
+// import * as morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,7 +19,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.enableCors({ credentials: true });
-  app.use(morgan('tiny'));
+  // app.use(morgan('tiny'));
 
   const theme = new SwaggerTheme();
   const document = SwaggerModule.createDocument(app, config);
