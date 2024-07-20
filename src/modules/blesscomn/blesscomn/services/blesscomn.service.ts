@@ -7,11 +7,6 @@ import { RegionService } from '../../../../modules/region/services/region.servic
 import { JemaatService } from '../../../../modules/jemaat/jemaat/services/jemaat.service';
 import { IsNull } from 'typeorm';
 
-export interface IPercobaan {
-  name: 'soerjo';
-  age: 27;
-}
-
 @Injectable()
 export class BlesscomnService {
   constructor(
@@ -19,11 +14,6 @@ export class BlesscomnService {
     private readonly regionService: RegionService,
     private readonly jemaatService: JemaatService,
   ) {}
-
-  async coba(data: IPercobaan) {
-    if (!(await this.regionService.percobaan(data.name))) throw new BadRequestException('error');
-    return { ...data, id: '123' };
-  }
 
   async create(createBlesscomnDto: CreateBlesscomnDto) {
     const region = await this.regionService.getOneById(createBlesscomnDto.region_id);
@@ -54,18 +44,14 @@ export class BlesscomnService {
     return this.blesscomnRepository.getAll(filter);
   }
 
-  findOne(id: number) {
-    return this.blesscomnRepository.findOne({
-      where: { id: id ?? IsNull() },
-      relations: { region: true },
-      select: {
-        id: true,
-        name: true,
-        location: true,
-        // lead: true,
-        members: true,
-      },
-    });
+  async findOne(id: number) {
+    const data = await this.blesscomnRepository.getOne(id);
+    if (!data) return;
+
+    return {
+      ...data,
+      members: data?.members?.split(','),
+    };
   }
 
   findOneByLeadId(leadId: number) {

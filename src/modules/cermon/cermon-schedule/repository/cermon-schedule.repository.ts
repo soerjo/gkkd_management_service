@@ -74,7 +74,6 @@ export class CermonScheduleRepository extends Repository<CermonScheduleEntity> {
       'region.name as region_name',
     ]);
 
-    console.log(queryBuilder.getQueryAndParameters());
     const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getRawMany();
 

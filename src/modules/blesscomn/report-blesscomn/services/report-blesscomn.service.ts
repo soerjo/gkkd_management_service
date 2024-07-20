@@ -4,6 +4,7 @@ import { UpdateReportBlesscomnDto } from '../dto/update-report-blesscomn.dto';
 import { ReportBlesscomnRepository } from '../repository/report-blesscomn.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { BlesscomnService } from '../../../../modules/blesscomn/blesscomn/services/blesscomn.service';
+import { BlesscomnDto } from '../../blesscomn/dto/blesscomn.dto';
 
 @Injectable()
 export class ReportBlesscomnService {
@@ -12,19 +13,22 @@ export class ReportBlesscomnService {
     private readonly blesscomnService: BlesscomnService,
   ) {}
 
-  async create(createReportBlesscomnDto: CreateReportBlesscomnDto) {
+  async create(dto: CreateReportBlesscomnDto) {
+    console.log({ dto });
+    const blesscomn = await this.blesscomnService.findOne(dto.blesscomn_id);
+    console.log({ blesscomn });
+    if (!blesscomn) throw new BadRequestException('Blesscomn is not found!');
+    dto.blesscomn = blesscomn;
+
     const isDataExist = await this.reportBlesscomnRepository.findOne({
-      where: { date: createReportBlesscomnDto.date, blesscomn: { id: createReportBlesscomnDto.blesscomn_id } },
+      where: { date: dto.date, blesscomn: { id: dto.blesscomn_id } },
     });
     if (isDataExist) throw new BadRequestException('data already exist!');
 
-    const blesscomn = await this.blesscomnService.findOne(createReportBlesscomnDto.blesscomn_id);
-    if (!blesscomn) throw new BadRequestException('Blesscomn is not found!');
-    createReportBlesscomnDto.blesscomn = blesscomn;
-
     const reportBlesscomn = this.reportBlesscomnRepository.create({
-      ...createReportBlesscomnDto,
-      total: createReportBlesscomnDto.total_female + createReportBlesscomnDto.total_male,
+      ...dto,
+      total: dto.total_female + dto.total_male,
+      new: dto.new_male + dto.new_female,
     });
 
     return this.reportBlesscomnRepository.save(reportBlesscomn);
@@ -35,7 +39,7 @@ export class ReportBlesscomnService {
   }
 
   findOne(id: number) {
-    return this.reportBlesscomnRepository.findOneBy({ id });
+    return this.reportBlesscomnRepository.getOne(id);
   }
 
   async chart(filter: FilterDto) {
@@ -77,42 +81,41 @@ export class ReportBlesscomnService {
     return averagePerMonth;
   }
 
-  async update(id: number, updateReportBlesscomnDto: UpdateReportBlesscomnDto) {
-    const pastReportBlesscomn = await this.findOne(id);
-    if (!pastReportBlesscomn) throw new BadRequestException('Blesscomn report is not found!');
+  async update(id: number, dto: UpdateReportBlesscomnDto) {
+    const lastDataBlesscomn = await this.findOne(id);
+    if (!lastDataBlesscomn) throw new BadRequestException('Blesscomn report is not found!');
 
-    if (updateReportBlesscomnDto.blesscomn_id) {
-      const blesscomn = await this.blesscomnService.findOne(updateReportBlesscomnDto.blesscomn_id);
+    if (dto.blesscomn_id) {
+      const blesscomn = await this.blesscomnService.findOne(dto.blesscomn_id);
       if (!blesscomn) throw new BadRequestException('Blesscomn is not found!');
-      updateReportBlesscomnDto.blesscomn = blesscomn;
+      dto.blesscomn = blesscomn;
     }
 
-    if (updateReportBlesscomnDto.date) {
+    if (dto.date) {
       const isDataExist = await this.reportBlesscomnRepository.findOne({
-        where: { date: updateReportBlesscomnDto.date, blesscomn: { id: updateReportBlesscomnDto.blesscomn_id } },
+        where: { date: dto.date, blesscomn: { id: dto.blesscomn_id } },
       });
       if (isDataExist && isDataExist.id != id) throw new BadRequestException('data already exist!');
     }
 
-    if (updateReportBlesscomnDto.total_female || updateReportBlesscomnDto.total_male) {
-      updateReportBlesscomnDto.total_female = updateReportBlesscomnDto.total_female ?? pastReportBlesscomn.total_female;
-      updateReportBlesscomnDto.total_male = updateReportBlesscomnDto.total_male ?? pastReportBlesscomn.total_male;
-      updateReportBlesscomnDto.total = updateReportBlesscomnDto.total_female + updateReportBlesscomnDto.total_male;
-    }
+    dto.total_female = dto.total_female ?? lastDataBlesscomn.total_female;
+    dto.total_male = dto.total_male ?? lastDataBlesscomn.total_male;
+    dto.total = dto.total_female + dto.total_male;
+    dto.new = dto.new_female + dto.new_male;
 
     await this.reportBlesscomnRepository.save({
-      ...pastReportBlesscomn,
-      ...updateReportBlesscomnDto,
+      ...lastDataBlesscomn,
+      ...dto,
     });
 
     return { id };
   }
 
   async remove(id: number) {
-    const pastReportBlesscomn = await this.findOne(id);
-    if (!pastReportBlesscomn) throw new BadRequestException('Blesscomn report is not found!');
+    const lastDataBlesscomn = await this.findOne(id);
+    if (!lastDataBlesscomn) throw new BadRequestException('Blesscomn report is not found!');
 
-    await this.reportBlesscomnRepository.softRemove(pastReportBlesscomn);
+    await this.reportBlesscomnRepository.softRemove(lastDataBlesscomn);
 
     return { id };
   }

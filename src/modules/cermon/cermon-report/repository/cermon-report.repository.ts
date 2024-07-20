@@ -44,6 +44,10 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
         }),
       );
 
+    // if (filter.region_id) {
+    //   queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });
+    // }
+
     queryBuilder.andWhere(
       new Brackets((qb) => {
         if (filter.region_ids.length) {

@@ -8,15 +8,30 @@ export class BlesscomnEntity extends MainEntityAbstract {
   @Column()
   name: string;
 
-  @Column()
-  location: string;
+  @Column({ nullable: true })
+  time: string;
+
+  @Column({ nullable: true })
+  day: string;
+
+  @Column({ nullable: true })
+  segment?: string;
+
+  @Column({ nullable: true })
+  location?: string;
 
   @Column('simple-array', { default: [] })
   members: string[];
 
+  @Column({ nullable: true })
+  lead_id?: number;
+
   @ManyToOne(() => JemaatEntity)
-  @JoinColumn({ name: 'lead_jemaat_id' })
+  @JoinColumn({ name: 'lead_id' })
   lead: JemaatEntity;
+
+  @Column({ nullable: true })
+  region_id: number;
 
   @ManyToOne(() => RegionEntity, (region) => region.blesscomn)
   @JoinColumn({ name: 'region_id' })

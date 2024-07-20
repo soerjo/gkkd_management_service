@@ -9,6 +9,31 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
     super(BlesscomnEntity, dataSource.createEntityManager());
   }
 
+  async getOne(id: number, region_id?: number) {
+    const queryBuilder = this.createQueryBuilder('blesscomn');
+    queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');
+    queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
+    queryBuilder.andWhere('blesscomn.id = :id', { id });
+    if (region_id) queryBuilder.andWhere('blesscomn.region_id = :region_id', { region_id });
+
+    queryBuilder.select([
+      'blesscomn.id as id',
+      'blesscomn.name as name',
+      'blesscomn.location as location',
+      'blesscomn.time as time',
+      'blesscomn.day as day',
+      'blesscomn.segment as segment',
+      'lead.id as lead_id',
+      'lead.name as lead_name',
+      'region.id as region_id',
+      'region.name as region_name',
+      'blesscomn.members as members',
+    ]);
+
+    const entities = await queryBuilder.getRawOne();
+    return entities;
+  }
+
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('blesscomn');
     queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');
@@ -33,8 +58,21 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
 
+    queryBuilder.select([
+      'blesscomn.id as id',
+      'blesscomn.name as name',
+      'blesscomn.location as location',
+      'blesscomn.time as time',
+      'blesscomn.day as day',
+      'blesscomn.segment as segment',
+      'lead.id as lead_id',
+      'lead.name as lead_name',
+      'region.id as region_id',
+      'region.name as region_name',
+    ]);
+
     const itemCount = await queryBuilder.getCount();
-    const entities = await queryBuilder.getMany();
+    const entities = await queryBuilder.getRawMany();
 
     const meta = {
       page: filter?.page || 0,

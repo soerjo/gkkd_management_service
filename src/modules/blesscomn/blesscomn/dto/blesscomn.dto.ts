@@ -11,6 +11,21 @@ export class BlesscomnDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
+  time: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  day: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  segment?: string;
+
+  @ApiProperty()
+  @IsString()
   @IsNotEmpty()
   location: string;
 

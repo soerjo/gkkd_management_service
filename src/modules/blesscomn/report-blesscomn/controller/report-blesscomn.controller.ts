@@ -37,23 +37,18 @@ export class ReportBlesscomnController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
-  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createReportBlesscomnDto: CreateReportBlesscomnDto) {
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateReportBlesscomnDto) {
     if (jwtPayload.jemaat_id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
-      createReportBlesscomnDto.blesscomn_id = blesscomn.id;
+      dto.blesscomn_id = blesscomn.id;
     }
-
-    return {
-      message: 'success',
-      data: await this.reportBlesscomnService.create(createReportBlesscomnDto),
-    };
+    return this.reportBlesscomnService.create(dto);
   }
 
   @Get()
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    console.log('get report blesscomn !');
     if (jwtPayload.role !== RoleEnum.ROLE_SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
 
     if (jwtPayload.jemaat_id) {
@@ -61,10 +56,7 @@ export class ReportBlesscomnController {
       filter.blesscomn_id = blesscomn.id;
     }
 
-    return {
-      message: 'success',
-      data: await this.reportBlesscomnService.findAll(filter),
-    };
+    return this.reportBlesscomnService.findAll(filter);
   }
 
   @Get('chart')
@@ -78,10 +70,7 @@ export class ReportBlesscomnController {
       filter.blesscomn_id = blesscomn.id;
     }
 
-    return {
-      message: 'success',
-      data: await this.reportBlesscomnService.chart(filter),
-    };
+    return this.reportBlesscomnService.chart(filter);
   }
 
   @Get(':id')
@@ -90,10 +79,7 @@ export class ReportBlesscomnController {
   async findOne(@Param('id') id: number) {
     const result = await this.reportBlesscomnService.findOne(id);
     if (!result) throw new BadRequestException('blesscomn report is not found!');
-    return {
-      message: 'success',
-      data: result,
-    };
+    return result;
   }
 
   @Patch(':id')
@@ -108,20 +94,13 @@ export class ReportBlesscomnController {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);
       updateReportBlesscomnDto.blesscomn_id = blesscomn.id;
     }
-
-    return {
-      message: 'success',
-      data: await this.reportBlesscomnService.update(id, updateReportBlesscomnDto),
-    };
+    return this.reportBlesscomnService.update(id, updateReportBlesscomnDto);
   }
 
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async remove(@Param('id') id: number) {
-    return {
-      message: 'success',
-      data: await this.reportBlesscomnService.remove(id),
-    };
+    await this.reportBlesscomnService.remove(id);
   }
 }

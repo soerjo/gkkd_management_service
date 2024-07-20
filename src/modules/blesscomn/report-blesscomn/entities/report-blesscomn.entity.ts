@@ -14,6 +14,12 @@ export class ReportBlesscomnEntity extends MainEntityAbstract {
   total_female: number;
 
   @Column()
+  new_male: number;
+
+  @Column()
+  new_female: number;
+
+  @Column()
   total: number;
 
   @Column()

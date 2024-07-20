@@ -45,44 +45,30 @@ export class BlesscomnController {
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
     if (jwtPayload.role !== RoleEnum.ROLE_SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
-
-    return {
-      message: 'success',
-      data: await this.blesscomnService.findAll(filter),
-    };
+    return await this.blesscomnService.findAll(filter);
   }
 
   @Get(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async findOne(@Param('id') id: number) {
-    console.log('get blesscomn by id: ' + id);
     const result = await this.blesscomnService.findOne(id);
     if (!result) throw new BadRequestException('blesscomn is not found!');
 
-    return {
-      message: 'success',
-      data: result,
-    };
+    return result;
   }
 
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN, RoleEnum.PEMIMPIN_PERSEKUTUAN])
   async update(@Param('id') id: number, @Body() updateBlesscomnDto: UpdateBlesscomnDto) {
-    return {
-      message: 'success',
-      data: await this.blesscomnService.update(id, updateBlesscomnDto),
-    };
+    return await this.blesscomnService.update(id, updateBlesscomnDto);
   }
 
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
   async remove(@Param('id') id: number) {
-    return {
-      message: 'success',
-      data: await this.blesscomnService.remove(id),
-    };
+    return await this.blesscomnService.remove(id);
   }
 }
