@@ -20,8 +20,8 @@ import { FilterDto } from '../dto/filter.dto';
 import { RolesGuard } from '../../../common/guard/role.guard';
 import { RoleEnum } from '../../../common/constant/role.constant';
 import { Roles } from '../../../common/decorator/role.decorator';
-import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
-import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
+import { CurrentUser } from '../../../common/decorator/jwt-payload.decorator';
+import { IJwtPayload } from '../../../common/interface/jwt-payload.interface';
 
 @ApiTags('Region')
 @ApiBearerAuth()

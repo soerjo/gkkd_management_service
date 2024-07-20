@@ -20,7 +20,7 @@ import { RoleEnum } from '../../../../common/constant/role.constant';
 import { CurrentUser } from '../../../../common/decorator/jwt-payload.decorator';
 import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface';
 import { FilterJadwalIbadahDto } from '../dto/filter.dto';
-import { JwtAuthGuard } from 'src/common/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
 
 @ApiTags('Cermon')
 @Controller('cermon')

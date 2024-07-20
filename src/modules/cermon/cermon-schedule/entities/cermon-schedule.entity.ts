@@ -1,6 +1,5 @@
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
 import { Column, Entity } from 'typeorm';
-import { DayEnum } from '../dto/create-jadwal-ibadah.dto';
 
 @Entity({ name: 'cermon_schedule' })
 export class CermonScheduleEntity extends MainEntityAbstract {

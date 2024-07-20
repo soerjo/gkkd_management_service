@@ -18,8 +18,8 @@ import { Roles } from '../../../../common/decorator/role.decorator';
 import { RoleEnum } from '../../../../common/constant/role.constant';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
-import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
-import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
+import { CurrentUser } from '../../../../common/decorator/jwt-payload.decorator';
+import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface';
 import { FilterReportDto } from '../dto/filter.dto';
 
 @ApiTags('Cermon')
