@@ -9,7 +9,7 @@ export class JemaatEntity extends MainEntityAbstract {
   @Column({ unique: true })
   nij?: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   nik?: string;
 
   @Column()

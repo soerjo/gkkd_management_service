@@ -27,7 +27,7 @@ import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @UseGuards(RolesGuard)
-@Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
+@Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
 export class MaritalController {
   constructor(private readonly maritalService: MaritalService) {}
 

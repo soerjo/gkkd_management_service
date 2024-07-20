@@ -28,7 +28,7 @@ import { RolesGuard } from '../../../../common/guard/role.guard';
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @UseGuards(RolesGuard)
-@Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
+@Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
 export class BaptisanController {
   constructor(private readonly baptisanService: BaptisanService) {}
 

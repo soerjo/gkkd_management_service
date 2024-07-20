@@ -7,6 +7,9 @@ export class DisciplesGroupEntity extends MainEntityAbstract {
   @Column()
   name: string;
 
+  @Column()
+  pembimbing_id: number;
+
   @OneToMany(() => DisciplesEntity, (disciples) => disciples.disciple_group, { nullable: true })
   anggota: DisciplesEntity[];
 

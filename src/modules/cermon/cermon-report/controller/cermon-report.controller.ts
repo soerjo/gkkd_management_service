@@ -27,7 +27,7 @@ import { FilterReportDto } from '../dto/filter.dto';
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @UseGuards(RolesGuard)
-@Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_ADMIN])
+@Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
 export class ReportIbadahController {
   constructor(private readonly reportIbadahService: ReportIbadahService) {}
 
