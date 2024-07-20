@@ -37,7 +37,7 @@ export class ReportIbadahService {
   }
 
   findOne(id: number, region_id?: number) {
-    return this.customReportRepository.getOne(id, region_id);
+    return this.customReportRepository.getOne(id);
   }
 
   async update(id: number, dto: UpdateReportIbadahDto) {
