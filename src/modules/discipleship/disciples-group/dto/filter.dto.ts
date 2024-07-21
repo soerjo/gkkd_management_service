@@ -11,7 +11,15 @@ export class FilterDto extends PaginationDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  lead_id: number;
+  pembimbing_nim: string;
 
-  lead: JemaatEntity;
+  @ApiPropertyOptional()
+  @IsOptional()
+  region_id: number;
+
+  disciple_tree_nim?: string;
+  disciple_nims?: string[];
+
+  region_tree_id: number;
+  region_ids: number[];
 }

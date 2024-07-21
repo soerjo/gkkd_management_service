@@ -29,7 +29,7 @@ export class DisciplesEntity extends MainEntityAbstract {
   admin: AdminEntity;
 
   @Column({ nullable: true })
-  group_id?: number;
+  disciple_group_id?: number;
 
   @ManyToOne(() => DisciplesGroupEntity, { nullable: true })
   @JoinColumn({ name: 'disciple_group_id' })

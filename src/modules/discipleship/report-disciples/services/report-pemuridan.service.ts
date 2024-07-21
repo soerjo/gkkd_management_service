@@ -7,32 +7,37 @@ import { IsNull } from 'typeorm';
 import { getWeeksInMonth } from '../../../../utils/week-in-month.utils';
 import { PemuridanStatusEnum } from '../../../../common/constant/pemuridan-status.constant';
 import { DisciplesService } from '../../disciples/services/disciples.service';
+import { RegionService } from '../../../region/services/region.service';
 
 @Injectable()
 export class ReportPemuridanService {
   constructor(
     private readonly reportPemuridanRepository: ReportPemuridanRepository,
+    private readonly regionService: RegionService,
     private readonly pemuridanService: DisciplesService,
   ) {}
 
-  async create(createReportPemuridanDto: CreateReportPemuridanDto) {
+  async create(dto: CreateReportPemuridanDto) {
     const isDataExist = await this.reportPemuridanRepository.findOne({
       where: {
-        date: createReportPemuridanDto.date,
-        // pemuridan: { id: createReportPemuridanDto.pemuridan_id }
+        date: dto.date,
+        disciple_group_id: dto.disciple_group_id,
       },
     });
     if (isDataExist) throw new BadRequestException('data already exist!');
 
-    // const pemuridan = await this.pemuridanService.findOne(createReportPemuridanDto.pemuridan_id);
-    // if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
-    // createReportPemuridanDto.pemuridan = pemuridan;
-
-    const reportPemuridan = this.reportPemuridanRepository.create(createReportPemuridanDto);
+    const reportPemuridan = this.reportPemuridanRepository.create(dto);
     return this.reportPemuridanRepository.save(reportPemuridan);
   }
 
-  findAll(filter: FilterDto) {
+  async findAll(filter: FilterDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_tree_id });
+    filter.region_ids = regions.map((data) => data.id);
+    filter.region_tree_id && filter.region_ids.push(filter.region_tree_id);
+
+    const disciples = await this.pemuridanService.getByHierarchy({ pembimbing_nim: filter.disciple_tree_nim });
+    filter.disciple_nims = disciples.map((data) => data.nim);
+
     return this.reportPemuridanRepository.getAll(filter);
   }
 
@@ -40,19 +45,23 @@ export class ReportPemuridanService {
     return this.reportPemuridanRepository.findOneBy({ id: id ?? IsNull() });
   }
 
-  async update(id: number, updateReportPemuridanDto: UpdateReportPemuridanDto) {
-    const pastReportPemuridan = await this.findOne(id);
-    if (!pastReportPemuridan) throw new BadRequestException('Pemuridan report is not found!');
+  async update(id: number, dto: UpdateReportPemuridanDto) {
+    const pastReport = await this.findOne(id);
+    if (!pastReport) throw new BadRequestException('Pemuridan report is not found!');
 
-    // if (updateReportPemuridanDto.pemuridan_id) {
-    //   const pemuridan = await this.pemuridanService.findOne(updateReportPemuridanDto.pemuridan_id);
-    //   if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
-    //   // updateReportPemuridanDto.pemuridan = pemuridan;
-    // }
+    const isDataExist = await this.reportPemuridanRepository.findOne({
+      where: {
+        date: dto.date,
+        disciple_group_id: dto.disciple_group_id,
+      },
+    });
+    if (isDataExist && isDataExist.id !== pastReport.id) {
+      throw new BadRequestException('data already exist!');
+    }
 
     await this.reportPemuridanRepository.save({
-      ...pastReportPemuridan,
-      ...updateReportPemuridanDto,
+      ...pastReport,
+      ...dto,
     });
 
     return { id };
@@ -67,7 +76,6 @@ export class ReportPemuridanService {
         acc[month] = [];
       }
       acc[month].push({
-        total: data.total_kehadiran_murid,
         date: data.date,
       });
       return acc;

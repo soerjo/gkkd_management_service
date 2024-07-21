@@ -26,7 +26,7 @@ export class PemuridanDto {
   @ApiProperty()
   @IsOptional()
   @IsNumber()
-  group_id?: number;
+  disciple_group_id?: number;
 
   @ApiProperty()
   @IsNumber()

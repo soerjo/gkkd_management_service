@@ -1,26 +1,28 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from '../../../../common/dto/pagination.dto';
-import { JemaatEntity } from '../../../../modules/jemaat/jemaat/entities/jemaat.entity';
 import { Type } from 'class-transformer';
 
 export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  search: string;
+  search?: string;
 
   @ApiPropertyOptional()
+  @IsString()
   @IsOptional()
-  lead_id: number;
+  pembimbing_nim?: string;
 
   @ApiPropertyOptional()
   @IsNumber()
   @Type(() => Number)
   @IsOptional()
-  region_id: number;
+  region_id?: number;
 
-  lead: JemaatEntity;
-  region_tree_id: number;
-  region_ids: number[];
+  disciple_tree_nim?: string;
+  disciple_nims?: string[];
+
+  region_tree_id?: number;
+  region_ids?: number[];
 }

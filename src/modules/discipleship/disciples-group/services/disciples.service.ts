@@ -1,84 +1,68 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreatePemuridanDto } from '../dto/create-pemuridan.dto';
-import { UpdatePemuridanDto } from '../dto/update-pemuridan.dto';
+import { UpdateGroupDto } from '../dto/update-group.dto';
 import { DisciplesGroupRepository } from '../repository/disciples.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { RegionService } from '../../../../modules/region/services/region.service';
+import { CreateGroupDto } from '../dto/create-group.dto';
+import { DisciplesService } from '../../disciples/services/disciples.service';
 
 @Injectable()
 export class DisciplesGroupService {
   constructor(
-    private readonly pemuridanRepository: DisciplesGroupRepository,
+    private readonly pemuridanGroupRepository: DisciplesGroupRepository,
+    private readonly pemuridanService: DisciplesService,
     private readonly regionService: RegionService,
-    // private readonly jemaatService: JemaatService,
   ) {}
 
-  async create(createPemuridanDto: CreatePemuridanDto) {
-    // if (createPemuridanDto.region_id) {
-    //   const region = await this.regionService.getOneById(createPemuridanDto.region_id);
-    //   if (!region) throw new BadRequestException('Region is not found!');
-    //   createPemuridanDto.region = region;
-    // }
+  async create(dto: CreateGroupDto) {
+    const disciples = await this.pemuridanService.findOne(dto.pembimbing_nim);
+    if (!disciples) throw new BadRequestException('disciples is not found');
 
-    // const lead = await this.jemaatService.findOne(createPemuridanDto.lead_id);
-    // if (!lead) throw new BadRequestException('Lead is not found in Jemaat!');
-    // createPemuridanDto.lead = lead;
+    const region = await this.regionService.getOneById(dto.region_id);
+    if (!region) throw new BadRequestException('region is not found!');
 
-    if (!createPemuridanDto.name) {
-      const getAllGruop = await this.pemuridanRepository.find({
-        where: {
-          // lead: {
-          //   id: createPemuridanDto.lead_id ?? IsNull(),
-          // },
-        },
-        withDeleted: true,
-      });
-
-      const groupLength = getAllGruop.length;
-      // createPemuridanDto.name = `${lead.name} - ${groupLength < 10 ? '0' + groupLength : groupLength.toString()}`;
-    }
-
-    const pemuridan = this.pemuridanRepository.create(createPemuridanDto);
-    return this.pemuridanRepository.save(pemuridan);
+    return this.pemuridanGroupRepository.save({
+      ...dto,
+      pembimbing_nim: dto.pembimbing_nim,
+      pembimbing_id: disciples.id,
+    });
   }
 
   async findAll(filter: FilterDto) {
-    return this.pemuridanRepository.getAll(filter);
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_tree_id });
+    filter.region_ids = regions.map((data) => data.id);
+    filter.region_tree_id && filter.region_ids.push(filter.region_tree_id);
+
+    return this.pemuridanGroupRepository.getAll(filter);
   }
 
   async findOne(id: number) {
-    return this.pemuridanRepository.findOneBy({ id });
+    return this.pemuridanGroupRepository.findOneBy({ id });
   }
 
-  async update(id: number, updatePemuridanDto: UpdatePemuridanDto) {
-    const pemuridan = await this.findOne(id);
-    if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
+  async update(id: number, dto: UpdateGroupDto) {
+    const group = await this.findOne(id);
+    if (!group) throw new BadRequestException('group is not found!');
 
-    // if (updatePemuridanDto.region_id) {
-    //   const region = await this.regionService.getOneById(updatePemuridanDto.region_id);
-    //   if (!region) throw new BadRequestException('Region is not found!');
-    //   updatePemuridanDto.region = region;
-    // }
+    const disciples = await this.pemuridanService.findOne(dto.pembimbing_nim);
+    if (!disciples) throw new BadRequestException('disciples is not found');
 
-    // if (updatePemuridanDto.lead_id) {
-    //   const lead = await this.jemaatService.findOne(updatePemuridanDto.lead_id);
-    //   if (!lead) throw new BadRequestException('Lead is not found in Jemaat!');
-    //   updatePemuridanDto.lead = lead;
-    // }
+    const region = await this.regionService.getOneById(dto.region_id);
+    if (!region) throw new BadRequestException('region is not found!');
 
-    await this.pemuridanRepository.save({
-      ...pemuridan,
-      ...UpdatePemuridanDto,
+    await this.pemuridanGroupRepository.save({
+      ...group,
+      ...dto,
     });
 
     return id;
   }
 
   async remove(id: number) {
-    const pemuridan = await this.findOne(id);
-    if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
+    const group = await this.findOne(id);
+    if (!group) throw new BadRequestException('group is not found!');
 
-    await this.pemuridanRepository.softRemove(pemuridan);
+    await this.pemuridanGroupRepository.softRemove(group);
 
     return id;
   }

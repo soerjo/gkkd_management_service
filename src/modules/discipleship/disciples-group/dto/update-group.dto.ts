@@ -1,8 +1,8 @@
 import { ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { CreatePemuridanDto } from './create-pemuridan.dto';
 import { IsString, IsNotEmpty } from 'class-validator';
+import { CreateGroupDto } from './create-group.dto';
 
-export class UpdatePemuridanDto extends PartialType(CreatePemuridanDto) {
+export class UpdateGroupDto extends PartialType(CreateGroupDto) {
   @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()

@@ -34,7 +34,7 @@ export class DisciplesController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN, RoleEnum.DISCIPLES])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreatePemuridanDto) {
-    dto.region_id = jwtPayload.region.id;
+    dto.region_id = jwtPayload?.region?.id;
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
       if (!parent) throw new BadRequestException('user account is not found!');
@@ -50,7 +50,12 @@ export class DisciplesController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN, RoleEnum.DISCIPLES])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    filter.region_tree_id = filter.region_id ?? jwtPayload.region.id;
+    filter.region_tree_id = filter.region_id ?? jwtPayload?.region?.id;
+    if (jwtPayload.role === RoleEnum.DISCIPLES) {
+      const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
+      if (!parent) throw new BadRequestException('user account is not found!');
+      filter.disciple_tree_nim = parent.nim;
+    }
 
     return this.pemuridanService.findAll(filter);
   }

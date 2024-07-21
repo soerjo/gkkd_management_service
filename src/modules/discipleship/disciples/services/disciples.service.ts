@@ -10,6 +10,7 @@ import { Transactional } from 'typeorm-transactional';
 import { RegionEntity } from '../../../region/entities/region.entity';
 import { JemaatService } from '../../../jemaat/jemaat/services/jemaat.service';
 import { JemaatEntity } from '../../../jemaat/jemaat/entities/jemaat.entity';
+import { DisciplesEntity } from '../entities/disciples.entity';
 
 @Injectable()
 export class DisciplesService {
@@ -43,7 +44,7 @@ export class DisciplesService {
     const admin = await this.adminService.create({
       name: pemuridan.nim,
       role: RoleEnum.DISCIPLES,
-      regions_id: dto.region_id,
+      region_id: dto.region_id,
     });
 
     await this.pemuridanRepository.save({
@@ -57,6 +58,9 @@ export class DisciplesService {
     filter.region_ids = regions.map((data) => data.id);
     filter.region_tree_id && filter.region_ids.push(filter.region_tree_id);
 
+    const disciples = await this.getByHierarchy({ pembimbing_nim: filter.disciple_tree_nim });
+    filter.disciple_nims = disciples.map((data) => data.nim);
+
     return this.pemuridanRepository.getAll(filter);
   }
 
@@ -68,6 +72,10 @@ export class DisciplesService {
     return this.pemuridanRepository.findOneBy({ nim });
   }
 
+  async getByHierarchy(filter: FilterDto) {
+    return this.pemuridanRepository.getByHirarcy(filter);
+  }
+
   async update(nim: string, dto: UpdatePemuridanDto) {
     const pemuridan = await this.findOne(nim);
     if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
@@ -75,17 +83,19 @@ export class DisciplesService {
     if (pemuridan.jemaat_nij) delete dto.name;
 
     let jemaat: JemaatEntity;
+    let muridByNij: DisciplesEntity;
     if (dto.jemaat_nij) {
       jemaat = await this.jemaatService.findOne(dto.jemaat_nij);
       if (!jemaat) throw new BadRequestException('jemaat is not found');
+      muridByNij = await this.pemuridanRepository.findOne({ where: { jemaat_nij: dto.jemaat_nij } });
     }
 
-    let muridByNij = await this.pemuridanRepository.findOne({ where: { jemaat_nij: dto.jemaat_nij } });
     if (muridByNij && pemuridan.id !== muridByNij.id)
       throw new BadRequestException('jemaat nij already related to murid nim: ' + muridByNij.nim);
 
     if (jemaat) dto.name = jemaat.name;
 
+    console.log({ dto });
     await this.pemuridanRepository.save({
       ...pemuridan,
       ...dto,

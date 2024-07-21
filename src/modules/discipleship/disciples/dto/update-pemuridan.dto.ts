@@ -27,4 +27,9 @@ export class UpdatePemuridanDto {
   @IsNumber()
   @IsOptional()
   group_id?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  disciple_group_id?: number;
 }

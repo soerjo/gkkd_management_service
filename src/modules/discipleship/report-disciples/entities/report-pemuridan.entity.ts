@@ -4,6 +4,9 @@ import { DisciplesGroupEntity } from '../../disciples-group/entities/disciples-g
 
 @Entity({ name: 'report_pemuridan' })
 export class ReportPemuridanEntity extends MainEntityAbstract {
+  @Column()
+  disciple_group_id: number;
+
   @ManyToOne(() => DisciplesGroupEntity)
   @JoinColumn({ name: 'disciple_group_id' })
   disciple_group: DisciplesGroupEntity;
@@ -14,6 +17,9 @@ export class ReportPemuridanEntity extends MainEntityAbstract {
   @Column({ default: '' })
   material: string;
 
-  @Column({ default: 0 })
-  total_kehadiran_murid: number;
+  @Column()
+  pembimbing_nim: string;
+
+  @Column({ nullable: true })
+  region_id?: number;
 }

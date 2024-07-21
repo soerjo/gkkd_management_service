@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 import { ReportPemuridanEntity } from '../entities/report-pemuridan.entity';
 import { FilterDto } from '../dto/filter.dto';
+import { DisciplesEntity } from '../../disciples/entities/disciples.entity';
+import { RegionEntity } from '../../../region/entities/region.entity';
 
 @Injectable()
 export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity> {
@@ -11,23 +13,32 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
 
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('pemuridan_report');
+    queryBuilder.leftJoinAndSelect('pemuridan_report.disciple_group', 'disciple_group');
+    queryBuilder.leftJoinAndSelect(DisciplesEntity, 'pembimbing', 'pembimbing.nim = pemuridan_report.pembimbing_nim');
+    queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = pemuridan_report.region_id');
 
-    queryBuilder.leftJoin('pemuridan_report.pemuridan', 'pemuridan');
-    queryBuilder.addSelect(['pemuridan.name', 'pemuridan.id']);
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('disciples.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+      }),
+    );
 
-    queryBuilder.leftJoin('pemuridan.lead', 'lead');
-    queryBuilder.addSelect(['lead.id', 'lead.full_name', 'lead.name']);
-
-    if (filter.lead_id) {
-      queryBuilder.andWhere('lead.id = :lead_id', { lead_id: filter.lead_id });
+    if (filter.pembimbing_nim) {
+      queryBuilder.andWhere('group.pembimbing_nim = :pembimbing_nim', { pembimbing_nim: filter.pembimbing_nim });
     }
 
-    if (filter.date_start) {
-      queryBuilder.andWhere('pemuridan_report.date >= :date_start', { date_start: filter.date_start });
+    if (filter.region_id) {
+      queryBuilder.andWhere('group.region_id = :region_id', { region_id: filter.region_id });
     }
 
-    if (filter.date_end) {
-      queryBuilder.andWhere('pemuridan_report.date <= :date_end', { date_end: filter.date_end });
+    if (filter.date_from) {
+      queryBuilder.andWhere('pemuridan_report.date >= :date_from', { date_from: filter.date_from });
+    }
+
+    if (filter.date_to) {
+      queryBuilder.andWhere('pemuridan_report.date <= :date_to', { date_to: filter.date_to });
     }
 
     if (filter.take) {

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 import { FilterDto } from '../dto/filter.dto';
 import { DisciplesGroupEntity } from '../entities/disciples-group.entity';
+import { DisciplesEntity } from '../../disciples/entities/disciples.entity';
 
 @Injectable()
 export class DisciplesGroupRepository extends Repository<DisciplesGroupEntity> {
@@ -10,23 +11,26 @@ export class DisciplesGroupRepository extends Repository<DisciplesGroupEntity> {
   }
 
   async getAll(filter: FilterDto) {
-    const queryBuilder = this.createQueryBuilder('pemuridan');
-    queryBuilder.leftJoin('pemuridan.lead', 'lead');
-    queryBuilder.addSelect(['lead.full_name', 'lead.name', 'lead.id']);
-
-    if (filter.lead_id) {
-      queryBuilder.andWhere('lead.id = :lead_id', { lead_id: filter.lead_id });
-    }
+    const queryBuilder = this.createQueryBuilder('group');
+    queryBuilder.leftJoinAndSelect(DisciplesEntity, 'pembimbing', 'pembimbing.nim = group.pembimbing_nim');
 
     filter.search &&
-      queryBuilder.andWhere('(pemuridan.name ILIKE :search OR pemuridan.lead ILIKE :search)', {
-        search: filter.search,
+      queryBuilder.andWhere('(group.name ILIKE :search OR pembimbing.name ILIKE :search)', {
+        search: `%${filter.search}%`,
       });
+
+    if (filter.pembimbing_nim) {
+      queryBuilder.andWhere('group.pembimbing_nim = :pembimbing_nim', { pembimbing_nim: filter.pembimbing_nim });
+    }
+
+    if (filter.region_id) {
+      queryBuilder.andWhere('group.region_id = :region_id', { region_id: filter.region_id });
+    }
 
     if (filter.take) {
       queryBuilder.limit(filter?.take);
       queryBuilder.offset((filter?.page - 1) * filter?.take);
-      queryBuilder.orderBy(`pemuridan.created_at`, 'DESC');
+      queryBuilder.orderBy(`group.created_at`, 'DESC');
     }
 
     const itemCount = await queryBuilder.getCount();

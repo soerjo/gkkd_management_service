@@ -5,5 +5,5 @@ import { IsNumber } from 'class-validator';
 export class CreateAdminDto extends AdminDto {
   @ApiPropertyOptional()
   @IsNumber()
-  regions_id?: number;
+  region_id?: number;
 }
