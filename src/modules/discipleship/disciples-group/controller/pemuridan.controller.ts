@@ -23,7 +23,7 @@ import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface'
 import { DisciplesGroupService } from '../services/disciples.service';
 
 @ApiTags('Pemuridan')
-@Controller('pemuridan')
+@Controller('pemuridan/group')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 export class DisciplesGroupController {
@@ -31,19 +31,16 @@ export class DisciplesGroupController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.PARENT])
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createPemuridanDto: CreatePemuridanDto) {
-    if (jwtPayload.jemaat_id) createPemuridanDto.lead_id = jwtPayload.jemaat_id;
+    // if (jwtPayload.jemaat_id) createPemuridanDto.lead_id = jwtPayload.jemaat_id;
 
-    return {
-      message: 'success',
-      data: await this.pemuridanService.create(createPemuridanDto),
-    };
+    return this.pemuridanService.create(createPemuridanDto);
   }
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.PARENT])
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
     if (jwtPayload.jemaat_id) filter.lead_id = jwtPayload.jemaat_id;
 
@@ -55,7 +52,7 @@ export class DisciplesGroupController {
 
   @Get(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.PARENT])
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async findOne(@Param('id') id: number) {
     const result = await this.pemuridanService.findOne(id);
     if (!result) throw new BadRequestException('pemuridan is not found!');
@@ -68,18 +65,17 @@ export class DisciplesGroupController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.PARENT])
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
     @Param('id') id: number,
     @Body() updatePemuridanDto: UpdatePemuridanDto,
   ) {
-    if (jwtPayload.jemaat_id) updatePemuridanDto.lead_id = jwtPayload.jemaat_id;
-
-    return {
-      message: 'success',
-      data: await this.pemuridanService.update(id, updatePemuridanDto),
-    };
+    // if (jwtPayload.jemaat_id) updatePemuridanDto.lead_id = jwtPayload.jemaat_id;
+    // return {
+    //   message: 'success',
+    //   data: await this.pemuridanService.update(id, updatePemuridanDto),
+    // };
   }
 
   @Delete(':id')

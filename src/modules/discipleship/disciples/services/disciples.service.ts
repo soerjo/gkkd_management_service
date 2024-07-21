@@ -7,6 +7,9 @@ import { RegionService } from '../../../../modules/region/services/region.servic
 import { AdminService } from '../../../admin/services/admin.service';
 import { RoleEnum } from '../../../../common/constant/role.constant';
 import { Transactional } from 'typeorm-transactional';
+import { RegionEntity } from '../../../region/entities/region.entity';
+import { JemaatService } from '../../../jemaat/jemaat/services/jemaat.service';
+import { JemaatEntity } from '../../../jemaat/jemaat/entities/jemaat.entity';
 
 @Injectable()
 export class DisciplesService {
@@ -14,7 +17,7 @@ export class DisciplesService {
     private readonly pemuridanRepository: DisciplesRepository,
     private readonly regionService: RegionService,
     private readonly adminService: AdminService,
-    // private readonly jemaatService: JemaatService,
+    private readonly jemaatService: JemaatService,
   ) {}
 
   @Transactional()
@@ -22,53 +25,81 @@ export class DisciplesService {
     if (dto.region_id) {
       const region = await this.regionService.getOneById(dto.region_id);
       if (!region) throw new BadRequestException('Region is not found!');
-      dto.region = region;
     }
+
+    if (dto.jemaat_nij) {
+      let jemaat = await this.jemaatService.findOne(dto.jemaat_nij);
+      if (!jemaat) throw new BadRequestException('jemaat is not found');
+
+      let muridByNij = await this.pemuridanRepository.findOne({ where: { jemaat_nij: dto.jemaat_nij } });
+      if (muridByNij) throw new BadRequestException('jemaat nij already related to murid nim: ' + muridByNij.nim);
+
+      dto.name = jemaat.name;
+    }
+
+    let pemuridan = this.pemuridanRepository.create(dto);
+    pemuridan = await this.pemuridanRepository.save(pemuridan);
 
     const admin = await this.adminService.create({
-      name: dto.name,
+      name: pemuridan.nim,
       role: RoleEnum.DISCIPLES,
+      regions_id: dto.region_id,
     });
-    const pemuridan = this.pemuridanRepository.create({
-      ...dto,
-      admin: admin,
-    });
-
-    await this.pemuridanRepository.save(pemuridan);
-  }
-
-  async findAll(filter: FilterDto) {
-    return this.pemuridanRepository.getAll(filter);
-  }
-
-  async findOne(id: number) {
-    return this.pemuridanRepository.findOneBy({ id });
-  }
-
-  async update(id: number, updatePemuridanDto: UpdatePemuridanDto) {
-    const pemuridan = await this.findOne(id);
-    if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
-
-    if (updatePemuridanDto.region_id) {
-      const region = await this.regionService.getOneById(updatePemuridanDto.region_id);
-      if (!region) throw new BadRequestException('Region is not found!');
-      updatePemuridanDto.region = region;
-    }
 
     await this.pemuridanRepository.save({
       ...pemuridan,
-      ...UpdatePemuridanDto,
+      admin: admin,
     });
-
-    return id;
   }
 
-  async remove(id: number) {
-    const pemuridan = await this.findOne(id);
+  async findAll(filter: FilterDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_tree_id });
+    filter.region_ids = regions.map((data) => data.id);
+    filter.region_tree_id && filter.region_ids.push(filter.region_tree_id);
+
+    return this.pemuridanRepository.getAll(filter);
+  }
+
+  async getAccountDisciple(admin_id: number) {
+    return this.pemuridanRepository.findOne({ where: { admin: { id: admin_id } } });
+  }
+
+  async findOne(nim: string) {
+    return this.pemuridanRepository.findOneBy({ nim });
+  }
+
+  async update(nim: string, dto: UpdatePemuridanDto) {
+    const pemuridan = await this.findOne(nim);
+    if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
+
+    if (pemuridan.jemaat_nij) delete dto.name;
+
+    let jemaat: JemaatEntity;
+    if (dto.jemaat_nij) {
+      jemaat = await this.jemaatService.findOne(dto.jemaat_nij);
+      if (!jemaat) throw new BadRequestException('jemaat is not found');
+    }
+
+    let muridByNij = await this.pemuridanRepository.findOne({ where: { jemaat_nij: dto.jemaat_nij } });
+    if (muridByNij && pemuridan.id !== muridByNij.id)
+      throw new BadRequestException('jemaat nij already related to murid nim: ' + muridByNij.nim);
+
+    if (jemaat) dto.name = jemaat.name;
+
+    await this.pemuridanRepository.save({
+      ...pemuridan,
+      ...dto,
+    });
+
+    return nim;
+  }
+
+  async remove(nim: string) {
+    const pemuridan = await this.findOne(nim);
     if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
 
     await this.pemuridanRepository.softRemove(pemuridan);
 
-    return id;
+    return nim;
   }
 }

@@ -110,7 +110,7 @@ export class AdminController {
   async resetPassword(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
     if (jwtPayload.id === id) throw new ForbiddenException();
 
-    await this.adminService.resetPassword(id, jwtPayload.region.id);
+    await this.adminService.resetPassword(id, jwtPayload?.region?.id);
   }
 
   @Delete(':id')

@@ -24,8 +24,8 @@ export class ReportPemuridanService {
     });
     if (isDataExist) throw new BadRequestException('data already exist!');
 
-    const pemuridan = await this.pemuridanService.findOne(createReportPemuridanDto.pemuridan_id);
-    if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
+    // const pemuridan = await this.pemuridanService.findOne(createReportPemuridanDto.pemuridan_id);
+    // if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
     // createReportPemuridanDto.pemuridan = pemuridan;
 
     const reportPemuridan = this.reportPemuridanRepository.create(createReportPemuridanDto);
@@ -44,11 +44,11 @@ export class ReportPemuridanService {
     const pastReportPemuridan = await this.findOne(id);
     if (!pastReportPemuridan) throw new BadRequestException('Pemuridan report is not found!');
 
-    if (updateReportPemuridanDto.pemuridan_id) {
-      const pemuridan = await this.pemuridanService.findOne(updateReportPemuridanDto.pemuridan_id);
-      if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
-      // updateReportPemuridanDto.pemuridan = pemuridan;
-    }
+    // if (updateReportPemuridanDto.pemuridan_id) {
+    //   const pemuridan = await this.pemuridanService.findOne(updateReportPemuridanDto.pemuridan_id);
+    //   if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
+    //   // updateReportPemuridanDto.pemuridan = pemuridan;
+    // }
 
     await this.reportPemuridanRepository.save({
       ...pastReportPemuridan,

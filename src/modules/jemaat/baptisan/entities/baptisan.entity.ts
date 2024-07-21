@@ -64,6 +64,6 @@ export class BaptismRecordEntity extends MainEntityAbstract {
     const incrementIdStr = ('0000' + incrementId).slice(-4); // zero-padded increment id
     const incrementRegionId = ('0000' + region_id).slice(-4); // zero-padded increment id
 
-    return `${year}${month}${date}${incrementRegionId}${incrementIdStr}`;
+    return `${year}${month}${date}15${incrementRegionId}${incrementIdStr}`;
   }
 }

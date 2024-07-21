@@ -100,6 +100,6 @@ export class JemaatEntity extends MainEntityAbstract {
     const incrementIdStr = ('0000' + incrementId).slice(-4); // zero-padded increment id
     const incrementRegionId = ('0000' + region_id).slice(-4); // zero-padded increment id
 
-    return `${year}${month}${incrementRegionId}${incrementIdStr}`;
+    return `${year}${month}10${incrementRegionId}${incrementIdStr}`;
   }
 }

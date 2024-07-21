@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 import { FilterDto } from '../dto/filter.dto';
 import { DisciplesEntity } from '../entities/disciples.entity';
 
@@ -10,23 +10,29 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
   }
 
   async getAll(filter: FilterDto) {
-    const queryBuilder = this.createQueryBuilder('pemuridan');
-    queryBuilder.leftJoin('pemuridan.lead', 'lead');
-    queryBuilder.addSelect(['lead.full_name', 'lead.name', 'lead.id']);
-
-    if (filter.lead_id) {
-      queryBuilder.andWhere('lead.id = :lead_id', { lead_id: filter.lead_id });
-    }
+    const queryBuilder = this.createQueryBuilder('disciples');
 
     filter.search &&
-      queryBuilder.andWhere('(pemuridan.name ILIKE :search OR pemuridan.lead ILIKE :search)', {
+      queryBuilder.andWhere('(disciples.name ILIKE :search OR disciples.lead ILIKE :search)', {
         search: filter.search,
       });
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('disciples.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+      }),
+    );
+
+    if (filter.region_id) {
+      queryBuilder.andWhere('disciples.region_id = :region_id', { region_id: filter.region_id });
+    }
 
     if (filter.take) {
       queryBuilder.limit(filter?.take);
       queryBuilder.offset((filter?.page - 1) * filter?.take);
-      queryBuilder.orderBy(`pemuridan.created_at`, 'DESC');
+      queryBuilder.orderBy(`disciples.created_at`, 'DESC');
     }
 
     const itemCount = await queryBuilder.getCount();

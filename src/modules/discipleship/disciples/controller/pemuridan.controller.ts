@@ -9,6 +9,7 @@ import {
   UseGuards,
   Query,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { CreatePemuridanDto } from '../dto/create-pemuridan.dto';
 import { UpdatePemuridanDto } from '../dto/update-pemuridan.dto';
@@ -31,49 +32,59 @@ export class DisciplesController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.PARENT])
-  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() createPemuridanDto: CreatePemuridanDto) {
-    if (jwtPayload.jemaat_id) createPemuridanDto.lead_id = jwtPayload.jemaat_id;
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN, RoleEnum.DISCIPLES])
+  async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreatePemuridanDto) {
+    dto.region_id = jwtPayload.region.id;
+    if (jwtPayload.role === RoleEnum.DISCIPLES) {
+      const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
+      if (!parent) throw new BadRequestException('user account is not found!');
+      dto.pembimbing_nim = parent.nim;
+    }
 
-    return this.pemuridanService.create(createPemuridanDto);
+    if (!dto.region_id) throw new BadRequestException('region is not found!');
+
+    return this.pemuridanService.create(dto);
   }
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.PARENT])
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN, RoleEnum.DISCIPLES])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.jemaat_id) filter.lead_id = jwtPayload.jemaat_id;
+    filter.region_tree_id = filter.region_id ?? jwtPayload.region.id;
 
     return this.pemuridanService.findAll(filter);
   }
 
-  @Get(':id')
+  @Get(':nim')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.PARENT])
-  async findOne(@Param('id') id: number) {
-    const result = await this.pemuridanService.findOne(id);
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
+  async findOne(@Param('nim') nim: string) {
+    const result = await this.pemuridanService.findOne(nim);
     if (!result) throw new BadRequestException('pemuridan is not found!');
 
     return result;
   }
 
-  @Patch(':id')
+  @Patch(':nim')
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.PARENT])
-  async update(
-    @CurrentUser() jwtPayload: IJwtPayload,
-    @Param('id') id: number,
-    @Body() updatePemuridanDto: UpdatePemuridanDto,
-  ) {
-    if (jwtPayload.jemaat_id) updatePemuridanDto.lead_id = jwtPayload.jemaat_id;
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
+  async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('nim') nim: string, @Body() dto: UpdatePemuridanDto) {
+    if (jwtPayload.role === RoleEnum.DISCIPLES) {
+      const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
+      if (!parent) throw new BadRequestException('user account is not found!');
 
-    await this.pemuridanService.update(id, updatePemuridanDto);
+      const murid = await this.pemuridanService.findOne(nim);
+      if (!murid) throw new BadRequestException('disciples is not found');
+      if (murid.pembimbing_nim !== parent.nim) throw new ForbiddenException('not the parent');
+    }
+
+    await this.pemuridanService.update(nim, dto);
   }
 
-  @Delete(':id')
+  @Delete(':nim')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
-  async remove(@Param('id') id: number) {
-    await this.pemuridanService.remove(id);
+  async remove(@Param('nim') nim: string) {
+    await this.pemuridanService.remove(nim);
   }
 }

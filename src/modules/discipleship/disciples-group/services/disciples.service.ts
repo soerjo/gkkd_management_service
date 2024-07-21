@@ -14,11 +14,11 @@ export class DisciplesGroupService {
   ) {}
 
   async create(createPemuridanDto: CreatePemuridanDto) {
-    if (createPemuridanDto.region_id) {
-      const region = await this.regionService.getOneById(createPemuridanDto.region_id);
-      if (!region) throw new BadRequestException('Region is not found!');
-      createPemuridanDto.region = region;
-    }
+    // if (createPemuridanDto.region_id) {
+    //   const region = await this.regionService.getOneById(createPemuridanDto.region_id);
+    //   if (!region) throw new BadRequestException('Region is not found!');
+    //   createPemuridanDto.region = region;
+    // }
 
     // const lead = await this.jemaatService.findOne(createPemuridanDto.lead_id);
     // if (!lead) throw new BadRequestException('Lead is not found in Jemaat!');
@@ -54,11 +54,11 @@ export class DisciplesGroupService {
     const pemuridan = await this.findOne(id);
     if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
 
-    if (updatePemuridanDto.region_id) {
-      const region = await this.regionService.getOneById(updatePemuridanDto.region_id);
-      if (!region) throw new BadRequestException('Region is not found!');
-      updatePemuridanDto.region = region;
-    }
+    // if (updatePemuridanDto.region_id) {
+    //   const region = await this.regionService.getOneById(updatePemuridanDto.region_id);
+    //   if (!region) throw new BadRequestException('Region is not found!');
+    //   updatePemuridanDto.region = region;
+    // }
 
     // if (updatePemuridanDto.lead_id) {
     //   const lead = await this.jemaatService.findOne(updatePemuridanDto.lead_id);

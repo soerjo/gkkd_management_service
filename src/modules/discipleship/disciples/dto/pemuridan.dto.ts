@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMinSize, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { BooksEnum } from '../../../../common/constant/books.constant';
-import { JemaatEntity } from '../../../../modules/jemaat/jemaat/entities/jemaat.entity';
-import { RegionEntity } from '../../../../modules/region/entities/region.entity';
 
 export class PemuridanDto {
-  name?: string;
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
   @ApiProperty({ enum: BooksEnum })
   @IsEnum(BooksEnum)
@@ -13,23 +14,23 @@ export class PemuridanDto {
   book_level: BooksEnum;
 
   @ApiProperty()
-  @IsNotEmpty()
-  lead_id: number;
-
-  lead: JemaatEntity;
+  @IsString()
+  @IsOptional()
+  jemaat_nij?: string;
 
   @ApiProperty()
-  @IsArray()
-  @ArrayMinSize(1, { message: 'members must contain at least 1 desciple' })
-  @IsString({ each: true })
-  @IsNotEmpty()
-  members: string[];
+  @IsString()
+  @IsOptional()
+  pembimbing_nim?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  group_id?: number;
 
   @ApiProperty()
   @IsNumber()
   @Min(1)
   @IsOptional()
   region_id?: number;
-
-  region?: RegionEntity;
 }

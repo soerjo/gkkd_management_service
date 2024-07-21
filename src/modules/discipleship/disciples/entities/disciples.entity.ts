@@ -1,6 +1,5 @@
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { JemaatEntity } from '../../../jemaat/jemaat/entities/jemaat.entity';
 import { DisciplesGroupEntity } from '../../disciples-group/entities/disciples-group.entity';
 import { RegionEntity } from '../../../region/entities/region.entity';
 import { AdminEntity } from '../../../admin/entities/admin.entity';
@@ -17,28 +16,20 @@ export class DisciplesEntity extends MainEntityAbstract {
   book_level: string;
 
   @Column({ nullable: true })
-  jemaat_nik: string;
+  jemaat_nij?: string;
 
   @Column({ nullable: true })
-  pembimbing_id: string;
+  pembimbing_nim?: string;
 
   @Column({ nullable: true })
-  disciple_group_id: string;
-
-  @Column({ nullable: true })
-  admin_id: string;
+  admin_id: number;
 
   @OneToOne(() => AdminEntity)
   @JoinColumn({ name: 'admin_id' })
   admin: AdminEntity;
 
-  @OneToOne(() => JemaatEntity, { nullable: true })
-  @JoinColumn({ name: 'jemaat_id' })
-  jemaat: JemaatEntity;
-
-  @ManyToOne(() => DisciplesEntity, { nullable: true })
-  @JoinColumn({ name: 'pembimbing_id' })
-  pembimbing: DisciplesEntity;
+  @Column({ nullable: true })
+  group_id?: number;
 
   @ManyToOne(() => DisciplesGroupEntity, { nullable: true })
   @JoinColumn({ name: 'disciple_group_id' })
@@ -47,11 +38,8 @@ export class DisciplesEntity extends MainEntityAbstract {
   @OneToMany(() => DisciplesGroupEntity, (group) => group.pembimbing, { nullable: true })
   group: DisciplesGroupEntity[];
 
-  @OneToMany(() => DisciplesEntity, (disciples) => disciples.pembimbing)
-  murid: DisciplesEntity[];
-
-  @Column({ name: 'region_id' })
-  region_id: number;
+  @Column({ nullable: true })
+  region_id?: number;
 
   @ManyToOne(() => RegionEntity, (region) => region, { nullable: true })
   @JoinColumn({ name: 'region_id' })
@@ -59,7 +47,7 @@ export class DisciplesEntity extends MainEntityAbstract {
 
   @BeforeInsert()
   async generateUniqueCode() {
-    this.nim = await JemaatEntity.createUniqueCode(this.region_id);
+    this.nim = await DisciplesEntity.createUniqueCode(this.region_id);
   }
 
   static async createUniqueCode(region_id: number): Promise<string> {
@@ -75,6 +63,6 @@ export class DisciplesEntity extends MainEntityAbstract {
     const incrementIdStr = ('0000' + incrementId).slice(-4); // zero-padded increment id
     const incrementRegionId = ('0000' + region_id).slice(-4); // zero-padded increment id
 
-    return `${year}${month}${incrementRegionId}${incrementIdStr}`;
+    return `${year}${month}05${incrementRegionId}${incrementIdStr}`;
   }
 }

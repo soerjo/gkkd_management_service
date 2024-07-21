@@ -63,12 +63,9 @@ export class PenyerahanAnakEntity extends MainEntityAbstract {
       .orderBy('penyerahan_anak.id', 'DESC')
       .withDeleted()
       .getOne();
-    console.log({ lastChildDedication });
     const incrementId = lastChildDedication ? lastChildDedication.id + 1 : 1;
     const incrementIdStr = ('0000' + incrementId).slice(-4); // zero-padded increment id
 
-    console.log({ id: `${year}${month}${date}${incrementIdStr}` });
-
-    return `${year}${month}${date}${incrementIdStr}`;
+    return `${year}${month}${date}25${incrementIdStr}`;
   }
 }
