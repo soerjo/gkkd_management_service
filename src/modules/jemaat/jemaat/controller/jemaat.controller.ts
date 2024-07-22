@@ -41,10 +41,8 @@ export class JemaatController {
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN)
-      filter.region_tree_id = filter.region_id ?? jwtPayload?.region?.id;
+    filter.region_tree_id = filter.region_id ?? jwtPayload?.region?.id;
 
     return await this.jemaatService.findAll(filter);
   }

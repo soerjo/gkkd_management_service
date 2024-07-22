@@ -19,9 +19,9 @@ export class CreatePemuridanDto {
   jemaat_nij?: string;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  pembimbing_nim?: string;
+  pembimbing_id?: number;
 
   @ApiProperty()
   @IsOptional()

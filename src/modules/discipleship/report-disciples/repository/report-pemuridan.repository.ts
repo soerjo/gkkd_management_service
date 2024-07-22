@@ -25,8 +25,8 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
       }),
     );
 
-    if (filter.pembimbing_nim) {
-      queryBuilder.andWhere('group.pembimbing_nim = :pembimbing_nim', { pembimbing_nim: filter.pembimbing_nim });
+    if (filter.pembimbing_id) {
+      queryBuilder.andWhere('group.pembimbing_id = :pembimbing_id', { pembimbing_id: filter.pembimbing_id });
     }
 
     if (filter.region_id) {

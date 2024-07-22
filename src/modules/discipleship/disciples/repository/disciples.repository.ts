@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Brackets, DataSource, Repository } from 'typeorm';
 import { FilterDto } from '../dto/filter.dto';
 import { DisciplesEntity } from '../entities/disciples.entity';
+import { RegionEntity } from '../../../region/entities/region.entity';
+import { JemaatEntity } from '../../../jemaat/jemaat/entities/jemaat.entity';
 
 @Injectable()
 export class DisciplesRepository extends Repository<DisciplesEntity> {
@@ -17,7 +19,7 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
         id,
         nim,
         name,
-        pembimbing_nim,
+        pembimbing_id,
         case
           when deleted_at is null then true
           else false
@@ -29,11 +31,11 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
         disciples.id is not null 
     `;
 
-    if (filter.pembimbing_nim) {
-      query += ` and pembimbing_nim  = $${params.length + 1} `;
-      params.push(filter.pembimbing_nim);
+    if (filter.pembimbing_id) {
+      query += ` and pembimbing_id  = $${params.length + 1} `;
+      params.push(filter.pembimbing_id);
     } else {
-      query += ` and pembimbing_nim is null `;
+      query += ` and pembimbing_id is null `;
     }
 
     query += `
@@ -42,7 +44,7 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
         e.id,
         e.nim,
         e.name,
-        e.pembimbing_nim,
+        e.pembimbing_id,
         case
           when e.deleted_at is null then true
           else false
@@ -51,20 +53,19 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
       from
         disciples e
       inner join disciples_hierarchy eh on
-        e.pembimbing_nim = eh.nim
+        e.pembimbing_id = eh.id
             )
             select
         rh.id,
-        rh.nim,
         rh.name,
-        rh.pembimbing_nim,
+        rh.pembimbing_id,
         rh.status,
         e.name as parent,
         level
       from
         disciples_hierarchy rh
       left join disciples e on
-        rh.pembimbing_nim = e.nim
+        rh.pembimbing_id = e.id
     `;
 
     return await this.query(query, params);
@@ -72,12 +73,12 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
 
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('disciples');
-    queryBuilder.leftJoinAndSelect('disciples.group', 'my_group');
-    queryBuilder.leftJoinAndSelect('disciples.disciple_group', 'group');
-    queryBuilder.leftJoinAndSelect(DisciplesEntity, 'pembimbing', 'pembimbing.nim = disciples.pembimbing_nim');
+    queryBuilder.leftJoinAndSelect('disciples.parent', 'parent');
+    queryBuilder.leftJoinAndSelect('disciples.childs', 'childs');
+    queryBuilder.leftJoinAndSelect('disciples.region', 'region');
 
     filter.search &&
-      queryBuilder.andWhere('(disciples.name ILIKE :search OR pembimbing.name ILIKE :search)', {
+      queryBuilder.andWhere('(disciples.name ILIKE :search OR disciples.name ILIKE :search)', {
         search: `%${filter.search}%`,
       });
 
@@ -91,14 +92,14 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
 
     queryBuilder.andWhere(
       new Brackets((qb) => {
-        if (filter.disciple_nims.length) {
-          qb.where('disciples.nim in ( :...disciple_nims )', { disciple_nims: filter.disciple_nims });
+        if (filter.disciple_ids.length) {
+          qb.where('disciples.id in ( :...disciple_ids )', { disciple_ids: filter.disciple_ids });
         }
       }),
     );
 
-    if (filter.pembimbing_nim) {
-      queryBuilder.andWhere('disciples.pembimbing_nim = :pembimbing_nim', { pembimbing_nim: filter.pembimbing_nim });
+    if (filter.pembimbing_id) {
+      queryBuilder.andWhere('disciples.pembimbing_id = :pembimbing_id', { pembimbing_id: filter.pembimbing_id });
     }
 
     if (filter.region_id) {
@@ -122,5 +123,18 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
     };
 
     return { entities, meta };
+  }
+
+  async getOne(nim: string) {
+    const queryBuilder = this.createQueryBuilder('disciples');
+    queryBuilder.leftJoinAndSelect('disciples.parent', 'parent');
+    queryBuilder.leftJoinAndSelect('disciples.childs', 'childs');
+    queryBuilder.leftJoinAndSelect('disciples.region', 'region');
+    queryBuilder.leftJoinAndSelect('disciples.group', 'group');
+    queryBuilder.leftJoinAndSelect(JemaatEntity, 'jemaat', 'jemaat.nij = disciples.jemaat_nij');
+
+    queryBuilder.andWhere('disciples.nim = :nim', { nim });
+
+    return queryBuilder.getOne();
   }
 }

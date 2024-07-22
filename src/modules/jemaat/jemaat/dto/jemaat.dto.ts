@@ -102,7 +102,6 @@ export class JemaatDto {
   @ApiProperty()
   @IsDateString()
   @IsOptional()
-  @Transform((e) => String(e.value).toLowerCase())
   wedding_date?: Date;
 
   @ApiProperty()

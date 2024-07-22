@@ -7,7 +7,6 @@ import { RegionService } from '../../../../modules/region/services/region.servic
 import { AdminService } from '../../../admin/services/admin.service';
 import { RoleEnum } from '../../../../common/constant/role.constant';
 import { Transactional } from 'typeorm-transactional';
-import { RegionEntity } from '../../../region/entities/region.entity';
 import { JemaatService } from '../../../jemaat/jemaat/services/jemaat.service';
 import { JemaatEntity } from '../../../jemaat/jemaat/entities/jemaat.entity';
 import { DisciplesEntity } from '../entities/disciples.entity';
@@ -53,13 +52,25 @@ export class DisciplesService {
     });
   }
 
+  async getAllList(filter: FilterDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_tree_id });
+    filter.region_ids = regions.map((data) => data.id);
+    filter.region_tree_id && filter.region_ids.push(filter.region_tree_id);
+
+    const disciples = await this.getByHierarchy({ pembimbing_id: filter.disciple_tree_id });
+    filter.disciple_ids = disciples.map((data) => data.id);
+    filter.disciple_tree_id && filter.disciple_ids.push(filter.disciple_tree_id);
+
+    return this.pemuridanRepository.getAll(filter);
+  }
+
   async findAll(filter: FilterDto) {
     const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_tree_id });
     filter.region_ids = regions.map((data) => data.id);
     filter.region_tree_id && filter.region_ids.push(filter.region_tree_id);
 
-    const disciples = await this.getByHierarchy({ pembimbing_nim: filter.disciple_tree_nim });
-    filter.disciple_nims = disciples.map((data) => data.nim);
+    const disciples = await this.getByHierarchy({ pembimbing_id: filter.disciple_tree_id });
+    filter.disciple_ids = disciples.map((data) => data.id);
 
     return this.pemuridanRepository.getAll(filter);
   }
@@ -69,7 +80,11 @@ export class DisciplesService {
   }
 
   async findOne(nim: string) {
-    return this.pemuridanRepository.findOneBy({ nim });
+    return this.pemuridanRepository.getOne(nim);
+  }
+
+  async findOneById(id: number) {
+    return this.pemuridanRepository.findOne({ where: { id } });
   }
 
   async getByHierarchy(filter: FilterDto) {
@@ -78,7 +93,14 @@ export class DisciplesService {
 
   async update(nim: string, dto: UpdatePemuridanDto) {
     const pemuridan = await this.findOne(nim);
-    if (!pemuridan) throw new BadRequestException('Pemuridan is not found!');
+    if (!pemuridan) throw new BadRequestException('disciples is not found!');
+
+    let parent;
+    if (dto.pembimbing_id) {
+      parent = await this.findOneById(dto.pembimbing_id);
+      if (!parent) throw new BadRequestException('parent is not found!');
+      pemuridan.parent = parent;
+    }
 
     if (pemuridan.jemaat_nij) delete dto.name;
 
@@ -95,10 +117,10 @@ export class DisciplesService {
 
     if (jemaat) dto.name = jemaat.name;
 
-    console.log({ dto });
     await this.pemuridanRepository.save({
       ...pemuridan,
       ...dto,
+      parent: parent,
     });
 
     return nim;

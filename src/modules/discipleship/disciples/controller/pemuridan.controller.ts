@@ -34,11 +34,11 @@ export class DisciplesController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN, RoleEnum.DISCIPLES])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreatePemuridanDto) {
-    dto.region_id = jwtPayload?.region?.id;
+    dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
       if (!parent) throw new BadRequestException('user account is not found!');
-      dto.pembimbing_nim = parent.nim;
+      dto.pembimbing_id = parent.id;
     }
 
     if (!dto.region_id) throw new BadRequestException('region is not found!');
@@ -54,10 +54,24 @@ export class DisciplesController {
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
       if (!parent) throw new BadRequestException('user account is not found!');
-      filter.disciple_tree_nim = parent.nim;
+      filter.disciple_tree_id = parent.id;
     }
 
     return this.pemuridanService.findAll(filter);
+  }
+
+  @Get('list')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SUPERADMIN, RoleEnum.DISCIPLES])
+  async getListAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
+    filter.region_tree_id = filter.region_id ?? jwtPayload?.region?.id;
+    if (jwtPayload.role === RoleEnum.DISCIPLES) {
+      const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
+      if (!parent) throw new BadRequestException('user account is not found!');
+      filter.disciple_tree_id = parent.id;
+    }
+
+    return this.pemuridanService.getAllList(filter);
   }
 
   @Get(':nim')
@@ -80,7 +94,7 @@ export class DisciplesController {
 
       const murid = await this.pemuridanService.findOne(nim);
       if (!murid) throw new BadRequestException('disciples is not found');
-      if (murid.pembimbing_nim !== parent.nim) throw new ForbiddenException('not the parent');
+      if (murid.id !== parent.id) throw new ForbiddenException('not the parent');
     }
 
     await this.pemuridanService.update(nim, dto);

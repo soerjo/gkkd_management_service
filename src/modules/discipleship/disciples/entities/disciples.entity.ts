@@ -19,7 +19,14 @@ export class DisciplesEntity extends MainEntityAbstract {
   jemaat_nij?: string;
 
   @Column({ nullable: true })
-  pembimbing_nim?: string;
+  pembimbing_id?: number;
+
+  @ManyToOne(() => DisciplesEntity, (pembimbing) => pembimbing.childs)
+  @JoinColumn({ name: 'pembimbing_id' })
+  parent: DisciplesEntity;
+
+  @OneToMany(() => DisciplesEntity, (pembimbing) => pembimbing.parent)
+  childs: DisciplesEntity[];
 
   @Column({ nullable: true })
   admin_id: number;
@@ -29,19 +36,16 @@ export class DisciplesEntity extends MainEntityAbstract {
   admin: AdminEntity;
 
   @Column({ nullable: true })
-  disciple_group_id?: number;
+  group_id?: number;
 
   @ManyToOne(() => DisciplesGroupEntity, { nullable: true })
-  @JoinColumn({ name: 'disciple_group_id' })
-  disciple_group: DisciplesGroupEntity;
-
-  @OneToMany(() => DisciplesGroupEntity, (group) => group.pembimbing, { nullable: true })
-  group: DisciplesGroupEntity[];
+  @JoinColumn({ name: 'group_id' })
+  group: DisciplesGroupEntity;
 
   @Column({ nullable: true })
   region_id?: number;
 
-  @ManyToOne(() => RegionEntity, (region) => region, { nullable: true })
+  @ManyToOne(() => RegionEntity, { nullable: true })
   @JoinColumn({ name: 'region_id' })
   region: RegionEntity;
 

@@ -1,7 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from '../../../../common/dto/pagination.dto';
-import { JemaatEntity } from '../../../../modules/jemaat/jemaat/entities/jemaat.entity';
 
 export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
@@ -22,15 +21,15 @@ export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  pembimbing_nim: string;
+  pembimbing_id: number;
 
   @ApiPropertyOptional()
   @IsNumber()
   @IsOptional()
   region_id: number;
 
-  disciple_tree_nim: string;
-  disciple_nims: string[];
+  disciple_tree_id: number;
+  disciple_ids: number[];
 
   region_tree_id: number;
   region_ids: number[];

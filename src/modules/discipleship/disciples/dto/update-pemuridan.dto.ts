@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsEnum, IsOptional, IsNumber } from 'class-validator';
+import { IsString, IsEnum, IsOptional, IsNumber } from 'class-validator';
 import { BooksEnum } from '../../../../common/constant/books.constant';
 
 export class UpdatePemuridanDto {
@@ -19,9 +19,9 @@ export class UpdatePemuridanDto {
   jemaat_nij?: string;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  pembimbing_nim?: string;
+  pembimbing_id?: number;
 
   @ApiProperty()
   @IsNumber()

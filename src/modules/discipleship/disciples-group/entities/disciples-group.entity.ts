@@ -14,7 +14,7 @@ export class DisciplesGroupEntity extends MainEntityAbstract {
   @Column()
   pembimbing_id: number;
 
-  @OneToMany(() => DisciplesEntity, (disciples) => disciples.disciple_group, { nullable: true })
+  @OneToMany(() => DisciplesEntity, (disciples) => disciples.group)
   anggota: DisciplesEntity[];
 
   @ManyToOne(() => DisciplesEntity)
@@ -24,7 +24,7 @@ export class DisciplesGroupEntity extends MainEntityAbstract {
   @Column({ nullable: true })
   region_id?: number;
 
-  @ManyToOne(() => RegionEntity, (region) => region, { nullable: true })
+  @ManyToOne(() => RegionEntity, (region) => region)
   @JoinColumn({ name: 'region_id' })
   region: RegionEntity;
 }

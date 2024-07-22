@@ -61,11 +61,11 @@ export class ReportPemuridanController {
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
       if (!parent) throw new BadRequestException('user account is not found!');
-      filter.pembimbing_nim = parent.nim;
+      filter.pembimbing_id = parent.id;
     }
 
     if (!filter.region_id) throw new BadRequestException('region is not found!');
-    if (!filter.pembimbing_nim) throw new BadRequestException('pembimbing is not found!');
+    if (!filter.pembimbing_id) throw new BadRequestException('pembimbing is not found!');
 
     return this.reportPemuridanService.findAll(filter);
   }

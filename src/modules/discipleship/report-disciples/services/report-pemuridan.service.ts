@@ -35,8 +35,8 @@ export class ReportPemuridanService {
     filter.region_ids = regions.map((data) => data.id);
     filter.region_tree_id && filter.region_ids.push(filter.region_tree_id);
 
-    const disciples = await this.pemuridanService.getByHierarchy({ pembimbing_nim: filter.disciple_tree_nim });
-    filter.disciple_nims = disciples.map((data) => data.nim);
+    const disciples = await this.pemuridanService.getByHierarchy({ pembimbing_id: filter.disciple_tree_id });
+    filter.disciple_ids = disciples.map((data) => data.id);
 
     return this.reportPemuridanRepository.getAll(filter);
   }
