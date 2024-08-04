@@ -58,6 +58,7 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
             select
         rh.id,
         rh.name,
+        rh.nim,
         rh.pembimbing_id,
         rh.status,
         e.name as parent,

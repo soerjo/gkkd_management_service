@@ -79,6 +79,10 @@ export class DisciplesService {
     return this.pemuridanRepository.findOne({ where: { admin: { id: admin_id } } });
   }
 
+  async getAccountDiscipleByNim(nim: string) {
+    return this.pemuridanRepository.findOne({ where: { nim } });
+  }
+
   async findOne(nim: string) {
     return this.pemuridanRepository.getOne(nim);
   }

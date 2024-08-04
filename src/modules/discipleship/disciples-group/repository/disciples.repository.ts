@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Brackets, DataSource, Repository } from 'typeorm';
 import { FilterDto } from '../dto/filter.dto';
 import { DisciplesGroupEntity } from '../entities/disciples-group.entity';
-import { DisciplesEntity } from '../../disciples/entities/disciples.entity';
 
 @Injectable()
 export class DisciplesGroupRepository extends Repository<DisciplesGroupEntity> {
@@ -10,18 +9,40 @@ export class DisciplesGroupRepository extends Repository<DisciplesGroupEntity> {
     super(DisciplesGroupEntity, dataSource.createEntityManager());
   }
 
+  async getOneById(id: number) {
+    const queryBuilder = this.createQueryBuilder('group');
+    queryBuilder.leftJoinAndSelect('group.pembimbing', 'pembimbing');
+    queryBuilder.leftJoinAndSelect('group.region', 'region');
+
+    queryBuilder.andWhere('group.id = :id', { id });
+    return queryBuilder.getOne();
+  }
+
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('group');
-    queryBuilder.leftJoinAndSelect(DisciplesEntity, 'pembimbing', 'pembimbing.nim = group.pembimbing_nim');
+    queryBuilder.leftJoinAndSelect('group.pembimbing', 'pembimbing');
+    queryBuilder.leftJoinAndSelect('group.region', 'region');
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('group.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+      }),
+    );
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.disciple_nims.length) {
+          qb.where('group.pembimbing_nim in ( :...disciple_nims )', { disciple_nims: filter.disciple_nims });
+        }
+      }),
+    );
 
     filter.search &&
       queryBuilder.andWhere('(group.name ILIKE :search OR pembimbing.name ILIKE :search)', {
         search: `%${filter.search}%`,
       });
-
-    if (filter.pembimbing_nim) {
-      queryBuilder.andWhere('group.pembimbing_nim = :pembimbing_nim', { pembimbing_nim: filter.pembimbing_nim });
-    }
 
     if (filter.region_id) {
       queryBuilder.andWhere('group.region_id = :region_id', { region_id: filter.region_id });

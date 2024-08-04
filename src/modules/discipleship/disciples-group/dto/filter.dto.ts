@@ -12,6 +12,7 @@ export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsOptional()
   pembimbing_nim: string;
+  pembimbing_id: number;
 
   @ApiPropertyOptional()
   @IsOptional()

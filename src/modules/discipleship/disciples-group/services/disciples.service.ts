@@ -33,11 +33,15 @@ export class DisciplesGroupService {
     filter.region_ids = regions.map((data) => data.id);
     filter.region_tree_id && filter.region_ids.push(filter.region_tree_id);
 
+    const disciples = await this.pemuridanService.getByHierarchy({ pembimbing_id: filter.pembimbing_id });
+    filter.disciple_nims = disciples.map((data) => data.nim);
+    filter.disciple_nims.push(filter.pembimbing_nim);
+
     return this.pemuridanGroupRepository.getAll(filter);
   }
 
   async findOne(id: number) {
-    return this.pemuridanGroupRepository.findOneBy({ id });
+    return this.pemuridanGroupRepository.getOneById(id);
   }
 
   async update(id: number, dto: UpdateGroupDto) {

@@ -56,10 +56,18 @@ export class DisciplesGroupController {
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
     filter.region_tree_id = filter.region_id ?? jwtPayload?.region?.id;
+
+    if (filter.pembimbing_nim) {
+      const disciple = await this.pemuridanService.getAccountDiscipleByNim(filter.pembimbing_nim);
+      if (!disciple) throw new BadRequestException('disciple account is not found!');
+      filter.pembimbing_id = disciple.id;
+    }
+
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
-      if (!parent) throw new BadRequestException('user account is not found!');
-      filter.pembimbing_nim = parent.nim;
+      if (!parent) throw new BadRequestException('disciple account is not found!');
+      filter.pembimbing_nim = filter.pembimbing_nim ?? parent.nim;
+      filter.pembimbing_id = filter.pembimbing_id ?? parent.id;
     }
 
     return this.pemuridanGroupService.findAll(filter);
@@ -81,10 +89,15 @@ export class DisciplesGroupController {
   async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number, @Body() dto: UpdateGroupDto) {
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
 
+    if (dto.pembimbing_nim) {
+      const disciple = await this.pemuridanService.getAccountDiscipleByNim(dto.pembimbing_nim);
+      if (!disciple) throw new BadRequestException('disciple account is not found!');
+    }
+
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
       if (!parent) throw new BadRequestException('user account is not found!');
-      dto.pembimbing_nim = parent.nim;
+      dto.pembimbing_nim = dto.pembimbing_nim ?? parent.nim;
     }
 
     if (!dto.region_id) throw new BadRequestException('region is not found!');
