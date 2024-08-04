@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from '../../../../common/dto/pagination.dto';
+import { Transform, Type } from 'class-transformer';
 
 export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
@@ -19,17 +20,23 @@ export class FilterDto extends PaginationDto {
   date_to: Date;
 
   @ApiPropertyOptional()
-  @IsString()
+  @IsNumber()
   @IsOptional()
   pembimbing_id: number;
 
   @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  pembimbing_nim: string;
+
+  @ApiPropertyOptional()
   @IsNumber()
+  @Type(() => Number)
   @IsOptional()
   region_id: number;
 
-  disciple_tree_id: number;
-  disciple_ids: number[];
+  disciple_tree_nim: string;
+  disciple_nims: string[];
 
   region_tree_id: number;
   region_ids: number[];

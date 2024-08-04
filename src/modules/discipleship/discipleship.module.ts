@@ -5,9 +5,9 @@ import { ReportDisciplesModule } from './report-disciples/report-pemuridan.modul
 
 @Module({
   imports: [
+    ReportDisciplesModule,
     DisciplesModule,
     DisciplesGroupModule,
-    ReportDisciplesModule,
     // other module...
   ],
 })

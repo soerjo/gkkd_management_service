@@ -12,26 +12,39 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
   }
 
   async getAll(filter: FilterDto) {
+    console.log({ filter });
     const queryBuilder = this.createQueryBuilder('pemuridan_report');
     queryBuilder.leftJoinAndSelect('pemuridan_report.disciple_group', 'disciple_group');
-    queryBuilder.leftJoinAndSelect(DisciplesEntity, 'pembimbing', 'pembimbing.nim = pemuridan_report.pembimbing_nim');
-    queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = pemuridan_report.region_id');
+    queryBuilder.leftJoinAndSelect('disciple_group.pembimbing', 'pembimbing');
 
     queryBuilder.andWhere(
       new Brackets((qb) => {
         if (filter.region_ids.length) {
-          qb.where('disciples.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+          qb.where('pemuridan_report.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
         }
       }),
     );
 
-    if (filter.pembimbing_id) {
-      queryBuilder.andWhere('group.pembimbing_id = :pembimbing_id', { pembimbing_id: filter.pembimbing_id });
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.disciple_nims.length) {
+          qb.where('disciple_group.pembimbing_nim in ( :...disciple_nims )', { disciple_nims: filter.disciple_nims });
+        }
+      }),
+    );
+
+    if (filter.search) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('disciple_group.name ILIKE :search', { search: `%${filter.search}%` });
+          qb.orWhere('pembimbing.name ILIKE :search', { search: `%${filter.search}%` });
+        }),
+      );
     }
 
-    if (filter.region_id) {
-      queryBuilder.andWhere('group.region_id = :region_id', { region_id: filter.region_id });
-    }
+    // if (filter.pembimbing_id) {
+    //   queryBuilder.andWhere('pembimbing.id = :pembimbing_id', { pembimbing_id: filter.pembimbing_id });
+    // }
 
     if (filter.date_from) {
       queryBuilder.andWhere('pemuridan_report.date >= :date_from', { date_from: filter.date_from });

@@ -39,10 +39,15 @@ export class DisciplesGroupController {
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateGroupDto) {
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
 
+    if (dto.pembimbing_nim) {
+      const disciple = await this.pemuridanService.getAccountDiscipleByNim(dto.pembimbing_nim);
+      if (!disciple) throw new BadRequestException('disciple account is not found!');
+    }
+
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
-      if (!parent) throw new BadRequestException('user account is not found!');
-      dto.pembimbing_nim = parent.nim;
+      if (!parent) throw new BadRequestException('disciple account is not found!');
+      dto.pembimbing_nim = dto.pembimbing_nim ?? parent.nim;
     }
 
     if (!dto.region_id) throw new BadRequestException('region is not found!');
@@ -87,6 +92,7 @@ export class DisciplesGroupController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number, @Body() dto: UpdateGroupDto) {
+    console.log({ dto });
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
 
     if (dto.pembimbing_nim) {
@@ -102,6 +108,8 @@ export class DisciplesGroupController {
 
     if (!dto.region_id) throw new BadRequestException('region is not found!');
     if (!dto.pembimbing_nim) throw new BadRequestException('pembimbing is not found!');
+
+    console.log({ dto });
 
     return this.pemuridanGroupService.update(id, dto);
   }

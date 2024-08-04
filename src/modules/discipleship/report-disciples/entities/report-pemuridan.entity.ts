@@ -1,6 +1,7 @@
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { DisciplesGroupEntity } from '../../disciples-group/entities/disciples-group.entity';
+import { DisciplesEntity } from '../../disciples/entities/disciples.entity';
 
 @Entity({ name: 'report_pemuridan' })
 export class ReportPemuridanEntity extends MainEntityAbstract {

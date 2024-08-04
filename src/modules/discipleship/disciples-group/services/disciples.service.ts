@@ -25,6 +25,7 @@ export class DisciplesGroupService {
       ...dto,
       pembimbing_nim: dto.pembimbing_nim,
       pembimbing_id: disciples.id,
+      pembimbing: disciples,
     });
   }
 
@@ -50,9 +51,14 @@ export class DisciplesGroupService {
 
     const disciples = await this.pemuridanService.findOne(dto.pembimbing_nim);
     if (!disciples) throw new BadRequestException('disciples is not found');
+    delete group.pembimbing;
+    group.pembimbing_nim = disciples.nim;
+    group.pembimbing = disciples;
 
     const region = await this.regionService.getOneById(dto.region_id);
     if (!region) throw new BadRequestException('region is not found!');
+
+    console.log({ group });
 
     await this.pemuridanGroupRepository.save({
       ...group,

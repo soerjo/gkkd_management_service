@@ -8,10 +8,12 @@ import { getWeeksInMonth } from '../../../../utils/week-in-month.utils';
 import { PemuridanStatusEnum } from '../../../../common/constant/pemuridan-status.constant';
 import { DisciplesService } from '../../disciples/services/disciples.service';
 import { RegionService } from '../../../region/services/region.service';
+import { DisciplesGroupService } from '../../disciples-group/services/disciples.service';
 
 @Injectable()
 export class ReportPemuridanService {
   constructor(
+    private readonly groupPemuridanService: DisciplesGroupService,
     private readonly reportPemuridanRepository: ReportPemuridanRepository,
     private readonly regionService: RegionService,
     private readonly pemuridanService: DisciplesService,
@@ -26,6 +28,9 @@ export class ReportPemuridanService {
     });
     if (isDataExist) throw new BadRequestException('data already exist!');
 
+    const group = await this.groupPemuridanService.findOne(dto.disciple_group_id);
+    if (!group) throw new BadRequestException('group is not found');
+
     const reportPemuridan = this.reportPemuridanRepository.create(dto);
     return this.reportPemuridanRepository.save(reportPemuridan);
   }
@@ -35,19 +40,26 @@ export class ReportPemuridanService {
     filter.region_ids = regions.map((data) => data.id);
     filter.region_tree_id && filter.region_ids.push(filter.region_tree_id);
 
-    const disciples = await this.pemuridanService.getByHierarchy({ pembimbing_id: filter.disciple_tree_id });
-    filter.disciple_ids = disciples.map((data) => data.id);
+    const disciples = await this.pemuridanService.getByHierarchy({ pembimbing_id: filter.pembimbing_id });
+    filter.disciple_nims = disciples.map((data) => data.nim);
+    filter.disciple_nims.push(filter.pembimbing_nim);
 
     return this.reportPemuridanRepository.getAll(filter);
   }
 
   findOne(id: number) {
-    return this.reportPemuridanRepository.findOneBy({ id: id ?? IsNull() });
+    return this.reportPemuridanRepository.findOne({
+      where: { id: id ?? IsNull() },
+      relations: { disciple_group: { pembimbing: true } },
+    });
   }
 
   async update(id: number, dto: UpdateReportPemuridanDto) {
     const pastReport = await this.findOne(id);
     if (!pastReport) throw new BadRequestException('Pemuridan report is not found!');
+
+    const group = await this.groupPemuridanService.findOne(dto.disciple_group_id);
+    if (!group) throw new BadRequestException('group is not found');
 
     const isDataExist = await this.reportPemuridanRepository.findOne({
       where: {
@@ -62,6 +74,7 @@ export class ReportPemuridanService {
     await this.reportPemuridanRepository.save({
       ...pastReport,
       ...dto,
+      disciple_group: group,
     });
 
     return { id };
