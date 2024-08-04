@@ -10,7 +10,7 @@ import { BlesscomnAdminEntity } from './entities/blesscomn-admin.entity';
 import { BlesscomnEntity } from './entities/blesscomn.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BlesscomnAdminEntity, BlesscomnEntity]), RegionModule, JemaatModule, AdminModule],
+  imports: [TypeOrmModule.forFeature([BlesscomnAdminEntity, BlesscomnEntity]), RegionModule, JemaatModule],
   controllers: [BlesscomnController],
   providers: [BlesscomnService, BlesscomnRepository],
   exports: [BlesscomnService],

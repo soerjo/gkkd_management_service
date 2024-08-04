@@ -10,7 +10,6 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
   }
 
   async getOne(id: number, region_id?: number) {
-    console.log({ id, region_id });
     const queryBuilder = this.createQueryBuilder('blesscomn');
     queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');
     queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
@@ -41,7 +40,7 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
     const queryBuilder = this.createQueryBuilder('blesscomn');
     queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');
     queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
-    queryBuilder.leftJoinAndSelect('blesscomn.admin', 'admin');
+    queryBuilder.leftJoin('blesscomn.admin', 'admin');
 
     filter.search &&
       queryBuilder.andWhere('(blesscomn.name ILIKE :search OR blesscomn.lead ILIKE :search)', {
@@ -52,7 +51,7 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       queryBuilder.andWhere(`admin.admin_id = :admin_id`, { admin_id: filter.admin_id });
     }
 
-    if (filter.region_id) {
+    if (!filter.admin_id && filter.region_id) {
       queryBuilder.andWhere(`region.id = :region_id`, { region_id: filter.region_id });
     }
 
@@ -67,10 +66,24 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
     if (filter.take) {
       queryBuilder.limit(filter?.take);
       queryBuilder.offset((filter?.page - 1) * filter?.take);
-      queryBuilder.orderBy(`blesscomn.created_at`, 'DESC');
     }
 
-    queryBuilder.select([
+    queryBuilder.distinctOn(['blesscomn.id']);
+    queryBuilder.orderBy(
+      ` 
+      "blesscomn"."id",
+      "blesscomn"."created_at"
+      `,
+      'DESC',
+    );
+    queryBuilder.groupBy(`
+      "blesscomn"."id",
+      "lead"."id",
+      "region"."id",
+      "admin"."id"
+      `);
+
+    queryBuilder.addSelect([
       'blesscomn.id as id',
       'blesscomn.name as name',
       'blesscomn.location as location',
@@ -84,7 +97,14 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       'admin.admin_id as admin_id',
     ]);
 
-    const itemCount = await queryBuilder.getCount();
+    const [subquery, params] = queryBuilder.getQueryAndParameters();
+    const countQuery = await this.query(
+      `
+      select count(*) from (${subquery}) bc
+      `,
+      params,
+    );
+    const itemCount = countQuery[0].count;
     const entities = await queryBuilder.getRawMany();
 
     const meta = {

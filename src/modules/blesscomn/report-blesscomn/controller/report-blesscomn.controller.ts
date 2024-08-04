@@ -27,7 +27,7 @@ import { BlesscomnService } from '../../../../modules/blesscomn/blesscomn/servic
 @ApiTags('Blesscomn')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('/blesscomn/report')
+@Controller('/blesscomn-report')
 export class ReportBlesscomnController {
   constructor(
     private readonly reportBlesscomnService: ReportBlesscomnService,
@@ -49,7 +49,10 @@ export class ReportBlesscomnController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.LEADER])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SUPERADMIN) filter.region_id = jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SUPERADMIN) {
+      filter.region_id = jwtPayload?.region?.id;
+      filter.admin_id = jwtPayload.id;
+    }
 
     if (jwtPayload.jemaat_id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.jemaat_id);

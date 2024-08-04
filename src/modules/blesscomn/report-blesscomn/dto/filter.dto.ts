@@ -33,5 +33,7 @@ export class FilterDto extends PaginationDto {
   @IsOptional()
   blesscomn_id: number;
 
+  admin_id?: number;
+
   blesscomn?: BlesscomnEntity;
 }

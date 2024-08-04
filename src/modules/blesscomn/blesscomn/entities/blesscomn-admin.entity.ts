@@ -8,7 +8,7 @@ export class BlesscomnAdminEntity extends MainEntityAbstract {
   @Column({ nullable: true })
   admin_id?: number;
 
-  @ManyToOne(() => AdminEntity)
+  @ManyToOne(() => AdminEntity, (admin) => admin.blesscomn)
   @JoinColumn({ name: 'admin_id' })
   admin: AdminEntity;
 

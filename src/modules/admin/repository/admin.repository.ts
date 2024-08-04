@@ -10,6 +10,18 @@ export class AdminRepository extends Repository<AdminEntity> {
     super(AdminEntity, dataSource.createEntityManager());
   }
 
+  async getOne(id: number) {
+    const queryBuilder = this.createQueryBuilder('user');
+    queryBuilder.leftJoinAndSelect('user.region', 'region');
+    queryBuilder.leftJoinAndSelect('user.blesscomn', 'blesscomn');
+    queryBuilder.leftJoinAndSelect('blesscomn.blesscomn', 'blesscomn_detail');
+    queryBuilder.andWhere('blesscomn_detail.id is not null');
+    queryBuilder.andWhere('user.id = :id', { id });
+    queryBuilder.withDeleted();
+
+    return queryBuilder.getOne();
+  }
+
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('user');
     queryBuilder.leftJoinAndSelect('user.region', 'region');
@@ -66,8 +78,6 @@ export class AdminRepository extends Repository<AdminEntity> {
       `,
     ]);
 
-    console.log(filter);
-    console.log(queryBuilder.getQuery());
     const entities = await queryBuilder.getRawMany();
     const itemCount = await queryBuilder.getCount();
 

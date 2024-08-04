@@ -37,15 +37,21 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
   }
 
   async getAll(filter: FilterDto) {
+    console.log({ filter });
     const queryBuilder = this.createQueryBuilder('blesscomn_report');
     queryBuilder.leftJoinAndSelect('blesscomn_report.blesscomn', 'blesscomn');
+    queryBuilder.leftJoin('blesscomn.admin', 'admin');
     queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = blesscomn.region_id');
+
+    if (filter.admin_id) {
+      queryBuilder.andWhere('admin.id = :admin_id', { admin_id: filter.admin_id });
+    }
 
     if (filter.blesscomn_id) {
       queryBuilder.andWhere('blesscomn.id = :blesscomn_id', { blesscomn_id: filter.blesscomn_id });
     }
 
-    if (filter.region_id) {
+    if (!filter.admin_id && filter.region_id) {
       queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });
     }
 

@@ -19,30 +19,24 @@ export class BlesscomnService {
 
     private readonly blesscomnRepository: BlesscomnRepository,
     private readonly regionService: RegionService,
-    private readonly adminService: AdminService,
   ) {}
 
   @Transactional()
   async createAdminBlesscomn(dto: CreateAdminBlesscomnDto) {
-    const admin = await this.adminService.findOne(dto.admin_id);
-    if (!admin) throw new BadRequestException('admin is not found!');
-
     const blesscomnAdminData: BlesscomnAdminEntity[] = [];
     for (const blesscomn_id of dto.blesscomn_ids) {
       const blesscomn = await this.blesscomnRepository.findOne({ where: { id: blesscomn_id } });
       if (!blesscomn) throw new BadRequestException('blesscomn is not found!');
-      if (admin.region_id !== blesscomn.region_id)
-        throw new BadRequestException('admin region is not the same with blesscomn region');
 
       blesscomnAdminData.push(
         this.blesscomnAdminRepo.create({
-          admin: admin,
+          admin_id: dto.admin_id,
           blesscomn: blesscomn,
         }),
       );
     }
 
-    await this.blesscomnAdminRepo.delete({ admin_id: admin.id });
+    await this.blesscomnAdminRepo.delete({ admin_id: dto.admin_id });
     await this.blesscomnAdminRepo.save(blesscomnAdminData);
   }
 

@@ -27,7 +27,7 @@ import { DisciplesService } from '../../disciples/services/disciples.service';
 @ApiTags('Pemuridan')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('pemuridan/report')
+@Controller('pemuridan-report')
 export class ReportPemuridanController {
   constructor(
     private readonly reportPemuridanService: ReportPemuridanService,

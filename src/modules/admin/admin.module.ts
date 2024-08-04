@@ -6,12 +6,14 @@ import { RegionModule } from '../region/region.module';
 import { JemaatModule } from '../jemaat/jemaat/jemaat.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminEntity } from './entities/admin.entity';
+import { BlesscomnModule } from '../blesscomn/blesscomn/blesscomn.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AdminEntity]),
     RegionModule,
     JemaatModule,
+    BlesscomnModule,
     // inject other module...
   ],
   controllers: [AdminController],

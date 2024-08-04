@@ -10,6 +10,8 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdminEntity } from '../entities/admin.entity';
 import { RegionService } from '../../../modules/region/services/region.service';
+import { BlesscomnService } from '../../blesscomn/blesscomn/services/blesscomn.service';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class AdminService implements OnApplicationBootstrap {
@@ -20,6 +22,7 @@ export class AdminService implements OnApplicationBootstrap {
     private readonly configService: ConfigService,
     private readonly regionService: RegionService,
     private readonly adminRepository: AdminRepository,
+    private readonly blesscomnService: BlesscomnService,
   ) {}
 
   async onApplicationBootstrap() {
@@ -69,11 +72,7 @@ export class AdminService implements OnApplicationBootstrap {
   }
 
   findOne(id: number, region_id?: number) {
-    return this.adminRepository.findOne({
-      where: { id: id ?? IsNull(), region: { id: region_id } },
-      relations: { region: true },
-      withDeleted: true,
-    });
+    return this.adminRepository.getOne(id);
   }
 
   async updatePassword(id: number, password: string) {
@@ -109,6 +108,7 @@ export class AdminService implements OnApplicationBootstrap {
     });
   }
 
+  @Transactional()
   async update(id: number, dto: UpdateAdminDto, user_region_id: number) {
     const user = await this.findOne(id);
     if (!user) throw new BadRequestException('admin is not found!');
@@ -130,6 +130,12 @@ export class AdminService implements OnApplicationBootstrap {
       name: dto.name.toLowerCase() ?? user.name.toLowerCase(),
       email: dto.email.toLowerCase() ?? user.email.toLowerCase(),
       password: user.password,
+    });
+
+    this.blesscomnService.createAdminBlesscomn({
+      admin_id: user.id,
+      blesscomn_ids: dto.blesscomn_ids,
+      region_id: user_region_id,
     });
 
     return updateUser.id;
