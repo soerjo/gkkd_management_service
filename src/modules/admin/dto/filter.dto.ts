@@ -1,7 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import { RoleEnum } from '../../../common/constant/role.constant';
 
 export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
@@ -15,6 +16,11 @@ export class FilterDto extends PaginationDto {
   @Type(() => Number)
   @IsOptional()
   region_id: number;
+
+  @ApiPropertyOptional({ enum: RoleEnum })
+  @IsEnum(RoleEnum)
+  @IsOptional()
+  role: RoleEnum;
 
   user_region_id: number;
 

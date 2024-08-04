@@ -24,6 +24,10 @@ export class AdminRepository extends Repository<AdminEntity> {
       }),
     );
 
+    if (filter.role) {
+      queryBuilder.andWhere('user.role = :filter_role', { filter_role: filter.role });
+    }
+
     if (filter.region_id) {
       queryBuilder.andWhere('(user.region_id = :region_id)', { region_id: filter.region_id });
     }
@@ -62,6 +66,8 @@ export class AdminRepository extends Repository<AdminEntity> {
       `,
     ]);
 
+    console.log(filter);
+    console.log(queryBuilder.getQuery());
     const entities = await queryBuilder.getRawMany();
     const itemCount = await queryBuilder.getCount();
 
