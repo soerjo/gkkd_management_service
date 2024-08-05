@@ -44,7 +44,7 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
     queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = blesscomn.region_id');
 
     if (filter.admin_id) {
-      queryBuilder.andWhere('admin.id = :admin_id', { admin_id: filter.admin_id });
+      queryBuilder.andWhere('admin.admin_id = :admin_id', { admin_id: filter.admin_id });
     }
 
     if (filter.blesscomn_id) {
@@ -85,6 +85,7 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
       'region.name as region_name',
     ]);
 
+    console.log(queryBuilder.getQuery());
     const entities = await queryBuilder.getRawMany();
     const itemCount = await queryBuilder.getCount();
 
