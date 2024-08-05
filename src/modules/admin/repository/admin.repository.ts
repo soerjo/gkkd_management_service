@@ -11,11 +11,12 @@ export class AdminRepository extends Repository<AdminEntity> {
   }
 
   async getOne(id: number) {
+    console.log({ id });
     const queryBuilder = this.createQueryBuilder('user');
     queryBuilder.leftJoinAndSelect('user.region', 'region');
     queryBuilder.leftJoinAndSelect('user.blesscomn', 'blesscomn');
     queryBuilder.leftJoinAndSelect('blesscomn.blesscomn', 'blesscomn_detail');
-    queryBuilder.andWhere('blesscomn_detail.id is not null');
+    // queryBuilder.andWhere('blesscomn_detail.id is not null');
     queryBuilder.andWhere('user.id = :id', { id });
     queryBuilder.withDeleted();
 

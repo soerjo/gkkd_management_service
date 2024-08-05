@@ -72,9 +72,10 @@ export class AdminController {
 
   @Patch('update-password')
   async updatePassword(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: UpdatePasswordDto) {
+    console.log({ jwtPayload });
     const adminUser = await this.adminService.findOne(jwtPayload.id);
+    console.log({ adminUser });
     if (!adminUser) throw new BadRequestException('admin is not found!');
-
     await this.adminService.updatePassword(jwtPayload.id, dto.new_password);
   }
 
