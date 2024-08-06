@@ -36,4 +36,5 @@ export class FilterDto extends PaginationDto {
   admin_id?: number;
 
   blesscomn?: BlesscomnEntity;
+  blesscomn_ids?: number[];
 }

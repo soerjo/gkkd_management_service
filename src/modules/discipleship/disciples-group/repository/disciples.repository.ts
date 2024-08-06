@@ -9,6 +9,15 @@ export class DisciplesGroupRepository extends Repository<DisciplesGroupEntity> {
     super(DisciplesGroupEntity, dataSource.createEntityManager());
   }
 
+  async getByPembimbingNim(pembimbing_nim: string) {
+    const queryBuilder = this.createQueryBuilder('group');
+    queryBuilder.leftJoinAndSelect('group.pembimbing', 'pembimbing');
+    queryBuilder.leftJoinAndSelect('group.region', 'region');
+
+    queryBuilder.andWhere('group.pembimbing_nim = :pembimbing_nim', { pembimbing_nim });
+    return queryBuilder.getMany();
+  }
+
   async getOneById(id: number) {
     const queryBuilder = this.createQueryBuilder('group');
     queryBuilder.leftJoinAndSelect('group.pembimbing', 'pembimbing');

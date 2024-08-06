@@ -10,7 +10,7 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
     super(ReportBlesscomnEntity, dataSource.createEntityManager());
   }
 
-  async getOne(id: number, region_id?: number) {
+  async getOne(id: number, region_id?: number, blesscomn_ids?: number[]) {
     const queryBuilder = this.createQueryBuilder('blesscomn_report');
     queryBuilder.leftJoinAndSelect('blesscomn_report.blesscomn', 'blesscomn');
     queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = blesscomn.region_id');
@@ -50,6 +50,9 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
     if (filter.blesscomn_id) {
       queryBuilder.andWhere('blesscomn.id = :blesscomn_id', { blesscomn_id: filter.blesscomn_id });
     }
+
+    if (!filter.blesscomn_id && filter.blesscomn_ids?.length)
+      queryBuilder.andWhere('region.id in (:...blesscomn_ids)', { blesscomn_ids: filter.blesscomn_ids });
 
     if (!filter.admin_id && filter.region_id) {
       queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });

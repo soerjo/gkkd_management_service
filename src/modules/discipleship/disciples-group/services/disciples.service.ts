@@ -45,6 +45,10 @@ export class DisciplesGroupService {
     return this.pemuridanGroupRepository.getOneById(id);
   }
 
+  async getByPembimbingNim(nim: string) {
+    return this.pemuridanGroupRepository.getByPembimbingNim(nim);
+  }
+
   async update(id: number, dto: UpdateGroupDto) {
     const group = await this.findOne(id);
     if (!group) throw new BadRequestException('group is not found!');

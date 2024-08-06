@@ -5,9 +5,10 @@ import { ReportPemuridanRepository } from './repository/report-pemuridan.reposit
 import { DisciplesModule } from '../disciples/disciples.module';
 import { RegionModule } from '../../region/region.module';
 import { DisciplesGroupModule } from '../disciples-group/disciples.module';
+import { NestjsFormDataModule } from 'nestjs-form-data';
 
 @Module({
-  imports: [DisciplesModule, RegionModule, DisciplesGroupModule],
+  imports: [NestjsFormDataModule, DisciplesModule, RegionModule, DisciplesGroupModule],
   controllers: [ReportPemuridanController],
   providers: [ReportPemuridanService, ReportPemuridanRepository],
 })

@@ -56,10 +56,10 @@ import { DataSource } from 'typeorm';
     // other module...
   ],
   providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ClassSerializerInterceptor,
-    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: ClassSerializerInterceptor,
+    // },
     // {
     //   provide: APP_FILTER,
     //   useClass: HttpExceptionFilter,

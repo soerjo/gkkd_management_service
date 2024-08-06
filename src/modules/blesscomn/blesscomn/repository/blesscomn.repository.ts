@@ -9,6 +9,18 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
     super(BlesscomnEntity, dataSource.createEntityManager());
   }
 
+  async getBlesscomnByAdminId(adminId: number) {
+    const queryBuilder = this.createQueryBuilder('blesscomn');
+    queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');
+    queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
+    queryBuilder.leftJoinAndSelect('blesscomn.admin', 'admin');
+
+    queryBuilder.andWhere('admin.admin_id = :adminId', { adminId });
+
+    // console.log(queryBuilder.getQuery());
+    return queryBuilder.getMany();
+  }
+
   async getOne(id: number, region_id?: number) {
     const queryBuilder = this.createQueryBuilder('blesscomn');
     queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');

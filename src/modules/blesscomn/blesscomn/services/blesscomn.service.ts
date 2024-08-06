@@ -10,6 +10,7 @@ import { AdminService } from '../../../admin/services/admin.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BlesscomnAdminEntity } from '../entities/blesscomn-admin.entity';
 import { Transactional } from 'typeorm-transactional';
+import { last } from 'rxjs';
 
 @Injectable()
 export class BlesscomnService {
@@ -81,7 +82,7 @@ export class BlesscomnService {
   }
 
   findOneByLeadId(leadId: number) {
-    return this.blesscomnRepository.findOne({ where: { lead: { id: leadId ?? IsNull() } } });
+    return this.blesscomnRepository.getBlesscomnByAdminId(leadId);
   }
 
   async update(id: number, dto: UpdateBlesscomnDto) {

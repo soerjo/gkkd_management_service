@@ -3,12 +3,13 @@ import { CreateReportPemuridanDto } from '../dto/create-report-pemuridan.dto';
 import { UpdateReportPemuridanDto } from '../dto/update-report-pemuridan.dto';
 import { ReportPemuridanRepository } from '../repository/report-pemuridan.repository';
 import { FilterDto } from '../dto/filter.dto';
-import { IsNull } from 'typeorm';
+import { DataSource, In, IsNull } from 'typeorm';
 import { getWeeksInMonth } from '../../../../utils/week-in-month.utils';
 import { PemuridanStatusEnum } from '../../../../common/constant/pemuridan-status.constant';
 import { DisciplesService } from '../../disciples/services/disciples.service';
 import { RegionService } from '../../../region/services/region.service';
 import { DisciplesGroupService } from '../../disciples-group/services/disciples.service';
+import { ReportPemuridanEntity } from '../entities/report-pemuridan.entity';
 
 @Injectable()
 export class ReportPemuridanService {
@@ -17,6 +18,7 @@ export class ReportPemuridanService {
     private readonly reportPemuridanRepository: ReportPemuridanRepository,
     private readonly regionService: RegionService,
     private readonly pemuridanService: DisciplesService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(dto: CreateReportPemuridanDto) {
@@ -133,5 +135,46 @@ export class ReportPemuridanService {
     await this.reportPemuridanRepository.softRemove(pastReportPemuridan);
 
     return { id };
+  }
+
+  async upload(listData: Partial<ReportPemuridanEntity>[], disciple_group_ids?: number[]) {
+    const batchSize = 1000; // Define the batch size
+    const totalBatches = Math.ceil(listData.length / batchSize);
+
+    for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+      let batch = listData.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
+
+      for (const bc of batch) {
+        if (disciple_group_ids.includes(bc.disciple_group_id))
+          throw new BadRequestException('not valid blesscomn_id in file');
+      }
+
+      try {
+        await this.dataSource.transaction(async (manager) => {
+          await manager
+            .createQueryBuilder()
+            .insert()
+            .into(ReportPemuridanEntity)
+            .values(batch)
+            .orUpdate(['material', 'pembimbing_nim'], ['date', 'disciple_group_id'])
+            .execute();
+        });
+      } catch (error) {
+        throw new BadRequestException('data can not be uploaded');
+      }
+    }
+  }
+
+  async export(disciple_group_ids?: number[]) {
+    return this.reportPemuridanRepository.find({
+      where: { disciple_group_id: In(disciple_group_ids) },
+      select: {
+        disciple_group_id: true,
+        date: true,
+        material: true,
+        pembimbing_nim: true,
+        region_id: true,
+      },
+    });
   }
 }

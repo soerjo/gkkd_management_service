@@ -1,9 +1,9 @@
 import { MainEntityAbstract } from '../../../../common/abstract/main-entity.abstract';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { DisciplesGroupEntity } from '../../disciples-group/entities/disciples-group.entity';
-import { DisciplesEntity } from '../../disciples/entities/disciples.entity';
 
 @Entity({ name: 'report_pemuridan' })
+@Unique(['date', 'disciple_group_id'])
 export class ReportPemuridanEntity extends MainEntityAbstract {
   @Column()
   disciple_group_id: number;
@@ -18,7 +18,7 @@ export class ReportPemuridanEntity extends MainEntityAbstract {
   @Column({ default: '' })
   material: string;
 
-  @Column()
+  @Column({ nullable: true })
   pembimbing_nim: string;
 
   @Column({ nullable: true })

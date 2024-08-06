@@ -9,11 +9,14 @@ import {
   UseGuards,
   Query,
   BadRequestException,
+  Res,
+  StreamableFile,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { ReportPemuridanService } from '../services/report-pemuridan.service';
 import { CreateReportPemuridanDto } from '../dto/create-report-pemuridan.dto';
 import { UpdateReportPemuridanDto } from '../dto/update-report-pemuridan.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
 
 import { FilterDto } from '../dto/filter.dto';
@@ -23,6 +26,10 @@ import { RoleEnum } from '../../../../common/constant/role.constant';
 import { Roles } from '../../../../common/decorator/role.decorator';
 import { RolesGuard } from '../../../../common/guard/role.guard';
 import { DisciplesService } from '../../disciples/services/disciples.service';
+import { FormDataRequest } from 'nestjs-form-data';
+import { UploadDto } from '../dto/upload.dto';
+import { read, utils, write } from 'xlsx';
+import { DisciplesGroupService } from '../../disciples-group/services/disciples.service';
 
 @ApiTags('Pemuridan')
 @ApiBearerAuth()
@@ -32,6 +39,7 @@ export class ReportPemuridanController {
   constructor(
     private readonly reportPemuridanService: ReportPemuridanService,
     private readonly pemuridanService: DisciplesService,
+    private readonly groupPemuridanService: DisciplesGroupService,
   ) {}
 
   @Post()
@@ -81,17 +89,28 @@ export class ReportPemuridanController {
     return this.reportPemuridanService.findAll(filter);
   }
 
-  // @Get('chart')
-  // @UseGuards(RolesGuard)
-  // @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
-  // async getChart(@CurrentUser() jwtPayload: IJwtPayload, @Query() filter: FilterDto) {
-  //   if (jwtPayload.jemaat_id) filter.lead_id = jwtPayload.jemaat_id;
+  @Get('export')
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
+  async exportXlsxFile(@CurrentUser() jwtPayload: IJwtPayload, @Res() res: Response) {
+    let disciple_group_ids: number[];
 
-  //   return {
-  //     message: 'success',
-  //     data: await this.reportPemuridanService.chart(filter),
-  //   };
-  // }
+    if (jwtPayload.role === RoleEnum.DISCIPLES) {
+      const group = await this.groupPemuridanService.getByPembimbingNim(jwtPayload.username);
+      disciple_group_ids = group.map((group) => group.id);
+    }
+
+    const buffer = await this.reportPemuridanService.export(disciple_group_ids);
+
+    let ws = utils.json_to_sheet(buffer);
+    var wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, 'Data');
+    var buf = write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+    res.header('Content-disposition', 'attachment; filename=report.xlsx');
+    res.type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    return res.send(buf);
+  }
 
   @Get(':id')
   @UseGuards(RolesGuard)
@@ -128,5 +147,25 @@ export class ReportPemuridanController {
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async remove(@Param('id') id: number) {
     await this.reportPemuridanService.remove(id);
+  }
+
+  @Post('upload')
+  @ApiConsumes('multipart/form-data')
+  @FormDataRequest()
+  @UseGuards(RolesGuard)
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
+  async uploadXlsxFile(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: UploadDto) {
+    let disciple_group_ids;
+    if (jwtPayload.role === RoleEnum.DISCIPLES) {
+      const group = await this.groupPemuridanService.getByPembimbingNim(jwtPayload.username);
+      disciple_group_ids = group.map((group) => group.id);
+    }
+
+    const wb = read(dto.file.buffer, { cellDates: true });
+    const sheetName = wb.SheetNames[0];
+    const workSheet = wb.Sheets[sheetName];
+    const jsonData = utils.sheet_to_json(workSheet);
+
+    await this.reportPemuridanService.upload(jsonData, disciple_group_ids);
   }
 }
