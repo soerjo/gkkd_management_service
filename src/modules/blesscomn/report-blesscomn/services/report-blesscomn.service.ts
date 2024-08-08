@@ -27,6 +27,7 @@ export class ReportBlesscomnService {
 
     const reportBlesscomn = this.reportBlesscomnRepository.create({
       ...dto,
+      date: new Date(dto.date),
       blesscomn_id: blesscomn.unique_id,
       new: dto.new_male + dto.new_female,
       total: dto.total_female + dto.total_male + dto.new_male + dto.new_female,
@@ -72,6 +73,7 @@ export class ReportBlesscomnService {
     await this.reportBlesscomnRepository.save({
       ...lastDataBlesscomn,
       ...dto,
+      date: new Date(dto.date),
     });
 
     return { id };

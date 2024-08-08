@@ -27,7 +27,7 @@ export class ReportPemuridanService {
 
     const isDataExist = await this.reportPemuridanRepository.findOne({
       where: {
-        date: dto.date,
+        date: new Date(dto.date),
         disciple_group_unique_id: group.unique_id,
       },
     });
@@ -81,6 +81,7 @@ export class ReportPemuridanService {
     const reportPemuridan = this.reportPemuridanRepository.create({
       ...pastReport,
       ...dto,
+      date: new Date(dto.date),
       disciple_group: group,
       disciple_group_unique_id: group.unique_id,
       pembimbing_nim: group.pembimbing_nim,
@@ -165,21 +166,35 @@ export class ReportPemuridanService {
             .insert()
             .into(ReportPemuridanEntity)
             .values(batch)
-            .orUpdate(['material', 'pembimbing_nim'], ['date', 'disciple_group_id'])
+            .orUpdate(['material', 'pembimbing_nim'], ['date', 'disciple_group_unique_id'])
             .execute();
         });
       } catch (error) {
+        console.log({ error });
         throw new BadRequestException('data can not be uploaded');
       }
     }
   }
 
-  async export(disciple_group_ids?: string[]) {
+  async export(disciple_group_ids?: string[], region_id?: number) {
+    console.log({ disciple_group_ids, region_id });
     const queryBuilder = this.reportPemuridanRepository.createQueryBuilder('report');
-    queryBuilder.andWhere('report.disciple_group_unique_id in (:...disciple_group_ids)', { disciple_group_ids });
+    queryBuilder.leftJoinAndSelect('report.disciple_group', 'disciple_group');
 
-    queryBuilder.select(['disciple_group_unique_id', 'date', 'material', 'pembimbing_nim', 'region_id']);
+    if (disciple_group_ids.length) {
+      queryBuilder.andWhere('report.disciple_group_unique_id in (:...disciple_group_ids)', { disciple_group_ids });
+    }
 
-    return queryBuilder.getMany();
+    if (region_id) {
+      queryBuilder.andWhere('report.region_id = :region_id', { region_id });
+    }
+
+    queryBuilder.select([
+      'report.disciple_group_unique_id as disciple_group_unique_id',
+      'report.date as date',
+      'report.material as material',
+    ]);
+
+    return queryBuilder.getRawMany();
   }
 }

@@ -11,6 +11,7 @@ import {
   BadRequestException,
   Res,
   StreamableFile,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ReportPemuridanService } from '../services/report-pemuridan.service';
@@ -86,23 +87,28 @@ export class ReportPemuridanController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async exportXlsxFile(@CurrentUser() jwtPayload: IJwtPayload, @Res() res: Response) {
-    let disciple_group_ids: string[];
+    let disciple_group_ids: string[] = [];
 
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const group = await this.groupPemuridanService.getByPembimbingNim(jwtPayload.username);
       disciple_group_ids = group.map((group) => group.unique_id);
     }
 
-    const buffer = await this.reportPemuridanService.export(disciple_group_ids);
+    try {
+      const buffer = await this.reportPemuridanService.export(disciple_group_ids, jwtPayload.region.id);
 
-    let ws = utils.json_to_sheet(buffer);
-    var wb = utils.book_new();
-    utils.book_append_sheet(wb, ws, 'Data');
-    var buf = write(wb, { type: 'buffer', bookType: 'xlsx' });
+      let ws = utils.json_to_sheet(buffer);
+      var wb = utils.book_new();
+      utils.book_append_sheet(wb, ws, 'Data');
+      var buf = write(wb, { type: 'buffer', bookType: 'xlsx' });
 
-    res.header('Content-disposition', 'attachment; filename=report.xlsx');
-    res.type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    return res.send(buf);
+      res.header('Content-disposition', 'attachment; filename=report.xlsx');
+      res.type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      return res.send(buf);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
+    }
   }
 
   @Get(':id')
@@ -141,10 +147,10 @@ export class ReportPemuridanController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async uploadXlsxFile(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: UploadDto) {
-    let disciple_group_ids;
+    let disciple_group_ids: string[] = [];
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const group = await this.groupPemuridanService.getByPembimbingNim(jwtPayload.username);
-      disciple_group_ids = group.map((group) => group.id);
+      disciple_group_ids = group.map((group) => group?.unique_id);
     }
 
     const wb = read(dto.file.buffer, { cellDates: true });

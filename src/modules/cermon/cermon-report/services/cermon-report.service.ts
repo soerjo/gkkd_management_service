@@ -26,7 +26,11 @@ export class ReportIbadahService {
     const isExist = await this.reportRepository.findOne({ where: { cermon_id: cermon.id, date: dto.date } });
     if (isExist) throw new BadRequestException('data report already exist');
 
-    this.reportRepository.save({ ...dto, region_id: cermon.region_id });
+    this.reportRepository.save({
+      ...dto,
+      date: new Date(dto.date),
+      region_id: cermon.region_id,
+    });
   }
 
   async findAll(dto: FilterReportDto) {
@@ -50,7 +54,13 @@ export class ReportIbadahService {
     const isExist = await this.reportRepository.findOne({ where: { cermon_id: cermon.id, date: dto.date } });
     if (isExist && isExist.id !== report.id) throw new BadRequestException('data report already exist');
 
-    this.reportRepository.save({ ...report, ...dto, cermon: cermon, region_id: cermon.region_id });
+    this.reportRepository.save({
+      ...report,
+      ...dto,
+      date: new Date(dto.date),
+      cermon: cermon,
+      region_id: cermon.region_id,
+    });
   }
 
   async remove(id: number, region_id?: number) {
