@@ -142,7 +142,7 @@ export class ReportPemuridanService {
     const pastReportPemuridan = await this.findOne(id);
     if (!pastReportPemuridan) throw new BadRequestException('Pemuridan report is not found!');
 
-    await this.reportPemuridanRepository.softRemove(pastReportPemuridan);
+    await this.reportPemuridanRepository.remove(pastReportPemuridan);
 
     return { id };
   }

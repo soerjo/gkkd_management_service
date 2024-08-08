@@ -83,7 +83,7 @@ export class ReportBlesscomnService {
     const lastDataBlesscomn = await this.findOne(id);
     if (!lastDataBlesscomn) throw new BadRequestException('Blesscomn report is not found!');
 
-    await this.reportBlesscomnRepository.softRemove(lastDataBlesscomn);
+    await this.reportBlesscomnRepository.remove(lastDataBlesscomn);
 
     return { id };
   }

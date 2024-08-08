@@ -67,6 +67,6 @@ export class ReportIbadahService {
     const report = await this.findOne(id, region_id);
     if (!report) throw new BadRequestException('report is not found!');
 
-    this.reportRepository.softRemove(report);
+    this.reportRepository.remove(report);
   }
 }
