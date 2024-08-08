@@ -26,7 +26,7 @@ export class CreatePemuridanDto {
   @ApiProperty()
   @IsOptional()
   @IsNumber()
-  group_id?: number;
+  group_id?: string;
 
   @ApiProperty()
   @IsNumber()

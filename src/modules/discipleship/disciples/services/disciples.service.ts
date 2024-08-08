@@ -10,6 +10,7 @@ import { Transactional } from 'typeorm-transactional';
 import { JemaatService } from '../../../jemaat/jemaat/services/jemaat.service';
 import { JemaatEntity } from '../../../jemaat/jemaat/entities/jemaat.entity';
 import { DisciplesEntity } from '../entities/disciples.entity';
+import { DisciplesGroupService } from '../../disciples-group/services/disciples.service';
 
 @Injectable()
 export class DisciplesService {
@@ -18,6 +19,7 @@ export class DisciplesService {
     private readonly regionService: RegionService,
     private readonly adminService: AdminService,
     private readonly jemaatService: JemaatService,
+    private readonly groupService: DisciplesGroupService,
   ) {}
 
   @Transactional()
@@ -87,6 +89,18 @@ export class DisciplesService {
     return this.pemuridanRepository.getOne(nim);
   }
 
+  async updateGroup(nims: string[], groupId: string) {
+    let updateGroupMurid: DisciplesEntity[] = [];
+    for (const nim of nims) {
+      const murid = await this.findOne(nim);
+      if (!murid) throw new BadRequestException('disciples is not found!');
+      updateGroupMurid.push(this.pemuridanRepository.create({ ...murid, group_id: groupId }));
+    }
+
+    console.log({ updateGroupMurid });
+    this.pemuridanRepository.save(updateGroupMurid);
+  }
+
   async findOneById(id: number) {
     return this.pemuridanRepository.findOne({ where: { id } });
   }
@@ -98,6 +112,8 @@ export class DisciplesService {
   async update(nim: string, dto: UpdatePemuridanDto) {
     const pemuridan = await this.findOne(nim);
     if (!pemuridan) throw new BadRequestException('disciples is not found!');
+
+    const group = await this.groupService.findOne(dto.group_id);
 
     let parent;
     if (dto.pembimbing_id) {
@@ -121,11 +137,15 @@ export class DisciplesService {
 
     if (jemaat) dto.name = jemaat.name;
 
-    await this.pemuridanRepository.save({
+    const updateMurid = this.pemuridanRepository.create({
       ...pemuridan,
       ...dto,
+      group: group ?? null,
+      group_id: group?.unique_id ?? null,
       parent: parent,
     });
+
+    await this.pemuridanRepository.save(updateMurid);
 
     return nim;
   }

@@ -22,6 +22,8 @@ export class DisciplesGroupRepository extends Repository<DisciplesGroupEntity> {
     const queryBuilder = this.createQueryBuilder('group');
     queryBuilder.leftJoinAndSelect('group.pembimbing', 'pembimbing');
     queryBuilder.leftJoinAndSelect('group.region', 'region');
+    queryBuilder.leftJoinAndSelect('group.anggota', 'anggota');
+    // anggota
 
     queryBuilder.andWhere('group.id = :id', { id });
     return queryBuilder.getOne();

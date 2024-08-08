@@ -33,7 +33,12 @@ export class ReportPemuridanService {
     });
     if (isDataExist) throw new BadRequestException('data already exist!');
 
-    const reportPemuridan = this.reportPemuridanRepository.create(dto);
+    const reportPemuridan = this.reportPemuridanRepository.create({
+      ...dto,
+      disciple_group_unique_id: group.unique_id,
+      pembimbing_nim: group.pembimbing_nim,
+    });
+
     return this.reportPemuridanRepository.save(reportPemuridan);
   }
 
@@ -73,11 +78,15 @@ export class ReportPemuridanService {
       throw new BadRequestException('data already exist!');
     }
 
-    await this.reportPemuridanRepository.save({
+    const reportPemuridan = this.reportPemuridanRepository.create({
       ...pastReport,
       ...dto,
       disciple_group: group,
+      disciple_group_unique_id: group.unique_id,
+      pembimbing_nim: group.pembimbing_nim,
     });
+
+    await this.reportPemuridanRepository.save(reportPemuridan);
 
     return { id };
   }

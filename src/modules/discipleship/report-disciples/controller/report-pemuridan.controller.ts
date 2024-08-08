@@ -48,19 +48,12 @@ export class ReportPemuridanController {
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateReportPemuridanDto) {
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
 
-    if (dto.pembimbing_nim) {
-      const disciple = await this.pemuridanService.getAccountDiscipleByNim(dto.pembimbing_nim);
-      if (!disciple) throw new BadRequestException('disciple account is not found!');
-    }
-
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
       if (!parent) throw new BadRequestException('disciple account is not found!');
-      dto.pembimbing_nim = dto.pembimbing_nim ?? parent.nim;
     }
 
     if (!dto.region_id) throw new BadRequestException('region is not found!');
-    if (!dto.pembimbing_nim) throw new BadRequestException('pembimbing is not found!');
 
     return this.reportPemuridanService.create(dto);
   }
@@ -125,19 +118,12 @@ export class ReportPemuridanController {
   async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number, @Body() dto: UpdateReportPemuridanDto) {
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
 
-    if (dto.pembimbing_nim) {
-      const disciple = await this.pemuridanService.getAccountDiscipleByNim(dto.pembimbing_nim);
-      if (!disciple) throw new BadRequestException('disciple account is not found!');
-    }
-
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
       if (!parent) throw new BadRequestException('disciple account is not found!');
-      dto.pembimbing_nim = dto.pembimbing_nim ?? parent.nim;
     }
 
     if (!dto.region_id) throw new BadRequestException('region is not found!');
-    if (!dto.pembimbing_nim) throw new BadRequestException('pembimbing is not found!');
 
     return this.reportPemuridanService.update(id, dto);
   }

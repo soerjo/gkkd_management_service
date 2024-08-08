@@ -1,16 +1,19 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { UpdateGroupDto } from '../dto/update-group.dto';
 import { DisciplesGroupRepository } from '../repository/disciples.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { RegionService } from '../../../../modules/region/services/region.service';
 import { CreateGroupDto } from '../dto/create-group.dto';
 import { DisciplesService } from '../../disciples/services/disciples.service';
+import { Transactional } from 'typeorm-transactional';
+import { DisciplesEntity } from '../../disciples/entities/disciples.entity';
 
 @Injectable()
 export class DisciplesGroupService {
   constructor(
-    private readonly pemuridanGroupRepository: DisciplesGroupRepository,
+    @Inject(forwardRef(() => DisciplesService))
     private readonly pemuridanService: DisciplesService,
+    private readonly pemuridanGroupRepository: DisciplesGroupRepository,
     private readonly regionService: RegionService,
   ) {}
 
@@ -51,8 +54,10 @@ export class DisciplesGroupService {
     return this.pemuridanGroupRepository.getByPembimbingNim(nim);
   }
 
+  @Transactional()
   async update(id: number, dto: UpdateGroupDto) {
     const group = await this.findOne(id);
+    console.log({ group });
     if (!group) throw new BadRequestException('group is not found!');
 
     const disciples = await this.pemuridanService.findOne(dto.pembimbing_nim);
@@ -64,10 +69,8 @@ export class DisciplesGroupService {
     const region = await this.regionService.getOneById(dto.region_id);
     if (!region) throw new BadRequestException('region is not found!');
 
-    await this.pemuridanGroupRepository.save({
-      ...group,
-      ...dto,
-    });
+    await this.pemuridanService.updateGroup(dto.anggota_nims, group.unique_id);
+    await this.pemuridanGroupRepository.save({ ...group, ...dto });
 
     return id;
   }

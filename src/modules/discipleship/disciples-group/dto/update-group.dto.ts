@@ -1,5 +1,5 @@
 import { ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsArray } from 'class-validator';
 import { CreateGroupDto } from './create-group.dto';
 
 export class UpdateGroupDto extends PartialType(CreateGroupDto) {
@@ -7,4 +7,10 @@ export class UpdateGroupDto extends PartialType(CreateGroupDto) {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @ApiPropertyOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty()
+  anggota_nims: string[];
 }

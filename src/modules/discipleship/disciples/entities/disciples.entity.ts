@@ -36,7 +36,7 @@ export class DisciplesEntity extends MainEntityAbstract {
   admin: AdminEntity;
 
   @Column({ nullable: true })
-  group_id?: number;
+  group_id?: string;
 
   @ManyToOne(() => DisciplesGroupEntity, { nullable: true })
   @JoinColumn({ name: 'group_id' })
