@@ -44,7 +44,6 @@ export class ReportIbadahService {
     const report = await this.findOne(id);
     if (!report) throw new BadRequestException('report is not found!');
 
-    console.log({});
     const cermon = await this.cermonService.findOne(dto.cermon_id);
     if (!cermon) throw new BadRequestException('cermon is not found!');
 

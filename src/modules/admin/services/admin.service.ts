@@ -30,6 +30,7 @@ export class AdminService implements OnApplicationBootstrap {
     if (!ROLE_SUPERADMIN) {
       this.defaultAdminRepo.save({
         name: 'superadmin',
+        username: 'superadmin',
         email: 'superadmin@mail.com',
         password: encryptPassword('Asdf1234.'),
         role: RoleEnum.ROLE_SYSTEMADMIN,
@@ -38,7 +39,7 @@ export class AdminService implements OnApplicationBootstrap {
   }
 
   getByUsername(name: string) {
-    return this.adminRepository.findOneBy({ name: name ?? IsNull() });
+    return this.adminRepository.findOneBy({ username: name ?? IsNull() });
   }
 
   getByEmail(email: string) {
@@ -47,7 +48,7 @@ export class AdminService implements OnApplicationBootstrap {
 
   getByUsernameOrEmail(usernameOrEmail: string) {
     return this.adminRepository.findOne({
-      where: [{ name: usernameOrEmail }, { email: usernameOrEmail }],
+      where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       relations: { region: true },
     });
   }
@@ -56,6 +57,7 @@ export class AdminService implements OnApplicationBootstrap {
     const newUser = this.adminRepository.create({
       ...dto,
       name: dto.name.toLowerCase(),
+      username: dto.username ?? dto.name.split(' ').join('_'),
       email: dto.email?.toLowerCase(),
       temp_password: encryptPassword(this.configService.get('TEMP_PASSWORD')),
     });
@@ -132,11 +134,13 @@ export class AdminService implements OnApplicationBootstrap {
       password: user.password,
     });
 
-    this.blesscomnService.createAdminBlesscomn({
-      admin_id: user.id,
-      blesscomn_ids: dto.blesscomn_ids,
-      region_id: user_region_id,
-    });
+    if (dto.blesscomn_ids) {
+      this.blesscomnService.createAdminBlesscomn({
+        admin_id: user.id,
+        blesscomn_ids: dto.blesscomn_ids,
+        region_id: user_region_id,
+      });
+    }
 
     return updateUser.id;
   }

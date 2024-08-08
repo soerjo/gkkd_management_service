@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controller/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { AdminModule } from '../admin/admin.module';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from '../../common/guard/jwt-auth.guard';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -22,6 +23,13 @@ import { JwtAuthGuard } from '../../common/guard/jwt-auth.guard';
     AdminModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard],
+  providers: [
+    AuthService,
+    JwtAuthGuard,
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: ClassSerializerInterceptor,
+    // },
+  ],
 })
 export class AuthModule {}

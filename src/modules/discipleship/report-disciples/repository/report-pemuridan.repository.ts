@@ -12,7 +12,6 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
   }
 
   async getAll(filter: FilterDto) {
-    console.log({ filter });
     const queryBuilder = this.createQueryBuilder('pemuridan_report');
     queryBuilder.leftJoinAndSelect('pemuridan_report.disciple_group', 'disciple_group');
     queryBuilder.leftJoinAndSelect('disciple_group.pembimbing', 'pembimbing');

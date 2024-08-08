@@ -36,8 +36,31 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
     return entities;
   }
 
+  async getExport(blesscomn_ids?: number[]) {
+    const queryBuilder = this.createQueryBuilder('blesscomn_report');
+    queryBuilder.leftJoinAndSelect('blesscomn_report.blesscomn', 'blesscomn');
+    queryBuilder.leftJoin('blesscomn.admin', 'admin');
+    queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = blesscomn.region_id');
+
+    if (blesscomn_ids?.length) {
+      queryBuilder.andWhere('blesscomn.id in (:...blesscomn_ids)', { blesscomn_ids });
+    }
+
+    queryBuilder.select([
+      'blesscomn_report.blesscomn_id as blesscomn_id',
+      'blesscomn_report.date as date',
+      'blesscomn_report.total_male as total_male',
+      'blesscomn_report.total_female as total_female',
+      'blesscomn_report.new_male as total_new_male',
+      'blesscomn_report.new_female as total_new_female',
+      'blesscomn_report.total as total',
+      'blesscomn_report.new as new',
+    ]);
+
+    return queryBuilder.getRawMany();
+  }
+
   async getAll(filter: FilterDto) {
-    console.log({ filter });
     const queryBuilder = this.createQueryBuilder('blesscomn_report');
     queryBuilder.leftJoinAndSelect('blesscomn_report.blesscomn', 'blesscomn');
     queryBuilder.leftJoin('blesscomn.admin', 'admin');
@@ -88,7 +111,6 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
       'region.name as region_name',
     ]);
 
-    console.log(queryBuilder.getQuery());
     const entities = await queryBuilder.getRawMany();
     const itemCount = await queryBuilder.getCount();
 

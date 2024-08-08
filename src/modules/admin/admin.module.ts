@@ -1,12 +1,14 @@
-import { Module } from '@nestjs/common';
 import { AdminService } from './services/admin.service';
 import { AdminController } from './controller/admin.controller';
 import { AdminRepository } from './repository/admin.repository';
 import { RegionModule } from '../region/region.module';
 import { JemaatModule } from '../jemaat/jemaat/jemaat.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminEntity } from './entities/admin.entity';
 import { BlesscomnModule } from '../blesscomn/blesscomn/blesscomn.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ClassSerializerInterceptor } from '@nestjs/common/serializer';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -17,7 +19,14 @@ import { BlesscomnModule } from '../blesscomn/blesscomn/blesscomn.module';
     // inject other module...
   ],
   controllers: [AdminController],
-  providers: [AdminService, AdminRepository],
+  providers: [
+    AdminService,
+    AdminRepository,
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: ClassSerializerInterceptor,
+    // },
+  ],
   exports: [AdminService],
 })
 export class AdminModule {}

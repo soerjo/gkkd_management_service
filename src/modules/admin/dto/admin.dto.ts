@@ -12,6 +12,12 @@ export class AdminDto {
   name: string;
 
   @ApiProperty()
+  @IsString()
+  @Transform((e) => String(e.value).toLowerCase())
+  @IsOptional()
+  username?: string;
+
+  @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
   @Transform((e) => String(e.value).toLowerCase())

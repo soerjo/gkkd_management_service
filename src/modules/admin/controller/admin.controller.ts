@@ -42,9 +42,10 @@ export class AdminController {
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateAdminDto) {
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
     const region = await this.regionService.getOneById(dto.region_id);
+    if (!region) throw new BadRequestException('region is not found!');
 
-    const isUsernameExist = await this.adminService.getByUsername(dto.name);
-    if (isUsernameExist) throw new BadRequestException('username already exist');
+    const isUsernameExist = await this.adminService.getByUsername(dto.username ?? dto.name.split(' ').join('_'));
+    if (isUsernameExist) throw new BadRequestException('name or username already exist');
 
     const isEmailExist = await this.adminService.getByEmail(dto.email);
     if (isEmailExist) throw new BadRequestException('email already exist');
@@ -85,6 +86,8 @@ export class AdminController {
     @Param('id') id: number,
     @Body() updateAdminDto: UpdateAdminDto,
   ) {
+    if (jwtPayload.id === id) throw new ForbiddenException('can not update it self');
+
     if (!updateAdminDto.region_id) updateAdminDto.region_id = jwtPayload?.region?.id;
     const isUsernameExist = await this.adminService.getByUsername(updateAdminDto?.name);
     if (isUsernameExist && id != isUsernameExist.id && isUsernameExist.name === updateAdminDto.name)

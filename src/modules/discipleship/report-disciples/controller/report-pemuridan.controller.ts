@@ -93,11 +93,11 @@ export class ReportPemuridanController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async exportXlsxFile(@CurrentUser() jwtPayload: IJwtPayload, @Res() res: Response) {
-    let disciple_group_ids: number[];
+    let disciple_group_ids: string[];
 
     if (jwtPayload.role === RoleEnum.DISCIPLES) {
       const group = await this.groupPemuridanService.getByPembimbingNim(jwtPayload.username);
-      disciple_group_ids = group.map((group) => group.id);
+      disciple_group_ids = group.map((group) => group.unique_id);
     }
 
     const buffer = await this.reportPemuridanService.export(disciple_group_ids);

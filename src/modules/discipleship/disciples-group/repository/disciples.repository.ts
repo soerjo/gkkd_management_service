@@ -49,9 +49,12 @@ export class DisciplesGroupRepository extends Repository<DisciplesGroupEntity> {
     );
 
     filter.search &&
-      queryBuilder.andWhere('(group.name ILIKE :search OR pembimbing.name ILIKE :search)', {
-        search: `%${filter.search}%`,
-      });
+      queryBuilder.andWhere(
+        '(group.name ILIKE :search OR pembimbing.name ILIKE :search OR group.unique_id ILIKE :search)',
+        {
+          search: `%${filter.search}%`,
+        },
+      );
 
     if (filter.region_id) {
       queryBuilder.andWhere('group.region_id = :region_id', { region_id: filter.region_id });

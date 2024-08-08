@@ -92,7 +92,6 @@ export class DisciplesGroupController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.DISCIPLES])
   async update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number, @Body() dto: UpdateGroupDto) {
-    console.log({ dto });
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
 
     if (dto.pembimbing_nim) {
@@ -108,8 +107,6 @@ export class DisciplesGroupController {
 
     if (!dto.region_id) throw new BadRequestException('region is not found!');
     if (!dto.pembimbing_nim) throw new BadRequestException('pembimbing is not found!');
-
-    console.log({ dto });
 
     return this.pemuridanGroupService.update(id, dto);
   }

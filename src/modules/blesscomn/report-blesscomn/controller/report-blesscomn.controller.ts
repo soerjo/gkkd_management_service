@@ -45,7 +45,7 @@ export class ReportBlesscomnController {
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateReportBlesscomnDto) {
     if (jwtPayload.id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.id);
-      const listBlesscomnIds = blesscomn.map((bc) => bc.id);
+      const listBlesscomnIds = blesscomn.map((bc) => bc?.id);
       if (listBlesscomnIds.includes(dto.blesscomn_id)) {
         throw new BadRequestException('user have not this blesscomn, blesscomn is not valid');
       }
@@ -98,9 +98,9 @@ export class ReportBlesscomnController {
     const buffer = await this.reportBlesscomnService.export(blesscomn_ids);
 
     let ws = utils.json_to_sheet(buffer);
-    var wb = utils.book_new();
+    let wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Data');
-    var buf = write(wb, { type: 'buffer', bookType: 'xlsx' });
+    let buf = write(wb, { type: 'buffer', bookType: 'xlsx' });
 
     res.header('Content-disposition', 'attachment; filename=report.xlsx');
     res.type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -150,7 +150,7 @@ export class ReportBlesscomnController {
     let blesscomn_ids;
     if (jwtPayload.role === RoleEnum.LEADER) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.id);
-      blesscomn_ids = blesscomn.map((bc) => bc.id);
+      blesscomn_ids = blesscomn.map((bc) => bc.unique_id);
     }
 
     const wb = read(dto.file.buffer, { cellDates: true });

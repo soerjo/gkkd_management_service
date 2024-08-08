@@ -4,9 +4,8 @@ import { UpdateReportBlesscomnDto } from '../dto/update-report-blesscomn.dto';
 import { ReportBlesscomnRepository } from '../repository/report-blesscomn.repository';
 import { FilterDto } from '../dto/filter.dto';
 import { BlesscomnService } from '../../../../modules/blesscomn/blesscomn/services/blesscomn.service';
-import { BlesscomnDto } from '../../blesscomn/dto/blesscomn.dto';
 import { ReportBlesscomnEntity } from '../entities/report-blesscomn.entity';
-import { DataSource, DeepPartial, In } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class ReportBlesscomnService {
@@ -28,6 +27,7 @@ export class ReportBlesscomnService {
 
     const reportBlesscomn = this.reportBlesscomnRepository.create({
       ...dto,
+      blesscomn_id: blesscomn.unique_id,
       new: dto.new_male + dto.new_female,
       total: dto.total_female + dto.total_male + dto.new_male + dto.new_female,
     });
@@ -43,39 +43,7 @@ export class ReportBlesscomnService {
     return this.reportBlesscomnRepository.getOne(id);
   }
 
-  async chart(filter: FilterDto) {
-    // const { entities: data } = await this.findAll(filter);
-    // // Group data by month
-    // const groupedData = data.reduce((acc, data) => {
-    //   const month = new Date(data.date).getMonth();
-    //   if (!acc[month]) {
-    //     acc[month] = [];
-    //   }
-    //   acc[month].push({
-    //     total: data.total,
-    //     male: data.total_male,
-    //     female: data.total_female,
-    //     new: data.new,
-    //   });
-    //   return acc;
-    // }, {});
-    // // Calculate the average for each month
-    // const averagePerMonth = Object.keys(groupedData).map((month) => {
-    //   const values = groupedData[month];
-    //   const averageTotal = values.reduce((sum, value) => sum + value.total, 0) / values.length;
-    //   const averageMale = values.reduce((sum, value) => sum + value.male, 0) / values.length;
-    //   const averageFemale = values.reduce((sum, value) => sum + value.female, 0) / values.length;
-    //   const averageNew = values.reduce((sum, value) => sum + value.new, 0) / values.length;
-    //   return {
-    //     month,
-    //     averageTotal,
-    //     averageMale,
-    //     averageFemale,
-    //     averageNew,
-    //   };
-    // });
-    // return averagePerMonth;
-  }
+  async chart(filter: FilterDto) {}
 
   async update(id: number, dto: UpdateReportBlesscomnDto) {
     const lastDataBlesscomn = await this.findOne(id);
@@ -118,7 +86,7 @@ export class ReportBlesscomnService {
     return { id };
   }
 
-  async upload(listData: Partial<ReportBlesscomnEntity>[], blesscomn_ids?: number[]) {
+  async upload(listData: Partial<ReportBlesscomnEntity>[], blesscomn_ids?: string[]) {
     const batchSize = 1000; // Define the batch size
     const totalBatches = Math.ceil(listData.length / batchSize);
 
@@ -149,18 +117,6 @@ export class ReportBlesscomnService {
   }
 
   async export(blesscomn_ids?: number[]) {
-    return this.reportBlesscomnRepository.find({
-      where: { blesscomn_id: In(blesscomn_ids) },
-      select: {
-        blesscomn_id: true,
-        date: true,
-        total_male: true,
-        total_female: true,
-        new_male: true,
-        new_female: true,
-        total: true,
-        new: true,
-      },
-    });
+    return this.reportBlesscomnRepository.getExport(blesscomn_ids);
   }
 }

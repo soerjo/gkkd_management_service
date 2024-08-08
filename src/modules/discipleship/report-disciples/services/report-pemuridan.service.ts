@@ -3,7 +3,7 @@ import { CreateReportPemuridanDto } from '../dto/create-report-pemuridan.dto';
 import { UpdateReportPemuridanDto } from '../dto/update-report-pemuridan.dto';
 import { ReportPemuridanRepository } from '../repository/report-pemuridan.repository';
 import { FilterDto } from '../dto/filter.dto';
-import { DataSource, In, IsNull } from 'typeorm';
+import { DataSource, IsNull } from 'typeorm';
 import { getWeeksInMonth } from '../../../../utils/week-in-month.utils';
 import { PemuridanStatusEnum } from '../../../../common/constant/pemuridan-status.constant';
 import { DisciplesService } from '../../disciples/services/disciples.service';
@@ -22,16 +22,16 @@ export class ReportPemuridanService {
   ) {}
 
   async create(dto: CreateReportPemuridanDto) {
+    const group = await this.groupPemuridanService.findOne(dto.disciple_group_id);
+    if (!group) throw new BadRequestException('group is not found');
+
     const isDataExist = await this.reportPemuridanRepository.findOne({
       where: {
         date: dto.date,
-        disciple_group_id: dto.disciple_group_id,
+        disciple_group_unique_id: group.unique_id,
       },
     });
     if (isDataExist) throw new BadRequestException('data already exist!');
-
-    const group = await this.groupPemuridanService.findOne(dto.disciple_group_id);
-    if (!group) throw new BadRequestException('group is not found');
 
     const reportPemuridan = this.reportPemuridanRepository.create(dto);
     return this.reportPemuridanRepository.save(reportPemuridan);
@@ -66,7 +66,7 @@ export class ReportPemuridanService {
     const isDataExist = await this.reportPemuridanRepository.findOne({
       where: {
         date: dto.date,
-        disciple_group_id: dto.disciple_group_id,
+        disciple_group_unique_id: group.unique_id,
       },
     });
     if (isDataExist && isDataExist.id !== pastReport.id) {
@@ -137,7 +137,7 @@ export class ReportPemuridanService {
     return { id };
   }
 
-  async upload(listData: Partial<ReportPemuridanEntity>[], disciple_group_ids?: number[]) {
+  async upload(listData: Partial<ReportPemuridanEntity>[], disciple_group_ids?: string[]) {
     const batchSize = 1000; // Define the batch size
     const totalBatches = Math.ceil(listData.length / batchSize);
 
@@ -145,7 +145,7 @@ export class ReportPemuridanService {
       let batch = listData.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
 
       for (const bc of batch) {
-        if (disciple_group_ids.includes(bc.disciple_group_id))
+        if (disciple_group_ids.includes(bc.disciple_group_unique_id))
           throw new BadRequestException('not valid blesscomn_id in file');
       }
 
@@ -165,16 +165,12 @@ export class ReportPemuridanService {
     }
   }
 
-  async export(disciple_group_ids?: number[]) {
-    return this.reportPemuridanRepository.find({
-      where: { disciple_group_id: In(disciple_group_ids) },
-      select: {
-        disciple_group_id: true,
-        date: true,
-        material: true,
-        pembimbing_nim: true,
-        region_id: true,
-      },
-    });
+  async export(disciple_group_ids?: string[]) {
+    const queryBuilder = this.reportPemuridanRepository.createQueryBuilder('report');
+    queryBuilder.andWhere('report.disciple_group_unique_id in (:...disciple_group_ids)', { disciple_group_ids });
+
+    queryBuilder.select(['disciple_group_unique_id', 'date', 'material', 'pembimbing_nim', 'region_id']);
+
+    return queryBuilder.getMany();
   }
 }

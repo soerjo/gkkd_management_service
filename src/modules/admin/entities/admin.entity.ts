@@ -8,8 +8,11 @@ import { BlesscomnAdminEntity } from '../../blesscomn/blesscomn/entities/blessco
 
 @Entity({ name: 'admin' })
 export class AdminEntity extends MainEntityAbstract {
-  @Column({ unique: true })
+  @Column()
   name: string;
+
+  @Column({ unique: true })
+  username: string;
 
   @Column({ nullable: true, unique: false })
   email?: string;

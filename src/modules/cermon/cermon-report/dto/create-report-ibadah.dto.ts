@@ -33,7 +33,6 @@ export class CreateReportIbadahDto {
   // @Min(0)
   @ValidateIf(
     (ob) => {
-      console.log({ isvalid: ob.total_female > ob.total_new_female });
       return ob.total_female > ob.total_new_female;
     },
     {

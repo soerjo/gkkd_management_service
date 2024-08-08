@@ -17,7 +17,6 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
 
     queryBuilder.andWhere('admin.admin_id = :adminId', { adminId });
 
-    // console.log(queryBuilder.getQuery());
     return queryBuilder.getMany();
   }
 
@@ -31,6 +30,7 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
 
     queryBuilder.select([
       'blesscomn.id as id',
+      'blesscomn.unique_id as unique_id',
       'blesscomn.name as name',
       'blesscomn.location as location',
       'blesscomn.time as time',
@@ -55,9 +55,12 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
     queryBuilder.leftJoin('blesscomn.admin', 'admin');
 
     filter.search &&
-      queryBuilder.andWhere('(blesscomn.name ILIKE :search OR blesscomn.lead ILIKE :search)', {
-        search: filter.search,
-      });
+      queryBuilder.andWhere(
+        '(blesscomn.name ILIKE :search OR blesscomn.lead ILIKE :search OR blesscomn.unique_id ILIKE :search)',
+        {
+          search: filter.search,
+        },
+      );
 
     if (filter.admin_id) {
       queryBuilder.andWhere(`admin.admin_id = :admin_id`, { admin_id: filter.admin_id });
@@ -80,16 +83,16 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       queryBuilder.offset((filter?.page - 1) * filter?.take);
     }
 
-    queryBuilder.distinctOn(['blesscomn.id']);
+    queryBuilder.distinctOn(['blesscomn.unique_id']);
     queryBuilder.orderBy(
       ` 
-      "blesscomn"."id",
+      "blesscomn"."unique_id",
       "blesscomn"."created_at"
       `,
       'DESC',
     );
     queryBuilder.groupBy(`
-      "blesscomn"."id",
+      "blesscomn"."unique_id",
       "lead"."id",
       "region"."id",
       "admin"."id"
@@ -97,6 +100,7 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
 
     queryBuilder.addSelect([
       'blesscomn.id as id',
+      'blesscomn.unique_id as unique_id',
       'blesscomn.name as name',
       'blesscomn.location as location',
       'blesscomn.time as time',
@@ -117,7 +121,7 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       params,
     );
     const itemCount = countQuery[0].count;
-    const entities = await queryBuilder.getRawMany();
+    const entities = await queryBuilder.getMany();
 
     const meta = {
       page: filter?.page || 0,

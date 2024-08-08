@@ -21,12 +21,14 @@ export class DisciplesGroupService {
     const region = await this.regionService.getOneById(dto.region_id);
     if (!region) throw new BadRequestException('region is not found!');
 
-    return this.pemuridanGroupRepository.save({
+    const create = this.pemuridanGroupRepository.create({
       ...dto,
       pembimbing_nim: dto.pembimbing_nim,
       pembimbing_id: disciples.id,
       pembimbing: disciples,
     });
+
+    return this.pemuridanGroupRepository.save(create);
   }
 
   async findAll(filter: FilterDto) {
@@ -61,8 +63,6 @@ export class DisciplesGroupService {
 
     const region = await this.regionService.getOneById(dto.region_id);
     if (!region) throw new BadRequestException('region is not found!');
-
-    console.log({ group });
 
     await this.pemuridanGroupRepository.save({
       ...group,
