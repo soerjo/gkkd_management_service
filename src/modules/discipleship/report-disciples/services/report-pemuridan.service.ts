@@ -155,7 +155,7 @@ export class ReportPemuridanService {
       let batch = listData.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
 
       for (const bc of batch) {
-        if (disciple_group_ids.includes(bc.disciple_group_unique_id))
+        if (!disciple_group_ids.includes(bc.disciple_group_unique_id))
           throw new BadRequestException('not valid blesscomn_id in file');
       }
 

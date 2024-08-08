@@ -147,12 +147,16 @@ export class ReportBlesscomnController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.LEADER])
   async uploadXlsxFile(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: UploadDto) {
-    let blesscomn_ids;
+    let blesscomn_ids: string[] = [];
     if (jwtPayload.role === RoleEnum.LEADER) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.id);
-      blesscomn_ids = blesscomn.map((bc) => bc.unique_id);
+      blesscomn_ids = blesscomn.map((bc) => bc?.unique_id);
+    } else {
+      const { entities: blesscomn } = await this.blesscomnService.findAll({ region_id: jwtPayload.region.id });
+      blesscomn_ids = blesscomn.map((bc) => bc?.unique_id);
     }
 
+    console.log({ jwtPayload });
     const wb = read(dto.file.buffer, { cellDates: true });
     const sheetName = wb.SheetNames[0];
     const workSheet = wb.Sheets[sheetName];

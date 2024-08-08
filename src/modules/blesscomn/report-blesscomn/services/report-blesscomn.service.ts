@@ -91,12 +91,11 @@ export class ReportBlesscomnService {
   async upload(listData: Partial<ReportBlesscomnEntity>[], blesscomn_ids?: string[]) {
     const batchSize = 1000; // Define the batch size
     const totalBatches = Math.ceil(listData.length / batchSize);
-
     for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
       let batch = listData.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
 
       for (const bc of batch) {
-        if (blesscomn_ids.includes(bc.blesscomn_id)) throw new BadRequestException('not valid blesscomn_id in file');
+        if (!blesscomn_ids?.includes(bc.blesscomn_id)) throw new BadRequestException('not valid blesscomn_id in file');
       }
 
       try {
@@ -113,6 +112,7 @@ export class ReportBlesscomnService {
             .execute();
         });
       } catch (error) {
+        console.log({ error });
         throw new BadRequestException('data can not be uploaded');
       }
     }
