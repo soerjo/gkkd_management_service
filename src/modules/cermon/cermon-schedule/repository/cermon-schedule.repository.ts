@@ -64,8 +64,9 @@ export class CermonScheduleRepository extends Repository<CermonScheduleEntity> {
       return { entities };
     }
 
-    queryBuilder.limit(filter?.take);
-    queryBuilder.offset((filter?.page - 1) * filter?.take);
+    queryBuilder.take(filter?.take);
+    queryBuilder.skip((filter?.page - 1) * filter?.take);
+
     queryBuilder.orderBy(`cermon-schedule.created_at`, 'DESC');
 
     queryBuilder.select([

@@ -52,8 +52,9 @@ export class AdminRepository extends Repository<AdminEntity> {
       return { entities };
     }
 
-    queryBuilder.limit(filter?.take);
-    queryBuilder.offset((filter?.page - 1) * filter?.take);
+    queryBuilder.take(filter?.take);
+    queryBuilder.skip((filter?.page - 1) * filter?.take);
+
     queryBuilder.orderBy(`user.created_at`, 'DESC');
 
     queryBuilder.select([

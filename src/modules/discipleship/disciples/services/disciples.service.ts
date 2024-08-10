@@ -29,7 +29,7 @@ export class DisciplesService {
       if (!region) throw new BadRequestException('Region is not found!');
     }
 
-    if (dto.region_id) {
+    if (dto.group_id) {
       const group = await this.groupService.findOne(dto.group_id);
       if (!group) throw new BadRequestException('group is not found!');
       delete dto.group_id;
@@ -74,6 +74,11 @@ export class DisciplesService {
     filter.disciple_ids = disciples.map((data) => data.id);
     // filter.disciple_tree_id && filter.disciple_ids.push(filter.disciple_tree_id);
 
+    if (filter.group_id) {
+      const group = await this.groupService.findOne(filter.group_id);
+      filter.group_unique_id = group.unique_id;
+    }
+
     return this.pemuridanRepository.getAll(filter);
   }
 
@@ -84,9 +89,15 @@ export class DisciplesService {
 
     const disciples = await this.getByHierarchy({ pembimbing_id: filter.disciple_tree_id });
     filter.disciple_ids = disciples.map((data) => data.id);
-    filter.disciple_tree_id && filter.disciple_ids.push(filter.disciple_tree_id);
+    if (filter.disciple_tree_id) filter.disciple_ids.push(filter.disciple_tree_id);
     delete filter.pembimbing_id;
 
+    if (filter.group_id) {
+      const group = await this.groupService.findOne(filter.group_id);
+      filter.group_unique_id = group.unique_id;
+    }
+
+    console.log({ filter });
     return this.pemuridanRepository.getAll(filter);
   }
 

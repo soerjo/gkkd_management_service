@@ -35,6 +35,7 @@ export class ReportPemuridanService {
 
     const reportPemuridan = this.reportPemuridanRepository.create({
       ...dto,
+      date: new Date(dto.date),
       disciple_group_unique_id: group.unique_id,
       pembimbing_nim: group.pembimbing_nim,
     });
@@ -177,7 +178,6 @@ export class ReportPemuridanService {
   }
 
   async export(disciple_group_ids?: string[], region_id?: number) {
-    console.log({ disciple_group_ids, region_id });
     const queryBuilder = this.reportPemuridanRepository.createQueryBuilder('report');
     queryBuilder.leftJoinAndSelect('report.disciple_group', 'disciple_group');
 
@@ -196,5 +196,21 @@ export class ReportPemuridanService {
     ]);
 
     return queryBuilder.getRawMany();
+  }
+
+  async getDashboardData(dto: FilterDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: dto?.region_id });
+    dto.region_ids = regions.map((data) => data.id);
+
+    const averageThisMonth = await this.reportPemuridanRepository.getAverageMonthly(dto);
+    const averageLastMonth = await this.reportPemuridanRepository.getAverageLastMonth(dto);
+
+    const devider = Number(averageLastMonth?.count) ? Number(averageLastMonth?.count) : 1;
+
+    let percentage = ((Number(averageThisMonth?.count) - Number(averageLastMonth?.count)) / devider) * 100;
+    return {
+      total: Number(averageThisMonth?.count),
+      percentage: Math.round(percentage * 100) / 100,
+    };
   }
 }

@@ -77,6 +77,12 @@ export class ReportBlesscomnController {
     return this.reportBlesscomnService.findAll(filter);
   }
 
+  @Get('dashboard')
+  getDasboardData(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterDto) {
+    dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
+    return this.reportBlesscomnService.getDashboardData(dto);
+  }
+
   @Get('chart')
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.LEADER])

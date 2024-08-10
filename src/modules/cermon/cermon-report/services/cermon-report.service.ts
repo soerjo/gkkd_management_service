@@ -42,6 +42,22 @@ export class ReportIbadahService {
     await this.reportRepository.save(createReport);
   }
 
+  async getDashboardData(dto: FilterReportDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: dto?.region_id });
+    dto.region_ids = regions.map((data) => data.id);
+
+    const averageThisMonth = await this.customReportRepository.getAverageMonthly(dto);
+    const averageLastMonth = await this.customReportRepository.getAverageLastMonth(dto);
+
+    const devider = Number(averageLastMonth?.average) ? Number(averageLastMonth?.average) : 1;
+
+    let percentage = ((Number(averageThisMonth?.average) - Number(averageLastMonth?.average)) / devider) * 100;
+    return {
+      total: Math.round(Number(averageThisMonth?.average)),
+      percentage: Math.round(percentage * 100) / 100,
+    };
+  }
+
   async findAll(dto: FilterReportDto) {
     const regions = await this.regionService.getByHierarchy({ region_id: dto?.region_id });
     dto.region_ids = regions.map((data) => data.id);

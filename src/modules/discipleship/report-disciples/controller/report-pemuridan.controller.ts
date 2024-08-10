@@ -80,10 +80,20 @@ export class ReportPemuridanController {
       filter.pembimbing_id = filter.pembimbing_id ?? parent.id;
     }
 
-    const group = await this.groupPemuridanService.findOne(filter.group_id);
-    if (!group) throw new BadRequestException('group is not found!');
+    if (filter.group_id) {
+      const group = await this.groupPemuridanService.findOne(filter.group_id);
+      if (!group) throw new BadRequestException('group is not found!');
+    }
 
     return this.reportPemuridanService.findAll(filter);
+  }
+
+  @Get('dashboard')
+  async getDasboardData(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterDto) {
+    dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
+    const result = await this.reportPemuridanService.getDashboardData(dto);
+
+    return result;
   }
 
   @Get('export')

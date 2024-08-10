@@ -6,12 +6,14 @@ import { FilterDto } from '../dto/filter.dto';
 import { BlesscomnService } from '../../../../modules/blesscomn/blesscomn/services/blesscomn.service';
 import { ReportBlesscomnEntity } from '../entities/report-blesscomn.entity';
 import { DataSource } from 'typeorm';
+import { RegionService } from '../../../region/services/region.service';
 
 @Injectable()
 export class ReportBlesscomnService {
   constructor(
     private readonly reportBlesscomnRepository: ReportBlesscomnRepository,
     private readonly blesscomnService: BlesscomnService,
+    private readonly regionService: RegionService,
     private dataSource: DataSource,
   ) {}
 
@@ -120,5 +122,21 @@ export class ReportBlesscomnService {
 
   async export(blesscomn_ids?: number[]) {
     return this.reportBlesscomnRepository.getExport(blesscomn_ids);
+  }
+
+  async getDashboardData(dto: FilterDto) {
+    const regions = await this.regionService.getByHierarchy({ region_id: dto?.region_id });
+    dto.region_ids = regions.map((data) => data.id);
+
+    const averageThisMonth = await this.reportBlesscomnRepository.getAverageMonthly(dto);
+    const averageLastMonth = await this.reportBlesscomnRepository.getAverageLastMonth(dto);
+
+    const devider = Number(averageLastMonth?.average) ? Number(averageLastMonth?.average) : 1;
+
+    let percentage = ((Number(averageThisMonth?.average) - Number(averageLastMonth?.average)) / devider) * 100;
+    return {
+      total: Math.round(Number(averageThisMonth?.average)),
+      percentage: Math.round(percentage * 100) / 100,
+    };
   }
 }

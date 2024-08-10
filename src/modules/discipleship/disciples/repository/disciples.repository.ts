@@ -77,6 +77,9 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
     queryBuilder.leftJoinAndSelect('disciples.parent', 'parent');
     queryBuilder.leftJoinAndSelect('disciples.childs', 'childs');
     queryBuilder.leftJoinAndSelect('disciples.region', 'region');
+    queryBuilder.leftJoinAndSelect('disciples.group', 'group');
+
+    console.log({ filter });
 
     filter.search &&
       queryBuilder.andWhere('(disciples.name ILIKE :search OR disciples.name ILIKE :search)', {
@@ -102,13 +105,22 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
       );
     }
 
+    if (!filter.disciple_ids.length) {
+      queryBuilder.andWhere('disciples.pembimbing_id = :pembimbing_id', { pembimbing_id: filter.pembimbing_id });
+    }
+
     if (filter.region_id) {
       queryBuilder.andWhere('disciples.region_id = :region_id', { region_id: filter.region_id });
     }
 
+    if (filter.group_unique_id) {
+      queryBuilder.andWhere('disciples.group = :group_unique_id', { group_unique_id: filter.group_unique_id });
+    }
+
     if (filter.take) {
-      queryBuilder.limit(filter?.take);
-      queryBuilder.offset((filter?.page - 1) * filter?.take);
+      queryBuilder.take(filter?.take);
+      queryBuilder.skip((filter?.page - 1) * filter?.take);
+
       queryBuilder.orderBy(`disciples.created_at`, 'DESC');
     }
 

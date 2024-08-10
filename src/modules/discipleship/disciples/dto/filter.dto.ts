@@ -20,6 +20,7 @@ export class FilterDto extends PaginationDto {
   @Type(() => Number)
   @IsOptional()
   group_id?: number;
+  group_unique_id?: string;
 
   @ApiPropertyOptional()
   @IsNumber()

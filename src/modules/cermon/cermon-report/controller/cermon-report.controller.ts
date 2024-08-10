@@ -38,7 +38,13 @@ export class ReportIbadahController {
   @Get()
   findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterReportDto) {
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
-    return this.reportIbadahService.findAll(dto);
+    return this.reportIbadahService.getDashboardData(dto);
+  }
+
+  @Get('dashboard')
+  getDasboardData(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterReportDto) {
+    dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
+    return this.reportIbadahService.getDashboardData(dto);
   }
 
   @Get('export')
@@ -47,7 +53,6 @@ export class ReportIbadahController {
     const { entities: cermon } = await this.cermonService.findAll({ region_id: jwtPayload.region.id });
     cermon_ids = (cermon as CermonScheduleEntity[]).map((bc: CermonScheduleEntity) => bc.id);
 
-    console.log({ cermon_ids });
     const buffer = await this.reportIbadahService.export(cermon_ids);
 
     let ws = utils.json_to_sheet(buffer);

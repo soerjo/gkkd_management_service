@@ -54,8 +54,8 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
     }
 
     if (filter.take) {
-      queryBuilder.limit(filter?.take);
-      queryBuilder.offset((filter?.page - 1) * filter?.take);
+      queryBuilder.take(filter?.take);
+      queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
 
     queryBuilder.orderBy(`pemuridan_report.created_at`, 'DESC');
@@ -71,5 +71,41 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
     };
 
     return { entities, meta };
+  }
+
+  async getAverageMonthly(filter: FilterDto) {
+    const queryBuilder = this.createQueryBuilder('disciples_report');
+    queryBuilder.andWhere("DATE_TRUNC('month', disciples_report.date) = DATE_TRUNC('month', CURRENT_DATE)");
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('disciples_report.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('disciples_report.region_id = :region_id', { region_id: filter.region_id });
+      }),
+    );
+
+    queryBuilder.select('COUNT(*)', 'count');
+    return queryBuilder.getRawOne();
+  }
+
+  async getAverageLastMonth(filter: FilterDto) {
+    const queryBuilder = this.createQueryBuilder('disciples_report');
+    queryBuilder.andWhere(
+      "DATE_TRUNC('month', disciples_report.date) = DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 month'",
+    );
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('disciples_report.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('disciples_report.region_id = :region_id', { region_id: filter.region_id });
+      }),
+    );
+
+    queryBuilder.select('COUNT(*)', 'count');
+    return queryBuilder.getRawOne();
   }
 }

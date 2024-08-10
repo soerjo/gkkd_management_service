@@ -4,9 +4,10 @@ import { ReportBlesscomnController } from './controller/report-blesscomn.control
 import { ReportBlesscomnRepository } from './repository/report-blesscomn.repository';
 import { BlesscomnModule } from '../blesscomn/blesscomn.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
+import { RegionModule } from '../../region/region.module';
 
 @Module({
-  imports: [NestjsFormDataModule, BlesscomnModule],
+  imports: [NestjsFormDataModule, BlesscomnModule, RegionModule],
   controllers: [ReportBlesscomnController],
   providers: [ReportBlesscomnService, ReportBlesscomnRepository],
 })

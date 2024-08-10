@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 import { ReportBlesscomnEntity } from '../entities/report-blesscomn.entity';
 import { FilterDto } from '../dto/filter.dto';
 import { RegionEntity } from '../../../region/entities/region.entity';
@@ -93,8 +93,8 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
     }
 
     if (filter.take) {
-      queryBuilder.limit(filter?.take);
-      queryBuilder.offset((filter?.page - 1) * filter?.take);
+      queryBuilder.take(filter?.take);
+      queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
 
     queryBuilder.orderBy('blesscomn_report.created_at', 'DESC');
@@ -141,5 +141,45 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
       }
       return false;
     });
+  }
+
+  async getAverageMonthly(filter: FilterDto) {
+    const queryBuilder = this.createQueryBuilder('blesscomn_report');
+    queryBuilder.leftJoin('blesscomn_report.blesscomn', 'blesscomn');
+
+    queryBuilder.andWhere("DATE_TRUNC('month', blesscomn_report.date) = DATE_TRUNC('month', CURRENT_DATE)");
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('blesscomn.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('blesscomn.region_id = :region_id', { region_id: filter.region_id });
+      }),
+    );
+
+    queryBuilder.select('AVG(blesscomn_report.total)', 'average');
+    return queryBuilder.getRawOne();
+  }
+
+  async getAverageLastMonth(filter: FilterDto) {
+    const queryBuilder = this.createQueryBuilder('blesscomn_report');
+    queryBuilder.leftJoin('blesscomn_report.blesscomn', 'blesscomn');
+
+    queryBuilder.andWhere(
+      "DATE_TRUNC('month', blesscomn_report.date) = DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 month'",
+    );
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('blesscomn.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('blesscomn.region_id = :region_id', { region_id: filter.region_id });
+      }),
+    );
+
+    queryBuilder.select('AVG(blesscomn_report.total)', 'average');
+    return queryBuilder.getRawOne();
   }
 }

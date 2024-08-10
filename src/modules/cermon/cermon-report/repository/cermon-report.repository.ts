@@ -74,8 +74,9 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
       queryBuilder.andWhere(`cermon-report.date >= :date_from`, { date_from: filter.date_from });
     }
 
-    queryBuilder.limit(filter?.take);
-    queryBuilder.offset((filter?.page - 1) * filter?.take);
+    queryBuilder.take(filter?.take);
+    queryBuilder.skip((filter?.page - 1) * filter?.take);
+
     queryBuilder.addOrderBy(`cermon-report.date`, 'DESC');
     queryBuilder.addOrderBy(`cermon-report.created_at`, 'DESC');
 
@@ -111,6 +112,7 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
     queryBuilder.leftJoinAndSelect('cermon_report.cermon', 'cermon');
     // queryBuilder.leftJoin('blesscomn.admin', 'admin');
     queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = cermon_report.region_id');
+    queryBuilder.andWhere("DATE_TRUNC('month', cermon_report.date) = DATE_TRUNC('month', CURRENT_DATE)");
 
     if (cermon_ids?.length) {
       queryBuilder.andWhere('cermon.id in (:...cermon_ids)', { cermon_ids });
@@ -128,5 +130,41 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
     ]);
 
     return queryBuilder.getRawMany();
+  }
+
+  async getAverageMonthly(filter: FilterReportDto) {
+    const queryBuilder = this.createQueryBuilder('cermon_report');
+    queryBuilder.andWhere("DATE_TRUNC('month', cermon_report.date) = DATE_TRUNC('month', CURRENT_DATE)");
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('cermon_report.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('cermon_report.region_id = :region_id', { region_id: filter.region_id });
+      }),
+    );
+
+    queryBuilder.select('AVG(cermon_report.total_male + cermon_report.total_female)', 'average');
+    return queryBuilder.getRawOne();
+  }
+
+  async getAverageLastMonth(filter: FilterReportDto) {
+    const queryBuilder = this.createQueryBuilder('cermon_report');
+    queryBuilder.andWhere(
+      "DATE_TRUNC('month', cermon_report.date) = DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 month'",
+    );
+
+    queryBuilder.andWhere(
+      new Brackets((qb) => {
+        if (filter.region_ids.length) {
+          qb.where('cermon_report.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+        }
+        qb.orWhere('cermon_report.region_id = :region_id', { region_id: filter.region_id });
+      }),
+    );
+
+    queryBuilder.select('AVG(cermon_report.total_male + cermon_report.total_female)', 'average');
+    return queryBuilder.getRawOne();
   }
 }

@@ -39,6 +39,7 @@ export class BaptismRepository {
 
     queryBuilder.take(filter?.take);
     queryBuilder.skip((filter?.page - 1) * filter?.take);
+
     queryBuilder.orderBy(`baptism.created_at`, 'DESC');
 
     const itemCount = await queryBuilder.getCount();

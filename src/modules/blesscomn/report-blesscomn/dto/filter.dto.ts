@@ -8,30 +8,32 @@ export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  search: string;
+  search?: string;
 
   @ApiPropertyOptional()
   @IsDateString()
   @IsOptional()
-  date_from: Date;
+  date_from?: Date;
 
   @ApiPropertyOptional()
   @IsDateString()
   @IsOptional()
-  date_to: Date;
+  date_to?: Date;
 
   @ApiPropertyOptional()
   @IsNumber()
   @Min(1)
   @Type(() => Number)
   @IsOptional()
-  region_id: number;
+  region_id?: number;
 
   region_ids?: number[];
 
   @ApiPropertyOptional()
+  @IsNumber()
+  @Type(() => Number)
   @IsOptional()
-  blesscomn_id: number;
+  blesscomn_id?: number;
 
   admin_id?: number;
 
