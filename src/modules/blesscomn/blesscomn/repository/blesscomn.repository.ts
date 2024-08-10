@@ -83,20 +83,20 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       queryBuilder.skip((filter?.page - 1) * filter?.take);
     }
 
-    queryBuilder.distinctOn(['blesscomn.unique_id']);
-    queryBuilder.orderBy(
-      ` 
-      "blesscomn"."unique_id",
-      "blesscomn"."created_at"
-      `,
-      'DESC',
-    );
-    queryBuilder.groupBy(`
-      "blesscomn"."unique_id",
-      "lead"."id",
-      "region"."id",
-      "admin"."id"
-      `);
+    // queryBuilder.distinctOn(['blesscomn.unique_id']);
+    // queryBuilder.orderBy(
+    //   `
+    //   "blesscomn"."unique_id",
+    //   "blesscomn"."created_at"
+    //   `,
+    //   'DESC',
+    // );
+    // queryBuilder.groupBy(`
+    //   "blesscomn"."unique_id",
+    //   "lead"."id",
+    //   "region"."id",
+    //   "admin"."id"
+    //   `);
 
     queryBuilder.addSelect([
       'blesscomn.id as id',
@@ -113,14 +113,16 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       'admin.admin_id as admin_id',
     ]);
 
-    const [subquery, params] = queryBuilder.getQueryAndParameters();
-    const countQuery = await this.query(
-      `
-      select count(*) from (${subquery}) bc
-      `,
-      params,
-    );
-    const itemCount = countQuery[0].count;
+    // const [subquery, params] = queryBuilder.getQueryAndParameters();
+    // console.log(subquery, params);
+    // const countQuery = await this.query(
+    //   `
+    //   select count(*) from (${subquery}) bc
+    //   `,
+    //   params,
+    // );
+    // const itemCount = countQuery[0].count;
+    const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getMany();
 
     const meta = {

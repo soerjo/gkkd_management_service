@@ -38,7 +38,7 @@ export class ReportIbadahController {
   @Get()
   findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterReportDto) {
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
-    return this.reportIbadahService.getDashboardData(dto);
+    return this.reportIbadahService.findAll(dto);
   }
 
   @Get('dashboard')
