@@ -80,6 +80,9 @@ export class ReportPemuridanController {
       filter.pembimbing_id = filter.pembimbing_id ?? parent.id;
     }
 
+    const group = await this.groupPemuridanService.findOne(filter.group_id);
+    if (!group) throw new BadRequestException('group is not found!');
+
     return this.reportPemuridanService.findAll(filter);
   }
 

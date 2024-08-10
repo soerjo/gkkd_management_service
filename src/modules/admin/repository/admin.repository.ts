@@ -59,10 +59,10 @@ export class AdminRepository extends Repository<AdminEntity> {
     queryBuilder.select([
       'user.id as id',
       'user.name as name',
+      'user.username as username',
       'user.email as email',
       'user.phone as phone',
       'user.role as role',
-      // 'region.name: as region',
       `
       json_build_object(
         'id', region.id,

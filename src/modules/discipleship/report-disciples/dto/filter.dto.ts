@@ -21,8 +21,15 @@ export class FilterDto extends PaginationDto {
 
   @ApiPropertyOptional()
   @IsNumber()
+  @Type(() => Number)
   @IsOptional()
   pembimbing_id: number;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  group_id: number;
 
   @ApiPropertyOptional()
   @IsString()

@@ -6,7 +6,6 @@ import { RegionService } from '../../../../modules/region/services/region.servic
 import { CreateGroupDto } from '../dto/create-group.dto';
 import { DisciplesService } from '../../disciples/services/disciples.service';
 import { Transactional } from 'typeorm-transactional';
-import { DisciplesEntity } from '../../disciples/entities/disciples.entity';
 
 @Injectable()
 export class DisciplesGroupService {
@@ -57,7 +56,6 @@ export class DisciplesGroupService {
   @Transactional()
   async update(id: number, dto: UpdateGroupDto) {
     const group = await this.findOne(id);
-    console.log({ group });
     if (!group) throw new BadRequestException('group is not found!');
 
     const disciples = await this.pemuridanService.findOne(dto.pembimbing_nim);
@@ -69,7 +67,15 @@ export class DisciplesGroupService {
     const region = await this.regionService.getOneById(dto.region_id);
     if (!region) throw new BadRequestException('region is not found!');
 
-    await this.pemuridanService.updateGroup(dto.anggota_nims, group.unique_id);
+    // await this.pemuridanService.updateGroup(dto.anggota_nims, group.unique_id);
+
+    group.anggota = [];
+    for (const anggota_nim of dto.anggota_nims) {
+      const disciples = await this.pemuridanService.findOne(anggota_nim);
+      if (!disciples) throw new BadRequestException('disciples is not found');
+      group.anggota.push(disciples);
+    }
+
     await this.pemuridanGroupRepository.save({ ...group, ...dto });
 
     return id;

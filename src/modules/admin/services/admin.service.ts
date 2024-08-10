@@ -57,7 +57,7 @@ export class AdminService implements OnApplicationBootstrap {
     const newUser = this.adminRepository.create({
       ...dto,
       name: dto.name.toLowerCase(),
-      username: dto.username ?? dto.name.split(' ').join('_'),
+      username: dto.username,
       email: dto.email?.toLowerCase(),
       temp_password: encryptPassword(this.configService.get('TEMP_PASSWORD')),
     });

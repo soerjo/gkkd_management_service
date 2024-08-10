@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateReportIbadahDto } from '../dto/create-report-ibadah.dto';
 import { UpdateReportIbadahDto } from '../dto/update-report-ibadah.dto';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CermonReportEntity } from '../entities/cermon-report.entity';
 import { FilterReportDto } from '../dto/filter.dto';
@@ -17,27 +17,48 @@ export class ReportIbadahService {
     private readonly customReportRepository: CermonReportRepository,
     private readonly cermonService: JadwalIbadahService,
     private readonly regionService: RegionService,
+    private dataSource: DataSource,
   ) {}
 
   async create(dto: CreateReportIbadahDto) {
-    const cermon = await this.cermonService.findOne(dto.cermon_id);
+    const cermon = await this.cermonService.getOne(dto.cermon_id);
     if (!cermon) throw new BadRequestException('cermon is not found!');
 
-    const isExist = await this.reportRepository.findOne({ where: { cermon_id: cermon.id, date: dto.date } });
+    const isExist = await this.reportRepository.findOne({
+      where: { cermon_id: cermon.unique_id, date: new Date(dto.date) },
+    });
     if (isExist) throw new BadRequestException('data report already exist');
 
-    this.reportRepository.save({
-      ...dto,
+    const createReport = this.reportRepository.create({
       date: new Date(dto.date),
+      total_male: dto.total_male,
+      total_female: dto.total_female,
+      total_new_male: dto.total_new_male,
+      total_new_female: dto.total_new_female,
+      cermon: cermon,
       region_id: cermon.region_id,
     });
+
+    await this.reportRepository.save(createReport);
   }
 
   async findAll(dto: FilterReportDto) {
     const regions = await this.regionService.getByHierarchy({ region_id: dto?.region_id });
     dto.region_ids = regions.map((data) => data.id);
 
-    return this.customReportRepository.getAll(dto);
+    if (dto.cermon_id) {
+      const cermon = await this.cermonService.getOne(dto.cermon_id);
+      if (!cermon) throw new BadRequestException('cermon is not found!');
+      dto.cermon_unique_id = cermon.unique_id;
+    }
+
+    try {
+      const result = await this.customReportRepository.getAll(dto);
+      return result;
+    } catch (error) {
+      console.log({ error });
+      throw new InternalServerErrorException();
+    }
   }
 
   findOne(id: number, region_id?: number) {
@@ -48,10 +69,12 @@ export class ReportIbadahService {
     const report = await this.findOne(id);
     if (!report) throw new BadRequestException('report is not found!');
 
-    const cermon = await this.cermonService.findOne(dto.cermon_id);
+    const cermon = await this.cermonService.getOne(dto.cermon_id);
     if (!cermon) throw new BadRequestException('cermon is not found!');
 
-    const isExist = await this.reportRepository.findOne({ where: { cermon_id: cermon.id, date: dto.date } });
+    const isExist = await this.reportRepository.findOne({
+      where: { cermon_id: cermon.unique_id, date: new Date(dto.date) },
+    });
     if (isExist && isExist.id !== report.id) throw new BadRequestException('data report already exist');
 
     this.reportRepository.save({
@@ -68,5 +91,43 @@ export class ReportIbadahService {
     if (!report) throw new BadRequestException('report is not found!');
 
     this.reportRepository.remove(report);
+  }
+
+  async upload(listData: Partial<CermonReportEntity>[], cermon_ids?: string[]) {
+    const batchSize = 1000; // Define the batch size
+    const totalBatches = Math.ceil(listData.length / batchSize);
+    for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+      let batch = listData.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
+
+      for (const bc of batch) {
+        if (!cermon_ids?.includes(bc.cermon_id)) throw new BadRequestException('not valid cermon_id in file');
+      }
+
+      try {
+        await this.dataSource.transaction(async (manager) => {
+          await manager
+            .createQueryBuilder()
+            .insert()
+            .into(CermonReportEntity)
+            .values(batch)
+            .orUpdate(['total_male', 'total_female', 'total_new_male', 'total_new_female'], ['date', 'cermon_id'])
+            .execute();
+        });
+      } catch (error) {
+        console.log({ error });
+        throw new BadRequestException('data can not be uploaded');
+      }
+    }
+  }
+
+  async export(cermon_ids?: number[]) {
+    try {
+      const result = await this.customReportRepository.getExport(cermon_ids);
+
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
+    }
   }
 }

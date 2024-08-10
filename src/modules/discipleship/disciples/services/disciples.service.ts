@@ -29,6 +29,13 @@ export class DisciplesService {
       if (!region) throw new BadRequestException('Region is not found!');
     }
 
+    if (dto.region_id) {
+      const group = await this.groupService.findOne(dto.group_id);
+      if (!group) throw new BadRequestException('group is not found!');
+      delete dto.group_id;
+      dto.group_unique_id = group.unique_id;
+    }
+
     if (dto.jemaat_nij) {
       let jemaat = await this.jemaatService.findOne(dto.jemaat_nij);
       if (!jemaat) throw new BadRequestException('jemaat is not found');
@@ -39,11 +46,15 @@ export class DisciplesService {
       dto.name = jemaat.name;
     }
 
-    let pemuridan = this.pemuridanRepository.create(dto);
+    let pemuridan = this.pemuridanRepository.create({
+      ...dto,
+      group_id: dto.group_unique_id,
+    });
     pemuridan = await this.pemuridanRepository.save(pemuridan);
 
     const admin = await this.adminService.create({
-      name: pemuridan.nim,
+      name: pemuridan.name,
+      username: pemuridan.nim,
       role: RoleEnum.DISCIPLES,
       region_id: dto.region_id,
     });
@@ -61,7 +72,7 @@ export class DisciplesService {
 
     const disciples = await this.getByHierarchy({ pembimbing_id: filter.disciple_tree_id });
     filter.disciple_ids = disciples.map((data) => data.id);
-    filter.disciple_tree_id && filter.disciple_ids.push(filter.disciple_tree_id);
+    // filter.disciple_tree_id && filter.disciple_ids.push(filter.disciple_tree_id);
 
     return this.pemuridanRepository.getAll(filter);
   }
@@ -73,6 +84,8 @@ export class DisciplesService {
 
     const disciples = await this.getByHierarchy({ pembimbing_id: filter.disciple_tree_id });
     filter.disciple_ids = disciples.map((data) => data.id);
+    filter.disciple_tree_id && filter.disciple_ids.push(filter.disciple_tree_id);
+    delete filter.pembimbing_id;
 
     return this.pemuridanRepository.getAll(filter);
   }
@@ -97,7 +110,6 @@ export class DisciplesService {
       updateGroupMurid.push(this.pemuridanRepository.create({ ...murid, group_id: groupId }));
     }
 
-    console.log({ updateGroupMurid });
     this.pemuridanRepository.save(updateGroupMurid);
   }
 

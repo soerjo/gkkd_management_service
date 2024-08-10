@@ -16,21 +16,21 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
     queryBuilder.leftJoinAndSelect('pemuridan_report.disciple_group', 'disciple_group');
     queryBuilder.leftJoinAndSelect('disciple_group.pembimbing', 'pembimbing');
 
-    queryBuilder.andWhere(
-      new Brackets((qb) => {
-        if (filter.region_ids.length) {
+    if (!filter.group_id && filter.region_ids.length) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
           qb.where('pemuridan_report.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
-        }
-      }),
-    );
+        }),
+      );
+    }
 
-    queryBuilder.andWhere(
-      new Brackets((qb) => {
-        if (filter.disciple_nims.length) {
+    if (!filter.group_id && filter.disciple_nims.length) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
           qb.where('disciple_group.pembimbing_nim in ( :...disciple_nims )', { disciple_nims: filter.disciple_nims });
-        }
-      }),
-    );
+        }),
+      );
+    }
 
     if (filter.search) {
       queryBuilder.andWhere(
@@ -41,9 +41,9 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
       );
     }
 
-    // if (filter.pembimbing_id) {
-    //   queryBuilder.andWhere('pembimbing.id = :pembimbing_id', { pembimbing_id: filter.pembimbing_id });
-    // }
+    if (filter.group_id) {
+      queryBuilder.andWhere('disciple_group.id = :group_id', { group_id: filter.group_id });
+    }
 
     if (filter.date_from) {
       queryBuilder.andWhere('pemuridan_report.date >= :date_from', { date_from: filter.date_from });

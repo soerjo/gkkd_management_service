@@ -54,7 +54,7 @@ export class JadwalIbadahController {
 
   @Patch(':id')
   update(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string, @Body() dto: UpdateJadwalIbadahDto) {
-    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = jwtPayload?.region?.id;
+    if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
     if (!dto.region_id) throw new BadRequestException('region is not found!');
 
     return this.jadwalIbadahService.update(+id, dto);

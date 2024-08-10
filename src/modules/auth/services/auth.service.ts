@@ -14,7 +14,8 @@ export class AuthService {
   generateJwt(user: AdminEntity) {
     const payload: IJwtPayload = {
       id: user.id,
-      username: user.name,
+      name: user.name,
+      username: user.username,
       email: user.email,
       role: user.role,
       region: user.region,

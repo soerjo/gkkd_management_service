@@ -6,9 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CermonReportEntity } from './entities/cermon-report.entity';
 import { JadwalIbadahModule } from '../cermon-schedule/cermon-schedule.module';
 import { RegionModule } from '../../region/region.module';
+import { NestjsFormDataModule } from 'nestjs-form-data';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CermonReportEntity]), JadwalIbadahModule, RegionModule],
+  imports: [NestjsFormDataModule, TypeOrmModule.forFeature([CermonReportEntity]), JadwalIbadahModule, RegionModule],
   controllers: [ReportIbadahController],
   providers: [ReportIbadahService, CermonReportRepository],
 })

@@ -3,6 +3,7 @@ import { Brackets, DataSource, Repository } from 'typeorm';
 import { CermonScheduleEntity } from '../entities/cermon-schedule.entity';
 import { FilterJadwalIbadahDto } from '../dto/filter.dto';
 import { RegionEntity } from '../../../../modules/region/entities/region.entity';
+import { IGetAllCermon } from '../interface/get-all-cermon.interface';
 
 @Injectable()
 export class CermonScheduleRepository extends Repository<CermonScheduleEntity> {
@@ -69,6 +70,7 @@ export class CermonScheduleRepository extends Repository<CermonScheduleEntity> {
 
     queryBuilder.select([
       'cermon-schedule.id as id',
+      'cermon-schedule.unique_id as unique_id',
       'cermon-schedule.name as name',
       'cermon-schedule.time as time',
       'cermon-schedule.day as day',
@@ -79,7 +81,7 @@ export class CermonScheduleRepository extends Repository<CermonScheduleEntity> {
     ]);
 
     const itemCount = await queryBuilder.getCount();
-    const entities = await queryBuilder.getRawMany();
+    const entities: IGetAllCermon[] = await queryBuilder.getRawMany();
 
     const meta = {
       page: filter?.page || 0,

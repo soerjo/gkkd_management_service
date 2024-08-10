@@ -95,7 +95,7 @@ export class DisciplesController {
 
       const murid = await this.pemuridanService.findOne(nim);
       if (!murid) throw new BadRequestException('disciples is not found');
-      if (murid.id !== parent.id) throw new ForbiddenException('not the parent');
+      if (murid.pembimbing_id !== parent.id) throw new ForbiddenException('not the parent');
     }
 
     await this.pemuridanService.update(nim, dto);

@@ -21,7 +21,8 @@ export class JadwalIbadahService {
     const isExist = await this.findByName(dto.name, dto.region_id);
     if (isExist) throw new BadRequestException('cermon already exist');
 
-    this.jadwalRepository.save(dto);
+    const createCermon = this.jadwalRepository.create(dto);
+    await this.jadwalRepository.save(createCermon);
   }
 
   findByName(name: string, region_id: number) {
@@ -40,17 +41,24 @@ export class JadwalIbadahService {
     return this.customCermonRepo.getOne(id, region_id);
   }
 
+  getOne(id: number, region_id?: number) {
+    return this.jadwalRepository.findOne({ where: { id, region_id: region_id } });
+  }
+
   async update(id: number, dto: UpdateJadwalIbadahDto) {
-    const cermon = await this.findOne(id, dto.region_id);
+    const cermon = await this.getOne(id);
     if (!cermon) throw new BadRequestException('cermon is not found');
 
-    this.jadwalRepository.save({ ...cermon, ...dto });
+    await this.jadwalRepository.save({
+      ...cermon,
+      ...dto,
+    });
   }
 
   async remove(id: number, region_id: number) {
     const cermon = await this.findOne(id, region_id);
     if (!cermon) throw new BadRequestException('cermon is not found');
 
-    this.jadwalRepository.softRemove(cermon);
+    await this.jadwalRepository.softRemove(cermon);
   }
 }

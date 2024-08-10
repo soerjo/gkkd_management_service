@@ -3,6 +3,7 @@ import { RoleEnum } from '../constant/role.constant';
 
 export interface IJwtPayload {
   id: number;
+  name: string;
   username: string;
   email: string;
   role: RoleEnum;

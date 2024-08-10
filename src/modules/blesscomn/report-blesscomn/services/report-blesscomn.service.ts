@@ -21,9 +21,9 @@ export class ReportBlesscomnService {
     dto.blesscomn = blesscomn;
 
     const isDataExist = await this.reportBlesscomnRepository.findOne({
-      where: { date: dto.date, blesscomn: { id: dto.blesscomn_id } },
+      where: { date: new Date(dto.date), blesscomn: { id: dto.blesscomn_id } },
     });
-    if (isDataExist) throw new BadRequestException('data already exist!');
+    if (isDataExist) throw new BadRequestException(`data already exist at [${new Date(dto.date).toDateString()}]`);
 
     const reportBlesscomn = this.reportBlesscomnRepository.create({
       ...dto,

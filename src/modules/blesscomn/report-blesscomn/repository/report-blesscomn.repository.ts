@@ -65,6 +65,9 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
     queryBuilder.leftJoinAndSelect('blesscomn_report.blesscomn', 'blesscomn');
     queryBuilder.leftJoin('blesscomn.admin', 'admin');
     queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = blesscomn.region_id');
+    if (!filter.date_from && !filter.date_to) {
+      queryBuilder.andWhere("DATE_TRUNC('month', blesscomn_report.date) = DATE_TRUNC('month', CURRENT_DATE)");
+    }
 
     if (filter.admin_id) {
       queryBuilder.andWhere('admin.admin_id = :admin_id', { admin_id: filter.admin_id });
@@ -75,7 +78,7 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
     }
 
     if (!filter.blesscomn_id && filter.blesscomn_ids?.length)
-      queryBuilder.andWhere('region.id in (:...blesscomn_ids)', { blesscomn_ids: filter.blesscomn_ids });
+      queryBuilder.andWhere('blesscomn.id in (:...blesscomn_ids)', { blesscomn_ids: filter.blesscomn_ids });
 
     if (!filter.admin_id && filter.region_id) {
       queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });

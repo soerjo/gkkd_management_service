@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Brackets, DataSource, Repository } from 'typeorm';
 import { FilterReportDto } from '../dto/filter.dto';
 import { CermonReportEntity } from '../entities/cermon-report.entity';
+import { RegionEntity } from '../../../region/entities/region.entity';
 
 @Injectable()
 export class CermonReportRepository extends Repository<CermonReportEntity> {
@@ -34,6 +35,9 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
   async getAll(filter: FilterReportDto) {
     const queryBuilder = this.createQueryBuilder('cermon-report');
     queryBuilder.leftJoin('cermon-report.cermon', 'cermon');
+    if (!filter.date_from && !filter.date_to) {
+      queryBuilder.andWhere("DATE_TRUNC('month', cermon-report.date) = DATE_TRUNC('month', CURRENT_DATE)");
+    }
 
     filter.search &&
       queryBuilder.andWhere(
@@ -44,9 +48,9 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
         }),
       );
 
-    // if (filter.region_id) {
-    //   queryBuilder.andWhere('region.id = :region_id', { region_id: filter.region_id });
-    // }
+    if (filter.cermon_unique_id) {
+      queryBuilder.andWhere('cermon.unique_id = :cermon_unique_id', { cermon_unique_id: filter.cermon_unique_id });
+    }
 
     queryBuilder.andWhere(
       new Brackets((qb) => {
@@ -75,6 +79,8 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
     queryBuilder.addOrderBy(`cermon-report.date`, 'DESC');
     queryBuilder.addOrderBy(`cermon-report.created_at`, 'DESC');
 
+    const itemCount = await queryBuilder.getCount();
+
     queryBuilder.select([
       'cermon-report.id as id',
       'cermon-report.date as date',
@@ -82,11 +88,12 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
       'cermon-report.total_female as total_female',
       'cermon-report.total_new_male as total_new_male',
       'cermon-report.total_new_female as total_new_female',
+      'cermon-report.total_male + cermon-report.total_female as total',
+      'cermon-report.total_new_male + cermon-report.total_new_female as new',
       'cermon.id as cermon_id',
       'cermon.name as cermon_name',
     ]);
 
-    const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getRawMany();
 
     const meta = {
@@ -97,5 +104,29 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
     };
 
     return { entities, meta };
+  }
+
+  async getExport(cermon_ids?: number[]) {
+    const queryBuilder = this.createQueryBuilder('cermon_report');
+    queryBuilder.leftJoinAndSelect('cermon_report.cermon', 'cermon');
+    // queryBuilder.leftJoin('blesscomn.admin', 'admin');
+    queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = cermon_report.region_id');
+
+    if (cermon_ids?.length) {
+      queryBuilder.andWhere('cermon.id in (:...cermon_ids)', { cermon_ids });
+    }
+
+    queryBuilder.select([
+      'cermon_report.cermon_id as cermon_id',
+      'cermon_report.date as date',
+      'cermon_report.total_male as total_male',
+      'cermon_report.total_female as total_female',
+      'cermon_report.total_new_male as total_new_male',
+      'cermon_report.total_new_female as total_new_female',
+      'cermon_report.total_male + cermon_report.total_female as total',
+      'cermon_report.total_new_male + cermon_report.total_new_female as new',
+    ]);
+
+    return queryBuilder.getRawMany();
   }
 }

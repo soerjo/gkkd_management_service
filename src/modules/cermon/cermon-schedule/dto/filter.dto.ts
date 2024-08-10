@@ -7,20 +7,20 @@ export class FilterJadwalIbadahDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  search: string;
+  search?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  segment: string;
+  segment?: string;
 
   @ApiPropertyOptional()
   @IsNumber()
   @Min(1)
   @Type(() => Number)
   @IsOptional()
-  region_id: number;
+  region_id?: number;
 
-  region_tree_id: number;
-  region_ids: number[];
+  region_tree_id?: number;
+  region_ids?: number[];
 }

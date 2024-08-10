@@ -91,16 +91,15 @@ export class DisciplesRepository extends Repository<DisciplesEntity> {
       );
     }
 
-    if (!filter.pembimbing_id && filter.disciple_ids.length) {
+    if (filter.disciple_ids.length) {
       queryBuilder.andWhere(
         new Brackets((qb) => {
           qb.where('disciples.id in ( :...disciple_ids )', { disciple_ids: filter.disciple_ids });
+          if (filter.pembimbing_id) {
+            qb.andWhere('disciples.pembimbing_id = :pembimbing_id', { pembimbing_id: filter.pembimbing_id });
+          }
         }),
       );
-    }
-
-    if (filter.pembimbing_id) {
-      queryBuilder.andWhere('disciples.pembimbing_id = :pembimbing_id', { pembimbing_id: filter.pembimbing_id });
     }
 
     if (filter.region_id) {

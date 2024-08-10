@@ -45,8 +45,14 @@ export class ReportBlesscomnController {
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateReportBlesscomnDto) {
     if (jwtPayload.id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.id);
-      const listBlesscomnIds = blesscomn.map((bc) => bc?.id);
-      if (listBlesscomnIds.includes(dto.blesscomn_id)) {
+      let listBlesscomnIds = blesscomn.map((bc) => bc?.id);
+
+      if (jwtPayload.role === RoleEnum.ROLE_SUPERADMIN) {
+        const { entities: myBlesscomn } = await this.blesscomnService.findAll({ region_id: jwtPayload.region.id });
+        listBlesscomnIds = myBlesscomn.map((bc) => bc?.id);
+      }
+
+      if (!listBlesscomnIds.includes(dto.blesscomn_id)) {
         throw new BadRequestException('user have not this blesscomn, blesscomn is not valid');
       }
     }
@@ -127,10 +133,12 @@ export class ReportBlesscomnController {
     if (jwtPayload.id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.id);
       const listBlesscomnIds = blesscomn.map((bc) => bc.id);
-      if (listBlesscomnIds.includes(updateReportBlesscomnDto.blesscomn_id)) {
+
+      if (!listBlesscomnIds.includes(updateReportBlesscomnDto.blesscomn_id)) {
         throw new BadRequestException('user have not this blesscomn, blesscomn is not valid');
       }
     }
+
     return this.reportBlesscomnService.update(id, updateReportBlesscomnDto);
   }
 
@@ -156,7 +164,6 @@ export class ReportBlesscomnController {
       blesscomn_ids = blesscomn.map((bc) => bc?.unique_id);
     }
 
-    console.log({ jwtPayload });
     const wb = read(dto.file.buffer, { cellDates: true });
     const sheetName = wb.SheetNames[0];
     const workSheet = wb.Sheets[sheetName];

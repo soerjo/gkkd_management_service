@@ -7,29 +7,37 @@ export class FilterReportDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  search: string;
+  search?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  segment: string;
+  segment?: string;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  cermon_id?: number;
+
+  cermon_unique_id?: string;
 
   @ApiPropertyOptional()
   @IsDateString()
   @IsOptional()
-  date_from: string;
+  date_from?: string;
 
   @ApiPropertyOptional()
   @IsDateString()
   @IsOptional()
-  date_to: string;
+  date_to?: string;
 
   @ApiPropertyOptional()
   @IsNumber()
   @Min(1)
   @Type(() => Number)
   @IsOptional()
-  region_id: number;
+  region_id?: number;
 
-  region_ids: number[];
+  region_ids?: number[];
 }
