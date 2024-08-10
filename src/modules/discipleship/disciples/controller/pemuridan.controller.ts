@@ -55,6 +55,7 @@ export class DisciplesController {
       const parent = await this.pemuridanService.getAccountDisciple(jwtPayload.id);
       if (!parent) throw new BadRequestException('user account is not found!');
       filter.disciple_tree_id = parent.id;
+      filter.pembimbing_id = filter.pembimbing_id ?? parent.id;
     }
 
     return this.pemuridanService.findAll(filter);
