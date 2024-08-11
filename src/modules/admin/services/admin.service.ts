@@ -5,13 +5,14 @@ import { CreateAdminDto } from '../dto/create-admin.dto';
 import { RoleEnum } from '../../../common/constant/role.constant';
 import { FilterDto } from '../dto/filter.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
-import { IsNull, Repository } from 'typeorm';
+import { ILike, IsNull, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdminEntity } from '../entities/admin.entity';
 import { RegionService } from '../../../modules/region/services/region.service';
 import { BlesscomnService } from '../../blesscomn/blesscomn/services/blesscomn.service';
 import { Transactional } from 'typeorm-transactional';
+import { BotFilter } from '../dto/filter-bot.dto';
 
 @Injectable()
 export class AdminService implements OnApplicationBootstrap {
@@ -67,7 +68,7 @@ export class AdminService implements OnApplicationBootstrap {
 
   async getAll(filter: FilterDto) {
     const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_tree_id });
-    filter.region_ids = regions.map((data) => data.id);
+    filter.region_ids = filter.region_ids ?? regions.map((data) => data.id);
     filter.region_ids.push(filter.region_tree_id);
 
     return this.adminRepository.getAll(filter);
@@ -75,6 +76,21 @@ export class AdminService implements OnApplicationBootstrap {
 
   findOne(id: number, region_id?: number) {
     return this.adminRepository.getOne(id);
+  }
+
+  getByPhoneNumber(phoneNumber: string) {
+    return this.adminRepository.findOne({ where: { phone: ILike(`%${phoneNumber}`) } });
+  }
+
+  async validateUserPhoneNumber(phoneNumber: string, data: BotFilter) {
+    const adminList = await this.adminRepository.find({ where: { phone: phoneNumber } });
+    if (!adminList.length) throw new BadRequestException('admin is not found!');
+
+    const updateAdmin = adminList.map((admin) =>
+      this.adminRepository.create({ ...admin, telegram_user_id: data.user_id }),
+    );
+
+    await this.adminRepository.save(updateAdmin);
   }
 
   async updatePassword(id: number, password: string) {

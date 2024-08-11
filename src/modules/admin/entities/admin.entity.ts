@@ -19,6 +19,9 @@ export class AdminEntity extends MainEntityAbstract {
   @Column({ nullable: true })
   phone?: string;
 
+  @Column({ nullable: true })
+  telegram_user_id?: string;
+
   @Column({ enum: RoleEnum, nullable: true })
   role: RoleEnum;
 

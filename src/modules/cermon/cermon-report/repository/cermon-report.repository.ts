@@ -3,6 +3,8 @@ import { Brackets, DataSource, Repository } from 'typeorm';
 import { FilterReportDto } from '../dto/filter.dto';
 import { CermonReportEntity } from '../entities/cermon-report.entity';
 import { RegionEntity } from '../../../region/entities/region.entity';
+import { CermonScheduleEntity } from '../../cermon-schedule/entities/cermon-schedule.entity';
+import { IReportWeekly } from '../interface/report-weekly.interface';
 
 @Injectable()
 export class CermonReportRepository extends Repository<CermonReportEntity> {
@@ -166,5 +168,22 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
 
     queryBuilder.select('AVG(cermon_report.total_male + cermon_report.total_female)', 'average');
     return queryBuilder.getRawOne();
+  }
+
+  async getReportByRegion(filter: any): Promise<IReportWeekly[]> {
+    const subQuery = this.dataSource.createQueryBuilder(CermonReportEntity, 'report');
+    subQuery.andWhere("DATE_TRUNC('week', report.date) = DATE_TRUNC('week', CURRENT_DATE)");
+
+    const queryBuilder = this.dataSource.createQueryBuilder(RegionEntity, 'region');
+    queryBuilder.leftJoinAndSelect(CermonScheduleEntity, 'cermon', 'cermon.region_id = region.id');
+    queryBuilder.andWhere('cermon.id IS NOT NULL');
+    queryBuilder.leftJoinAndSelect(
+      `(${subQuery.getQuery()})`,
+      'subreport',
+      'subreport.report_cermon_id = cermon.unique_id',
+    );
+    queryBuilder.andWhere('subreport.report_id is null');
+
+    return queryBuilder.getRawMany();
   }
 }

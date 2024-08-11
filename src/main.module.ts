@@ -21,6 +21,7 @@ import { MainDiscipleshipModule } from './modules/discipleship/discipleship.modu
 import { ExampleModule } from './modules/example/example.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
+import { BotModule } from './modules/bot/bot.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { DataSource } from 'typeorm';
     MainDiscipleshipModule,
     AdminModule,
     ExampleModule,
+    BotModule,
     // other module...
   ],
   providers: [

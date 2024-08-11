@@ -12,5 +12,6 @@ import { NestjsFormDataModule } from 'nestjs-form-data';
   imports: [NestjsFormDataModule, TypeOrmModule.forFeature([CermonReportEntity]), JadwalIbadahModule, RegionModule],
   controllers: [ReportIbadahController],
   providers: [ReportIbadahService, CermonReportRepository],
+  exports: [ReportIbadahService],
 })
 export class ReportIbadahModule {}

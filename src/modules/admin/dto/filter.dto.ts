@@ -8,22 +8,22 @@ export class FilterDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  search: string;
+  search?: string;
 
   @ApiPropertyOptional()
   @IsNumber()
   @Min(1)
   @Type(() => Number)
   @IsOptional()
-  region_id: number;
+  region_id?: number;
 
   @ApiPropertyOptional({ enum: RoleEnum })
   @IsEnum(RoleEnum)
   @IsOptional()
-  role: RoleEnum;
+  role?: RoleEnum;
 
-  user_region_id: number;
+  user_region_id?: number;
 
-  region_tree_id: number;
-  region_ids: number[] = [];
+  region_tree_id?: number;
+  region_ids?: number[] = [];
 }

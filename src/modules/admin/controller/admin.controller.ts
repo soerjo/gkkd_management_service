@@ -25,11 +25,10 @@ import { RolesGuard } from '../../../common/guard/role.guard';
 import { IJwtPayload } from '../../../common/interface/jwt-payload.interface';
 import { CurrentUser } from '../../../common/decorator/jwt-payload.decorator';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
+import { BotFilter } from '../dto/filter-bot.dto';
 
 @ApiTags('Admin')
 @Controller('admin')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 export class AdminController {
   constructor(
     private readonly adminService: AdminService,
@@ -37,6 +36,8 @@ export class AdminController {
   ) {}
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateAdminDto) {
@@ -55,6 +56,8 @@ export class AdminController {
   }
 
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filterDto: FilterDto) {
@@ -63,7 +66,17 @@ export class AdminController {
     return await this.adminService.getAll(filterDto);
   }
 
+  @Get('/phone/:phone_number')
+  async validateUserByPhoneNumber(@Param('phone_number') phone_number: string, @Query() data: any) {
+    const admin = await this.adminService.getByPhoneNumber(phone_number);
+    if (!admin) throw new BadRequestException('admin is not found!');
+
+    await this.adminService.validateUserPhoneNumber(admin.phone, data);
+  }
+
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   async findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
     const result = await this.adminService.findOne(id);
     if (!result) throw new BadRequestException('admin is not found!');
@@ -72,6 +85,8 @@ export class AdminController {
   }
 
   @Patch('update-password')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   async updatePassword(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: UpdatePasswordDto) {
     const adminUser = await this.adminService.findOne(jwtPayload.id);
     if (!adminUser) throw new BadRequestException('admin is not found!');
@@ -79,6 +94,8 @@ export class AdminController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async update(
@@ -107,6 +124,8 @@ export class AdminController {
   }
 
   @Patch(':id/reset-password')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async resetPassword(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
@@ -116,6 +135,8 @@ export class AdminController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
@@ -127,6 +148,8 @@ export class AdminController {
   }
 
   @Post('/restore/:id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SYSTEMADMIN])
   async restore(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {

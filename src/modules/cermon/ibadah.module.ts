@@ -1,12 +1,13 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { JadwalIbadahModule } from './cermon-schedule/cermon-schedule.module';
 import { ReportIbadahModule } from './cermon-report/cermon-report.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CermonSchedulerModule } from './cermon-scheduler/cermon-scheduler.module';
 
 @Module({
   imports: [
     ReportIbadahModule,
     JadwalIbadahModule,
+    CermonSchedulerModule,
     //  other module...
   ],
   providers: [

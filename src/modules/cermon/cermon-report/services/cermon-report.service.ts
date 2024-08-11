@@ -136,6 +136,10 @@ export class ReportIbadahService {
     }
   }
 
+  async getReportByRegion(filter: any) {
+    return this.customReportRepository.getReportByRegion(filter);
+  }
+
   async export(cermon_ids?: number[]) {
     try {
       const result = await this.customReportRepository.getExport(cermon_ids);
