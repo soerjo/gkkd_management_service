@@ -176,6 +176,11 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
 
     const queryBuilder = this.dataSource.createQueryBuilder(RegionEntity, 'region');
     queryBuilder.leftJoinAndSelect(CermonScheduleEntity, 'cermon', 'cermon.region_id = region.id');
+    if (filter?.region_ids.length) {
+      queryBuilder.andWhere('region.id in ( :...region_ids )', { region_ids: filter.region_ids });
+    } else {
+      queryBuilder.andWhere('region.id IS NULL');
+    }
     queryBuilder.andWhere('cermon.id IS NOT NULL');
     queryBuilder.leftJoinAndSelect(
       `(${subQuery.getQuery()})`,

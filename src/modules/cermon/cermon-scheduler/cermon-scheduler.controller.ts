@@ -5,8 +5,8 @@ import { CermonSchedulerService } from './cermon-scheduler.service';
 export class CermonSchedulerController {
   constructor(private readonly cermonSchedulerService: CermonSchedulerService) {}
 
-  @Get()
-  trigerWeeklyReport() {
-    this.cermonSchedulerService.handletWeekly();
-  }
+  // @Get()
+  // trigerWeeklyReport() {
+  //   this.cermonSchedulerService.handletWeekly();
+  // }
 }

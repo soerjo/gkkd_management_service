@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CermonSchedulerService } from './cermon-scheduler.service';
 import { CermonSchedulerController } from './cermon-scheduler.controller';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -8,8 +8,9 @@ import { BotModule } from '../../bot/bot.module';
 import { ParameterModule } from '../../parameter/parameter.module';
 
 @Module({
-  imports: [ScheduleModule.forRoot(), ReportIbadahModule, AdminModule, BotModule, ParameterModule],
+  imports: [ScheduleModule.forRoot(), forwardRef(() => ReportIbadahModule), AdminModule, BotModule, ParameterModule],
   controllers: [CermonSchedulerController],
   providers: [CermonSchedulerService],
+  exports: [CermonSchedulerService],
 })
 export class CermonSchedulerModule {}

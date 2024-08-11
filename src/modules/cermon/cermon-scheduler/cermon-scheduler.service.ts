@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ReportIbadahService } from '../cermon-report/services/cermon-report.service';
 import { AdminService } from '../../admin/services/admin.service';
@@ -13,6 +13,7 @@ export class CermonSchedulerService implements OnModuleInit {
   private readonly logger = new Logger(CermonSchedulerService.name);
 
   constructor(
+    @Inject(forwardRef(() => ReportIbadahService))
     private readonly cermonReportService: ReportIbadahService,
     private readonly adminService: AdminService,
     private readonly botService: BotService,
@@ -30,10 +31,10 @@ export class CermonSchedulerService implements OnModuleInit {
   }
 
   @Cron('0 19 * * 0') //EVERY_SUNDAY_7_PM
-  async handletWeekly() {
+  async handletWeekly(region_id: number) {
     this.logger.debug('handletWeekly');
 
-    const report = await this.cermonReportService.getReportByRegion({});
+    const report = await this.cermonReportService.getReportByRegion({ region_id });
     const regionNotReport = report.map((report) => report.region_id);
     const regionList = new Set(regionNotReport);
     const { entities } = await this.adminService.getAll({

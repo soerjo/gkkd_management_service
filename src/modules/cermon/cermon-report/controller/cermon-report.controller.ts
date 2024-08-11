@@ -1,4 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  Res,
+  forwardRef,
+  Inject,
+} from '@nestjs/common';
 import { ReportIbadahService } from '../services/cermon-report.service';
 import { CreateReportIbadahDto } from '../dto/create-report-ibadah.dto';
 import { UpdateReportIbadahDto } from '../dto/update-report-ibadah.dto';
@@ -16,6 +29,7 @@ import { CermonScheduleEntity } from '../../cermon-schedule/entities/cermon-sche
 import { read, utils, write } from 'xlsx';
 import { FormDataRequest } from 'nestjs-form-data';
 import { UploadDto } from '../dto/upload.dto';
+import { CermonSchedulerService } from '../../cermon-scheduler/cermon-scheduler.service';
 
 @ApiTags('Cermon')
 @Controller('cermon/report')
@@ -27,6 +41,8 @@ export class ReportIbadahController {
   constructor(
     private readonly reportIbadahService: ReportIbadahService,
     private readonly cermonService: JadwalIbadahService,
+    @Inject(forwardRef(() => CermonSchedulerService))
+    private readonly cermonSchedulerService: CermonSchedulerService,
   ) {}
 
   @Post()
@@ -39,6 +55,12 @@ export class ReportIbadahController {
   findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterReportDto) {
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
     return this.reportIbadahService.findAll(dto);
+  }
+
+  @Get('reminder')
+  trigerRimender(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterReportDto) {
+    dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
+    return this.cermonSchedulerService.handletWeekly(dto.region_id);
   }
 
   @Get('dashboard')

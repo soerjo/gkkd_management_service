@@ -137,7 +137,9 @@ export class ReportIbadahService {
   }
 
   async getReportByRegion(filter: any) {
-    return this.customReportRepository.getReportByRegion(filter);
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_id });
+    const region_ids = regions.map((data) => data.id);
+    return this.customReportRepository.getReportByRegion({ region_ids });
   }
 
   async export(cermon_ids?: number[]) {
