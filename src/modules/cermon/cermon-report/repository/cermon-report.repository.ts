@@ -55,9 +55,9 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
     queryBuilder.andWhere(
       new Brackets((qb) => {
         if (filter.region_ids.length) {
-          qb.where('cermon-report.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+          qb.where('cermon.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
         }
-        qb.orWhere('cermon-report.region_id = :region_id', { region_id: filter.region_id });
+        qb.orWhere('cermon.region_id = :region_id', { region_id: filter.region_id });
       }),
     );
 
