@@ -109,7 +109,6 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
   async getExport(cermon_ids?: number[]) {
     const queryBuilder = this.createQueryBuilder('cermon_report');
     queryBuilder.leftJoinAndSelect('cermon_report.cermon', 'cermon');
-    // queryBuilder.leftJoin('blesscomn.admin', 'admin');
     queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = cermon_report.region_id');
     queryBuilder.andWhere("DATE_TRUNC('month', cermon_report.date) = DATE_TRUNC('month', CURRENT_DATE)");
 
@@ -133,14 +132,15 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
 
   async getAverageMonthly(filter: FilterReportDto) {
     const queryBuilder = this.createQueryBuilder('cermon_report');
+    queryBuilder.leftJoinAndSelect('cermon_report.cermon', 'cermon');
     queryBuilder.andWhere("DATE_TRUNC('month', cermon_report.date) = DATE_TRUNC('month', CURRENT_DATE)");
 
     queryBuilder.andWhere(
       new Brackets((qb) => {
         if (filter.region_ids.length) {
-          qb.where('cermon_report.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+          qb.where('cermon.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
         }
-        qb.orWhere('cermon_report.region_id = :region_id', { region_id: filter.region_id });
+        qb.orWhere('cermon.region_id = :region_id', { region_id: filter.region_id });
       }),
     );
 
@@ -150,6 +150,7 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
 
   async getAverageLastMonth(filter: FilterReportDto) {
     const queryBuilder = this.createQueryBuilder('cermon_report');
+    queryBuilder.leftJoinAndSelect('cermon_report.cermon', 'cermon');
     queryBuilder.andWhere(
       "DATE_TRUNC('month', cermon_report.date) = DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 month'",
     );
@@ -157,9 +158,9 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
     queryBuilder.andWhere(
       new Brackets((qb) => {
         if (filter.region_ids.length) {
-          qb.where('cermon_report.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
+          qb.where('cermon.region_id in ( :...region_ids )', { region_ids: filter.region_ids });
         }
-        qb.orWhere('cermon_report.region_id = :region_id', { region_id: filter.region_id });
+        qb.orWhere('cermon.region_id = :region_id', { region_id: filter.region_id });
       }),
     );
 
