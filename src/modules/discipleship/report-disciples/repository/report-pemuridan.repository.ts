@@ -53,12 +53,9 @@ export class ReportPemuridanRepository extends Repository<ReportPemuridanEntity>
       queryBuilder.andWhere('pemuridan_report.date <= :date_to', { date_to: filter.date_to });
     }
 
-    if (filter.take) {
-      queryBuilder.take(filter?.take);
-      queryBuilder.skip((filter?.page - 1) * filter?.take);
-    }
-
-    queryBuilder.orderBy(`pemuridan_report.created_at`, 'DESC');
+    queryBuilder.limit(filter?.take);
+    queryBuilder.offset((filter?.page - 1) * filter?.take);
+    queryBuilder.orderBy(`pemuridan_report.date`, 'DESC');
 
     const itemCount = await queryBuilder.getCount();
     const entities = await queryBuilder.getMany();

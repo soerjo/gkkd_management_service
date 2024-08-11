@@ -37,9 +37,8 @@ export class MaritalRepository {
       }),
     );
 
-    queryBuilder.take(filter?.take);
-    queryBuilder.skip((filter?.page - 1) * filter?.take);
-
+    queryBuilder.limit(filter?.take);
+    queryBuilder.offset((filter?.page - 1) * filter?.take);
     queryBuilder.orderBy(`marital.created_at`, 'DESC');
 
     const itemCount = await queryBuilder.getCount();

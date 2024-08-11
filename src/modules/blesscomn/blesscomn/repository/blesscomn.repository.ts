@@ -78,10 +78,8 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       }),
     );
 
-    if (filter.take) {
-      queryBuilder.take(filter?.take);
-      queryBuilder.skip((filter?.page - 1) * filter?.take);
-    }
+    queryBuilder.limit(filter?.take);
+    queryBuilder.offset((filter?.page - 1) * filter?.take);
 
     // queryBuilder.distinctOn(['blesscomn.unique_id']);
     // queryBuilder.orderBy(

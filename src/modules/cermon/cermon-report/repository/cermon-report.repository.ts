@@ -74,11 +74,10 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
       queryBuilder.andWhere(`cermon-report.date >= :date_from`, { date_from: filter.date_from });
     }
 
-    queryBuilder.take(filter?.take);
-    queryBuilder.skip((filter?.page - 1) * filter?.take);
+    queryBuilder.limit(filter?.take);
+    queryBuilder.offset((filter?.page - 1) * filter?.take);
 
     queryBuilder.addOrderBy(`cermon-report.date`, 'DESC');
-    queryBuilder.addOrderBy(`cermon-report.created_at`, 'DESC');
 
     const itemCount = await queryBuilder.getCount();
 

@@ -92,12 +92,10 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
       queryBuilder.andWhere(`blesscomn_report.date >= :date_from`, { date_from: filter.date_from });
     }
 
-    if (filter.take) {
-      queryBuilder.take(filter?.take);
-      queryBuilder.skip((filter?.page - 1) * filter?.take);
-    }
+    queryBuilder.limit(filter?.take);
+    queryBuilder.offset((filter?.page - 1) * filter?.take);
 
-    queryBuilder.orderBy('blesscomn_report.created_at', 'DESC');
+    queryBuilder.orderBy('blesscomn_report.date', 'DESC');
 
     queryBuilder.select([
       'blesscomn_report.id as id',

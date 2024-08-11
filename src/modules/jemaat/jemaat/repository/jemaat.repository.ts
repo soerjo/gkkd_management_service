@@ -42,9 +42,8 @@ export class JemaatRepository extends Repository<JemaatEntity> {
       return { entities };
     }
 
-    queryBuilder.take(filter?.take);
-    queryBuilder.skip((filter?.page - 1) * filter?.take);
-
+    queryBuilder.limit(filter?.take);
+    queryBuilder.offset((filter?.page - 1) * filter?.take);
     queryBuilder.orderBy(`jemaat.created_at`, 'DESC');
 
     const itemCount = await queryBuilder.getCount();

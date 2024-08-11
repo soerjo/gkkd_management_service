@@ -146,11 +146,10 @@ export class RegionRepository extends Repository<RegionEntity> {
       }),
     );
 
-    queryBuilder.take(filter?.take);
-    queryBuilder.skip((filter?.page - 1) * filter?.take);
-
-    queryBuilder.addOrderBy('region.deleted_at', 'DESC');
+    queryBuilder.limit(filter?.take);
+    queryBuilder.offset((filter?.page - 1) * filter?.take);
     queryBuilder.addOrderBy('region.updated_at', 'DESC');
+    queryBuilder.addOrderBy('region.deleted_at', 'DESC');
 
     queryBuilder.select([
       'region.id as id',
