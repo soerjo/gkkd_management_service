@@ -40,15 +40,21 @@ export class BlesscomnSchedulerService implements OnModuleInit {
       region_ids: Array.from(regionList),
       role: RoleEnum.LEADER,
     });
-
+    console.log({ report });
+    console.log({ entities });
     const userList: AdminEntity[] = entities;
 
     for (const user of userList) {
-      if (user.telegram_user_id) {
-        const userReportList = report.filter((reportData) => reportData.region_id === user.region_id);
-        for (const userReport of userReportList) {
-          const message = await this.generateMessage(user, userReport);
-          if (message) await this.botService.sendMail({ telegram_user_id: user.telegram_user_id, message: message });
+      if (user.telegram_user_id && user.blesscomn.length) {
+        for (const blesscomn of user.blesscomn) {
+          console.log({ blesscomn });
+          const userReportList = report.filter(
+            (reportData) => reportData.blesscomn_unique_id === blesscomn.blesscomn_id,
+          );
+          for (const userReport of userReportList) {
+            const message = await this.generateMessage(user, userReport);
+            if (message) await this.botService.sendMail({ telegram_user_id: user.telegram_user_id, message: message });
+          }
         }
       }
     }

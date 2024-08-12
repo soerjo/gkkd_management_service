@@ -142,7 +142,9 @@ export class ReportBlesscomnService {
 
   async getReportByRegion(filter: any) {
     const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_id });
-    const region_ids = regions.map((data) => data.id);
+    let region_ids = regions.map((data) => data.id);
+    region_ids.push(filter?.region_id);
+
     return this.reportBlesscomnRepository.getReportByRegion({ region_ids });
   }
 }
