@@ -40,14 +40,12 @@ export class BlesscomnSchedulerService implements OnModuleInit {
       region_ids: Array.from(regionList),
       role: RoleEnum.LEADER,
     });
-    console.log({ report });
-    console.log({ entities });
+
     const userList: AdminEntity[] = entities;
 
     for (const user of userList) {
       if (user.telegram_user_id && user.blesscomn.length) {
         for (const blesscomn of user.blesscomn) {
-          console.log({ blesscomn });
           const userReportList = report.filter(
             (reportData) => reportData.blesscomn_unique_id === blesscomn.blesscomn_id,
           );
