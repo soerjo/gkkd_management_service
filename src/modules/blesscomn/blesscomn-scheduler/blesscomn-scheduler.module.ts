@@ -16,5 +16,6 @@ import { ReportBlesscomnModule } from '../report-blesscomn/report-blesscomn.modu
     // other dependecies...
   ],
   providers: [BlesscomnSchedulerService],
+  exports: [BlesscomnSchedulerService],
 })
 export class BlesscomnSchedulerModule {}

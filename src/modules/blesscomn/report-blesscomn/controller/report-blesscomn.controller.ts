@@ -28,6 +28,8 @@ import { FormDataRequest } from 'nestjs-form-data';
 import { UploadDto } from '../dto/upload.dto';
 import { read, utils, write } from 'xlsx';
 import { Response } from 'express';
+import { FilterReportDto } from '../dto/filter-report.dto';
+import { BlesscomnSchedulerService } from '../../blesscomn-scheduler/blesscomn-scheduler.service';
 
 @ApiTags('Blesscomn')
 @ApiBearerAuth()
@@ -37,6 +39,7 @@ export class ReportBlesscomnController {
   constructor(
     private readonly reportBlesscomnService: ReportBlesscomnService,
     private readonly blesscomnService: BlesscomnService,
+    private readonly blesscomnScheduler: BlesscomnSchedulerService,
   ) {}
 
   @Post()
@@ -81,6 +84,12 @@ export class ReportBlesscomnController {
   getDasboardData(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterDto) {
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
     return this.reportBlesscomnService.getDashboardData(dto);
+  }
+
+  @Get('reminder')
+  trigerRimender(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FilterReportDto) {
+    dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
+    return this.blesscomnScheduler.handletWeekly(dto.region_id);
   }
 
   @Get('chart')
