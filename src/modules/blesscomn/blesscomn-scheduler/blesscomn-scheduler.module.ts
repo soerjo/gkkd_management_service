@@ -1,21 +1,20 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { CermonSchedulerService } from './cermon-scheduler.service';
+import { BlesscomnSchedulerService } from './blesscomn-scheduler.service';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ReportIbadahModule } from '../cermon-report/cermon-report.module';
 import { AdminModule } from '../../admin/admin.module';
 import { BotModule } from '../../bot/bot.module';
 import { ParameterModule } from '../../parameter/parameter.module';
+import { ReportBlesscomnModule } from '../report-blesscomn/report-blesscomn.module';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    forwardRef(() => ReportIbadahModule),
+    forwardRef(() => ReportBlesscomnModule),
     AdminModule,
     BotModule,
     ParameterModule,
     // other dependecies...
   ],
-  providers: [CermonSchedulerService],
-  exports: [CermonSchedulerService],
+  providers: [BlesscomnSchedulerService],
 })
-export class CermonSchedulerModule {}
+export class BlesscomnSchedulerModule {}

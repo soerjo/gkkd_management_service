@@ -1,12 +1,13 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ReportBlesscomnModule } from './report-blesscomn/report-blesscomn.module';
 import { BlesscomnModule } from './blesscomn/blesscomn.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { BlesscomnSchedulerModule } from './blesscomn-scheduler/blesscomn-scheduler.module';
 
 @Module({
   imports: [
     ReportBlesscomnModule,
     BlesscomnModule,
+    BlesscomnSchedulerModule,
     //  other module
   ],
 })

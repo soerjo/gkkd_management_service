@@ -3,6 +3,7 @@ import { Brackets, DataSource, Repository } from 'typeorm';
 import { ReportBlesscomnEntity } from '../entities/report-blesscomn.entity';
 import { FilterDto } from '../dto/filter.dto';
 import { RegionEntity } from '../../../region/entities/region.entity';
+import { BlesscomnEntity } from '../../blesscomn/entities/blesscomn.entity';
 
 @Injectable()
 export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity> {
@@ -179,5 +180,27 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
 
     queryBuilder.select('AVG(blesscomn_report.total)', 'average');
     return queryBuilder.getRawOne();
+  }
+
+  async getReportByRegion(filter: any): Promise<any[]> {
+    const subQuery = this.dataSource.createQueryBuilder(ReportBlesscomnEntity, 'report');
+    subQuery.andWhere("DATE_TRUNC('week', report.date) = DATE_TRUNC('week', CURRENT_DATE)");
+
+    const queryBuilder = this.dataSource.createQueryBuilder(RegionEntity, 'region');
+    queryBuilder.leftJoinAndSelect(BlesscomnEntity, 'blesscomn', 'blesscomn.region_id = region.id');
+    if (filter?.region_ids.length) {
+      queryBuilder.andWhere('region.id in ( :...region_ids )', { region_ids: filter.region_ids });
+    } else {
+      queryBuilder.andWhere('region.id IS NULL');
+    }
+    queryBuilder.andWhere('blesscomn.id IS NOT NULL');
+    queryBuilder.leftJoinAndSelect(
+      `(${subQuery.getQuery()})`,
+      'subreport',
+      'subreport.report_blesscomn_id = blesscomn.unique_id',
+    );
+    queryBuilder.andWhere('subreport.report_id is null');
+
+    return queryBuilder.getRawMany();
   }
 }

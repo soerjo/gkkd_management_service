@@ -76,6 +76,12 @@ export class AdminRepository extends Repository<AdminEntity> {
         ELSE FALSE 
       END AS status
       `,
+      `
+      CASE 
+        WHEN user.telegram_user_id IS NULL THEN FALSE 
+        ELSE TRUE 
+      END AS isPhoneValid
+      `,
     ]);
 
     const entities = await queryBuilder.getRawMany();

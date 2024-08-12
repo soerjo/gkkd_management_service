@@ -10,5 +10,6 @@ export interface IJwtPayload {
   region?: RegionEntity;
   jemaat_id?: number | undefined;
   nij?: string;
-  tempPassword: boolean;
+  tempPassword?: boolean;
+  isPhoneValidate?: boolean;
 }

@@ -10,5 +10,6 @@ import { RegionModule } from '../../region/region.module';
   imports: [NestjsFormDataModule, BlesscomnModule, RegionModule],
   controllers: [ReportBlesscomnController],
   providers: [ReportBlesscomnService, ReportBlesscomnRepository],
+  exports: [ReportBlesscomnService],
 })
 export class ReportBlesscomnModule {}

@@ -20,6 +20,7 @@ export class AuthService {
       role: user.role,
       region: user.region,
       tempPassword: user.temp_password ? true : false,
+      isPhoneValidate: user.telegram_user_id ? true : false,
     };
     const jwt = this.jwtService.sign(payload);
 

@@ -139,4 +139,10 @@ export class ReportBlesscomnService {
       percentage: Math.round(percentage * 100) / 100,
     };
   }
+
+  async getReportByRegion(filter: any) {
+    const regions = await this.regionService.getByHierarchy({ region_id: filter?.region_id });
+    const region_ids = regions.map((data) => data.id);
+    return this.reportBlesscomnRepository.getReportByRegion({ region_ids });
+  }
 }

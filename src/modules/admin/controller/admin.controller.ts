@@ -37,9 +37,9 @@ export class AdminController {
 
   @Post()
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateAdminDto) {
     dto.region_id = dto.region_id ?? jwtPayload?.region?.id;
     const region = await this.regionService.getOneById(dto.region_id);
@@ -57,9 +57,9 @@ export class AdminController {
 
   @Get()
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   async findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() filterDto: FilterDto) {
     if (jwtPayload.role !== RoleEnum.ROLE_SYSTEMADMIN) filterDto.region_tree_id = jwtPayload?.region?.id;
 
@@ -95,9 +95,9 @@ export class AdminController {
 
   @Patch(':id')
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   async update(
     @CurrentUser() jwtPayload: IJwtPayload,
     @Param('id') id: number,
@@ -125,9 +125,9 @@ export class AdminController {
 
   @Patch(':id/reset-password')
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   async resetPassword(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
     if (jwtPayload.id === id) throw new ForbiddenException();
 
@@ -136,9 +136,9 @@ export class AdminController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SYSTEMADMIN])
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   async remove(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
     const user = await this.adminService.findOne(id, jwtPayload?.region?.id);
     if (!user) throw new BadRequestException('admin is not found!');
@@ -149,9 +149,9 @@ export class AdminController {
 
   @Post('/restore/:id')
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.ROLE_SYSTEMADMIN])
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   async restore(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: number) {
     const user = await this.adminService.findOne(id, jwtPayload?.region?.id);
     if (!user) throw new BadRequestException('admin is not found!');
