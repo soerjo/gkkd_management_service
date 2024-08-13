@@ -41,10 +41,24 @@ export class BlesscomnService {
     await this.blesscomnAdminRepo.save(blesscomnAdminData);
   }
 
+  async addAdminBlesscomn(admin_id: number, blesscomn_id: number) {
+    const blesscomn = await this.blesscomnRepository.findOne({ where: { id: blesscomn_id } });
+    if (!blesscomn) throw new BadRequestException('blesscomn is not found!');
+
+    const blesscomnAdminData = this.blesscomnAdminRepo.create({
+      admin_id: admin_id,
+      blesscomn: blesscomn,
+    });
+
+    await this.blesscomnAdminRepo.save(blesscomnAdminData);
+  }
+
   @Transactional()
   async create(dto: CreateBlesscomnDto) {
     const region = await this.regionService.getOneById(dto.region_id);
-    if (!region) throw new BadRequestException('Region is not found!');
+    if (!region) {
+      throw new BadRequestException('Region is not found!');
+    }
     dto.region = region;
 
     const isBlesscomnNameExist = await this.blesscomnRepository.findOne({
@@ -55,10 +69,15 @@ export class BlesscomnService {
         },
       },
     });
-    if (isBlesscomnNameExist) throw new BadRequestException(`blesscomn name is already exist in region ${region.name}`);
 
-    let blesscomn = this.blesscomnRepository.create(dto);
-    blesscomn = await this.blesscomnRepository.save(blesscomn);
+    if (isBlesscomnNameExist) {
+      throw new BadRequestException(`blesscomn name is already exist in region ${region.name}`);
+    }
+
+    const createBlesscomn = this.blesscomnRepository.create(dto);
+    const blesscomn = await this.blesscomnRepository.save(createBlesscomn);
+
+    await this.addAdminBlesscomn(dto.admin_id, blesscomn.id);
 
     return blesscomn;
   }

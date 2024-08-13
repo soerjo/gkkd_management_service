@@ -53,7 +53,7 @@ export class BlesscomnController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN])
+  @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.LEADER])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateBlesscomnDto) {
     switch (jwtPayload.role) {
       case RoleEnum.ROLE_SYSTEMADMIN:
