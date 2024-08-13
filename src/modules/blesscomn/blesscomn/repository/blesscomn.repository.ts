@@ -52,7 +52,20 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
     const queryBuilder = this.createQueryBuilder('blesscomn');
     queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');
     queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
-    queryBuilder.leftJoin('blesscomn.admin', 'admin');
+
+    queryBuilder.select([
+      'blesscomn.id as id',
+      'blesscomn.unique_id as unique_id',
+      'blesscomn.name as name',
+      'blesscomn.location as location',
+      'blesscomn.time as time',
+      'blesscomn.day as day',
+      'blesscomn.segment as segment',
+      'lead.id as lead_id',
+      'lead.name as lead_name',
+      'region.id as region_id',
+      'region.name as region_name',
+    ]);
 
     filter.search &&
       queryBuilder.andWhere(
@@ -63,7 +76,9 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       );
 
     if (filter.admin_id) {
+      queryBuilder.leftJoin('blesscomn.admin', 'admin');
       queryBuilder.andWhere(`admin.admin_id = :admin_id`, { admin_id: filter.admin_id });
+      queryBuilder.addSelect(['admin.admin_id as admin_id']);
     }
 
     if (!filter.admin_id && filter.region_id) {
@@ -81,47 +96,8 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
     queryBuilder.limit(filter?.take);
     queryBuilder.offset((filter?.page - 1) * filter?.take);
 
-    // queryBuilder.distinctOn(['blesscomn.unique_id']);
-    // queryBuilder.orderBy(
-    //   `
-    //   "blesscomn"."unique_id",
-    //   "blesscomn"."created_at"
-    //   `,
-    //   'DESC',
-    // );
-    // queryBuilder.groupBy(`
-    //   "blesscomn"."unique_id",
-    //   "lead"."id",
-    //   "region"."id",
-    //   "admin"."id"
-    //   `);
-
-    queryBuilder.addSelect([
-      'blesscomn.id as id',
-      'blesscomn.unique_id as unique_id',
-      'blesscomn.name as name',
-      'blesscomn.location as location',
-      'blesscomn.time as time',
-      'blesscomn.day as day',
-      'blesscomn.segment as segment',
-      'lead.id as lead_id',
-      'lead.name as lead_name',
-      'region.id as region_id',
-      'region.name as region_name',
-      'admin.admin_id as admin_id',
-    ]);
-
-    // const [subquery, params] = queryBuilder.getQueryAndParameters();
-    // console.log(subquery, params);
-    // const countQuery = await this.query(
-    //   `
-    //   select count(*) from (${subquery}) bc
-    //   `,
-    //   params,
-    // );
-    // const itemCount = countQuery[0].count;
+    const entities = await queryBuilder.getRawMany();
     const itemCount = await queryBuilder.getCount();
-    const entities = await queryBuilder.getMany();
 
     const meta = {
       page: filter?.page || 0,
