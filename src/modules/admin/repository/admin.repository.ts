@@ -35,7 +35,7 @@ export class AdminRepository extends Repository<AdminEntity> {
       }),
     );
 
-    if (filter.role === RoleEnum.LEADER) {
+    if (!filter.take && filter.role === RoleEnum.LEADER) {
       queryBuilder.leftJoinAndSelect('user.blesscomn', 'blesscomn');
     }
 
