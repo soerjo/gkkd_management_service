@@ -97,7 +97,6 @@ export class DisciplesService {
       filter.group_unique_id = group.unique_id;
     }
 
-    console.log({ filter });
     return this.pemuridanRepository.getAll(filter);
   }
 

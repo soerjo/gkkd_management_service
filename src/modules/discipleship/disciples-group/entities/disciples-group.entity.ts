@@ -77,7 +77,6 @@ export class DisciplesGroupEntity extends BaseEntity {
   }
 
   static async createUniqueCode(region_id: number): Promise<string> {
-    console.log({ region_id });
     const latestId = await this.createQueryBuilder('disciples_group')
       .orderBy('disciples_group.id', 'DESC')
       .withDeleted()

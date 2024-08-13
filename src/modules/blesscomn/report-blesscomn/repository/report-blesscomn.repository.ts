@@ -64,13 +64,13 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
   async getAll(filter: FilterDto) {
     const queryBuilder = this.createQueryBuilder('blesscomn_report');
     queryBuilder.leftJoinAndSelect('blesscomn_report.blesscomn', 'blesscomn');
-    queryBuilder.leftJoin('blesscomn.admin', 'admin');
     queryBuilder.leftJoinAndSelect(RegionEntity, 'region', 'region.id = blesscomn.region_id');
     if (!filter.date_from && !filter.date_to) {
       queryBuilder.andWhere("DATE_TRUNC('month', blesscomn_report.date) = DATE_TRUNC('month', CURRENT_DATE)");
     }
 
     if (filter.admin_id) {
+      queryBuilder.leftJoin('blesscomn.admin', 'admin');
       queryBuilder.andWhere('admin.admin_id = :admin_id', { admin_id: filter.admin_id });
     }
 

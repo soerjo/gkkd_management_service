@@ -44,7 +44,7 @@ export class BlesscomnSchedulerService implements OnModuleInit {
     const userList: AdminEntity[] = entities;
 
     for (const user of userList) {
-      if (user.telegram_user_id && user.blesscomn.length) {
+      if (user?.telegram_user_id && user?.blesscomn?.length) {
         for (const blesscomn of user.blesscomn) {
           const userReportList = report.filter(
             (reportData) => reportData.blesscomn_unique_id === blesscomn.blesscomn_id,
