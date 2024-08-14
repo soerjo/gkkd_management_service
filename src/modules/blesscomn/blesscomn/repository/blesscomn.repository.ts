@@ -49,8 +49,9 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
   }
 
   async getAll(filter: FilterDto) {
+    console.log({ filter });
     const queryBuilder = this.createQueryBuilder('blesscomn');
-    queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');
+    // queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');
     queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');
 
     queryBuilder.select([
@@ -61,19 +62,16 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       'blesscomn.time as time',
       'blesscomn.day as day',
       'blesscomn.segment as segment',
-      'lead.id as lead_id',
-      'lead.name as lead_name',
+      // 'lead.id as lead_id',
+      // 'lead.name as lead_name',
       'region.id as region_id',
       'region.name as region_name',
     ]);
 
     filter.search &&
-      queryBuilder.andWhere(
-        '(blesscomn.name ILIKE :search OR blesscomn.lead ILIKE :search OR blesscomn.unique_id ILIKE :search)',
-        {
-          search: filter.search,
-        },
-      );
+      queryBuilder.andWhere('(blesscomn.name ILIKE :search OR blesscomn.unique_id ILIKE :search)', {
+        search: `%${filter.search}%`,
+      });
 
     if (filter.admin_id) {
       queryBuilder.leftJoin('blesscomn.admin', 'admin');
