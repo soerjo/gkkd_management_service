@@ -6,6 +6,7 @@ import { AdminModule } from '../admin/admin.module';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from '../../common/guard/jwt-auth.guard';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { BotModule } from '../bot/bot.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       inject: [ConfigService],
     }),
     AdminModule,
+    BotModule,
   ],
   controllers: [AuthController],
   providers: [
