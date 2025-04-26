@@ -22,6 +22,7 @@ import { ExampleModule } from './modules/example/example.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 import { BotModule } from './modules/bot/bot.module';
+import { GkkdServiceModule } from './modules/gkkd-service/gkkd-service.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { BotModule } from './modules/bot/bot.module';
     AdminModule,
     ExampleModule,
     BotModule,
+    GkkdServiceModule,
     // other module...
   ],
   providers: [

@@ -23,4 +23,7 @@ export class ReportPemuridanEntity extends MainEntityAbstract {
 
   @Column({ nullable: true })
   region_id?: number;
+
+  @Column({ default: false, type: 'boolean' })
+  is_sync: boolean;
 }

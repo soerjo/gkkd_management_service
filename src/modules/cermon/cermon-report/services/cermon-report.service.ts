@@ -8,6 +8,8 @@ import { FilterReportDto } from '../dto/filter.dto';
 import { RegionService } from '../../../region/services/region.service';
 import { CermonReportRepository } from '../repository/cermon-report.repository';
 import { JadwalIbadahService } from '../../cermon-schedule/services/jadwal-ibadah.service';
+import { Transactional } from 'typeorm-transactional';
+import { GkkdServiceService } from 'src/modules/gkkd-service/services/gkkd-service.service';
 
 @Injectable()
 export class ReportIbadahService {
@@ -18,6 +20,7 @@ export class ReportIbadahService {
     private readonly cermonService: JadwalIbadahService,
     private readonly regionService: RegionService,
     private dataSource: DataSource,
+    private readonly gkkdService: GkkdServiceService,
   ) {}
 
   async create(dto: CreateReportIbadahDto) {
@@ -152,4 +155,70 @@ export class ReportIbadahService {
       throw new InternalServerErrorException();
     }
   }
+
+  @Transactional()
+  async syncById(id: number, region_id?: number) {
+    const report = await this.customReportRepository.findOne({
+      where: {
+        id: id,
+        region_id: region_id,
+        is_sync: false,
+      },
+      relations: ['cermon'],
+    })
+    if (!report) throw new BadRequestException('report have been sync!');
+
+    // sync service
+    await this.gkkdService.syncIbadah({
+      tanggal: new Date(report.date).toISOString().split('T')[0],
+      ibadah: report.cermon.name,
+      pelayanan: report.cermon.segment,
+      onsite_pria: report.total_male,
+      onsite_wanita: report.total_female,
+      onsite_total: report.total_male + report.total_female,
+      online_pria: 0,
+      online_wanita: 0,
+      online_total: 0,
+      orba_pria: report.total_new_male,
+      orba_wanita: report.total_new_female,
+    })
+
+    return this.reportRepository.save({
+      ...report,
+      is_sync: true,
+    });
+  }
+
+  @Transactional()
+  async syncAll(region_id?: number) {
+    const reportList = await this.customReportRepository.find({
+      where: {
+        region_id: region_id,
+        is_sync: false,
+      },
+      relations: ['cermon'],
+    })
+    if (!reportList.length) throw new BadRequestException('all report have been sync!');
+
+    for (const [index, report] of reportList.entries()) {
+      await this.gkkdService.syncIbadah({
+        tanggal: new Date(report.date).toISOString().split('T')[0],
+        ibadah: report.cermon.name,
+        pelayanan: report.cermon.segment,
+        onsite_pria: report.total_male,
+        onsite_wanita: report.total_female,
+        onsite_total: report.total_male + report.total_female,
+        online_pria: 0,
+        online_wanita: 0,
+        online_total: 0,
+        orba_pria: report.total_new_male,
+        orba_wanita: report.total_new_female,
+      });
+
+      reportList[index].is_sync = true;
+    }
+
+    return this.reportRepository.save(reportList);
+  }
+
 }

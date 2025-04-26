@@ -29,4 +29,7 @@ export class CermonReportEntity extends MainEntityAbstract {
 
   @Column()
   total_new_female: number;
+
+  @Column({ default: false, type: 'boolean' })
+  is_sync: boolean;
 }

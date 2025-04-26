@@ -92,6 +92,7 @@ export class CermonReportRepository extends Repository<CermonReportEntity> {
       'cermon-report.total_new_female as total_new_female',
       'cermon-report.total_male + cermon-report.total_female as total',
       'cermon-report.total_new_male + cermon-report.total_new_female as new',
+      'cermon-report.is_sync as is_sync',
       'cermon.id as cermon_id',
       'cermon.name as cermon_name',
     ]);

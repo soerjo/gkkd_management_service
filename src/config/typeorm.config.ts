@@ -11,6 +11,7 @@ const config: DataSourceOptions = {
   type: 'postgres',
   entities: [__dirname + '/../modules/**/*.entity{.ts,.js}'],
   synchronize: configService.get(`NODE_ENV`) === 'development' || false,
+  logging: configService.get(`NODE_ENV`) === 'development' || false,
 };
 
 export default registerAs('typeorm', () => config);

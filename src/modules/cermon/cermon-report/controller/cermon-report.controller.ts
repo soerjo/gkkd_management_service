@@ -87,6 +87,16 @@ export class ReportIbadahController {
     return res.send(buf);
   }
 
+  @Get('sync/all')
+  syncAll(@CurrentUser() jwtPayload: IJwtPayload) {
+    return this.reportIbadahService.syncAll(jwtPayload?.region?.id);
+  }
+
+  @Get('sync/:id')
+  syncById(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
+    return this.reportIbadahService.syncById(+id, jwtPayload?.region?.id);
+  }
+
   @Get(':id')
   findOne(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
     return this.reportIbadahService.findOne(+id, jwtPayload?.region?.id);

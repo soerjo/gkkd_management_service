@@ -32,4 +32,8 @@ export class ReportBlesscomnEntity extends MainEntityAbstract {
   @ManyToOne((type) => BlesscomnEntity)
   @JoinColumn({ name: 'blesscomn_id' })
   blesscomn: BlesscomnEntity;
+
+  @Column({ default: false, type: 'boolean' })
+  is_sync: boolean;
+
 }

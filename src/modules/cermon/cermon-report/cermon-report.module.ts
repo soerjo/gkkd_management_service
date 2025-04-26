@@ -8,6 +8,7 @@ import { JadwalIbadahModule } from '../cermon-schedule/cermon-schedule.module';
 import { RegionModule } from '../../region/region.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { CermonSchedulerModule } from '../cermon-scheduler/cermon-scheduler.module';
+import { GkkdServiceModule } from 'src/modules/gkkd-service/gkkd-service.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CermonSchedulerModule } from '../cermon-scheduler/cermon-scheduler.modu
     JadwalIbadahModule,
     RegionModule,
     forwardRef(() => CermonSchedulerModule),
+    GkkdServiceModule,
   ],
   controllers: [ReportIbadahController],
   providers: [ReportIbadahService, CermonReportRepository],
