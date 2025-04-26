@@ -106,6 +106,7 @@ export class ReportBlesscomnRepository extends Repository<ReportBlesscomnEntity>
       'blesscomn_report.new_male as total_new_male',
       'blesscomn_report.new_female as total_new_female',
       'blesscomn_report.total as total',
+      'blesscomn_report.is_sync as is_sync',
       'blesscomn_report.new as new',
       'blesscomn.id as blesscomn_id',
       'blesscomn.name as blesscomn_name',

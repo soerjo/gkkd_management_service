@@ -46,6 +46,7 @@ export class ReportBlesscomnController {
   @UseGuards(RolesGuard)
   @Roles([RoleEnum.ROLE_SUPERADMIN, RoleEnum.ROLE_SYSTEMADMIN, RoleEnum.LEADER])
   async create(@CurrentUser() jwtPayload: IJwtPayload, @Body() dto: CreateReportBlesscomnDto) {
+    console.log({jwtPayload})
     if (jwtPayload.id) {
       const blesscomn = await this.blesscomnService.findOneByLeadId(jwtPayload.id);
       let listBlesscomnIds = blesscomn.map((bc) => bc?.id);
@@ -126,6 +127,16 @@ export class ReportBlesscomnController {
     res.header('Content-disposition', 'attachment; filename=report.xlsx');
     res.type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     return res.send(buf);
+  }
+
+  @Get('sync/all')
+  syncAll(@CurrentUser() jwtPayload: IJwtPayload) {
+    return this.reportBlesscomnService.syncAll(jwtPayload?.region?.id);
+  }
+
+  @Get('sync/:id')
+  syncById(@CurrentUser() jwtPayload: IJwtPayload, @Param('id') id: string) {
+    return this.reportBlesscomnService.syncById(+id, jwtPayload?.region?.id);
   }
 
   @Get(':id')

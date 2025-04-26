@@ -91,8 +91,8 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
       }),
     );
 
-    queryBuilder.limit(filter?.take);
-    queryBuilder.offset((filter?.page - 1) * filter?.take);
+    filter?.take && queryBuilder.limit(filter?.take);
+    filter?.page && queryBuilder.offset((filter?.page - 1) * filter?.take);
 
     const entities = await queryBuilder.getRawMany();
     const itemCount = await queryBuilder.getCount();

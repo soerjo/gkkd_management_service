@@ -56,26 +56,27 @@ export class GkkdServiceService {
   }
 
   async syncBlesscomn(dto: SyncBlesscomnDto): Promise<any> {
-    this.logging.log('============== SYNC IBADAH =============');
+    this.logging.log('============== SYNC BLESSCOMN =============');
     this.logging.log({dto});
 
     try {
-      const response = await this.axiosInstance.post('/app/f?id=55', {
-        params: {
-          _csrf: this.configService.get<string>('GKKD_SERVICE_CSRF'),
-          date_1: dto.tanggal,
-          "selectlist_2": dto.wilayah,
-          "selectlist_4": dto.pelayanan,
-          "selectlist_1": dto.blesscomn,
-          "number_2": dto.hadir_pria,
-          "number_3": dto.hadir_wanita,
-          "number_4": dto.hadir_total,
-          "number_5": dto.orba_pria,
-          "number_1": dto.orba_wanita,
-          "button_1": null,
-          "_email": null,
-        },
+      const response = await this.axiosInstance.post('/app/f?id=50', {
+        _csrf: this.configService.get<string>('GKKD_SERVICE_CSRF'),
+        date_1: dto.tanggal,
+        "selectlist_2": dto.wilayah,
+        "selectlist_4": dto.pelayanan,
+        "selectlist_1": dto.blesscomn,
+        "number_2": dto.hadir_pria,
+        "number_3": dto.hadir_wanita,
+        "number_4": dto.hadir_total,
+        "number_5": dto.orba_pria,
+        "number_1": dto.orba_wanita,
+        "button_1": null,
+        "_email": null,
       });
+      this.logging.log('============== RESPONSE BLESSCOMN =============');
+      this.logging.log({response: response.data});
+
       return response.data;
     } catch (error) {
       this.logging.error(error);
@@ -84,25 +85,26 @@ export class GkkdServiceService {
   }
 
   async syncDisciple(dto: SyncDescipleDto): Promise<any> {
-    this.logging.log('============== SYNC IBADAH =============');
+    this.logging.log('============== SYNC DISCIPLES =============');
     this.logging.log({dto});
 
     try {
-      const response = await this.axiosInstance.post('/app/f?id=31', {
-        params: {
-          _csrf: this.configService.get<string>('GKKD_SERVICE_CSRF'),
-          date_1: dto.tanggal,
-          "selectlist_7": dto.wilayah,
-          "selectlist_4": dto.pelayanan,
-          "selectlist_1]": dto.nama_pembimbing,
-          "selectlist_5": dto.nama_anak_pa,
-          "selectlist_3": dto.buku_pa,
-          "text_2": dto.lain_lain,
-          "selectlist_6": dto.bab,
-          "button_1": null,
-          "_email": null,
-        },
+      const response = await this.axiosInstance.post('/app/f?id=55', {
+        _csrf: this.configService.get<string>('GKKD_SERVICE_CSRF'),
+        date_1: dto.tanggal,
+        "selectlist_7": dto.wilayah,
+        "selectlist_4": dto.pelayanan,
+        "selectlist_1]": dto.nama_pembimbing,
+        "selectlist_5": dto.nama_anak_pa,
+        "selectlist_3": dto.buku_pa,
+        "text_2": dto.lain_lain,
+        "selectlist_6": dto.bab,
+        "button_1": null,
+        "_email": null,
       });
+      this.logging.log('============== RESPONSE DISCIPLES =============');
+      this.logging.log({response: response.data});
+
       return response.data;
     } catch (error) {
       this.logging.error(error);

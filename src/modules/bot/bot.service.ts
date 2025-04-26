@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 
 @Injectable()
 export class BotService {
+  private readonly loggin: Logger = new Logger(BotService.name);
   private readonly axiosInstance: AxiosInstance;
 
   constructor() {
@@ -22,7 +23,8 @@ export class BotService {
       return response.data;
     } catch (error) {
       // Handle errors as needed
-      throw new Error(`Error fetching data: ${error.message}`);
+      this.loggin.error('Error sending mail:', error);
+      // throw new Error(`Error fetching data: ${error.message}`);
     }
   }
 }

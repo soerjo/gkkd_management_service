@@ -7,6 +7,8 @@ import { BlesscomnService } from '../../../../modules/blesscomn/blesscomn/servic
 import { ReportBlesscomnEntity } from '../entities/report-blesscomn.entity';
 import { DataSource } from 'typeorm';
 import { RegionService } from '../../../region/services/region.service';
+import { Transactional } from 'typeorm-transactional';
+import { GkkdServiceService } from 'src/modules/gkkd-service/services/gkkd-service.service';
 
 @Injectable()
 export class ReportBlesscomnService {
@@ -15,6 +17,8 @@ export class ReportBlesscomnService {
     private readonly blesscomnService: BlesscomnService,
     private readonly regionService: RegionService,
     private dataSource: DataSource,
+    private readonly gkkdService: GkkdServiceService,
+    
   ) {}
 
   async create(dto: CreateReportBlesscomnDto) {
@@ -146,5 +150,67 @@ export class ReportBlesscomnService {
     region_ids.push(filter?.region_id);
 
     return this.reportBlesscomnRepository.getReportByRegion({ region_ids });
+  }
+
+
+  @Transactional()
+  async syncById(id: number, region_id?: number) {
+    const report = await this.reportBlesscomnRepository.findOne({
+      where: {
+        id: id,
+        blesscomn: { region_id: region_id },
+        is_sync: false,
+      },
+      relations: ['blesscomn.region'],
+    })
+    if (!report) throw new BadRequestException('report have been sync!');
+
+    // sync service
+    await this.gkkdService.syncBlesscomn({
+      tanggal: new Date(report.date).toISOString().split('T')[0],
+      wilayah: report.blesscomn.region.alt_name,
+      pelayanan: report.blesscomn.segment,
+      blesscomn: report.blesscomn.name,
+      hadir_pria: report.total_male,
+      hadir_wanita: report.total_female,
+      hadir_total: report.total_male + report.total_female,
+      orba_pria: report.new_male,
+      orba_wanita: report.new_female,
+    })
+
+    return this.reportBlesscomnRepository.save({
+      ...report,
+      is_sync: true,
+    });
+  }
+
+  @Transactional()
+  async syncAll(region_id?: number) {
+    const reportList = await this.reportBlesscomnRepository.find({
+      where: {
+        blesscomn: { region_id: region_id },
+        is_sync: false,
+      },
+      relations: ['blesscomn.region'],
+    })
+    if (!reportList.length) throw new BadRequestException('all report have been sync!');
+
+    for (const [index, report] of reportList.entries()) {
+      await this.gkkdService.syncBlesscomn({
+        tanggal: new Date(report.date).toISOString().split('T')[0],
+        wilayah: report.blesscomn.region.alt_name,
+        pelayanan: report.blesscomn.segment,
+        blesscomn: report.blesscomn.name,
+        hadir_pria: report.total_male,
+        hadir_wanita: report.total_female,
+        hadir_total: report.total_male + report.total_female,
+        orba_pria: report.new_male,
+        orba_wanita: report.new_female,
+      });
+
+      reportList[index].is_sync = true;
+    }
+
+    return this.reportBlesscomnRepository.save(reportList);
   }
 }
