@@ -27,6 +27,12 @@ export class DisciplesGroupEntity extends BaseEntity {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  tag: string;
+
+  @Column({ nullable: true })
+  buku_pa: string;
+
   @Column()
   pembimbing_nim: string;
 

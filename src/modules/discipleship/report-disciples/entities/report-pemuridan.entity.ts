@@ -15,8 +15,11 @@ export class ReportPemuridanEntity extends MainEntityAbstract {
   @Column({ type: 'date', default: new Date() })
   date: Date;
 
-  @Column({ default: '' })
+  @Column({ nullable: true })
   material: string;
+
+  @Column({ nullable: true })
+  bab: string;
 
   @Column({ nullable: true })
   pembimbing_nim: string;

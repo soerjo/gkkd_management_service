@@ -7,6 +7,11 @@ export class GroupDto {
   @IsNotEmpty()
   name: string;
 
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  tag: string;
+
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()

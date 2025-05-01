@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -23,6 +23,10 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 import { BotModule } from './modules/bot/bot.module';
 import { GkkdServiceModule } from './modules/gkkd-service/gkkd-service.module';
+import { SegmentModule } from './modules/segment/segment.module';
+import { DataModule } from './modules/hospitality/data/data.module';
+import { ReportModule } from './modules/hospitality/report/report.module';
+import { HospitalityModule } from './modules/hospitality/hospitality.module';
 
 @Module({
   imports: [
@@ -57,6 +61,8 @@ import { GkkdServiceModule } from './modules/gkkd-service/gkkd-service.module';
     ExampleModule,
     BotModule,
     GkkdServiceModule,
+    SegmentModule,
+    HospitalityModule,
     // other module...
   ],
   providers: [

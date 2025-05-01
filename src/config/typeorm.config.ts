@@ -10,8 +10,10 @@ const config: DataSourceOptions = {
   url: configService.get(`DATABASE_URL`),
   type: 'postgres',
   entities: [__dirname + '/../modules/**/*.entity{.ts,.js}'],
-  synchronize: configService.get(`NODE_ENV`) === 'development' || false,
-  logging: configService.get(`NODE_ENV`) === 'development' || false,
+  synchronize: false,
+  migrations: [__dirname + '/../migrations/*-migration.ts'],
+  migrationsRun: false,
+  logging: true,
 };
 
 export default registerAs('typeorm', () => config);

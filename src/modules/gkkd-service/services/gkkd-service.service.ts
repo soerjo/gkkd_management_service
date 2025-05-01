@@ -94,7 +94,7 @@ export class GkkdServiceService {
         date_1: dto.tanggal,
         "selectlist_7": dto.wilayah,
         "selectlist_4": dto.pelayanan,
-        "selectlist_1]": dto.nama_pembimbing,
+        "selectlist_1": dto.nama_pembimbing,
         "selectlist_5": dto.nama_anak_pa,
         "selectlist_3": dto.buku_pa,
         "text_2": dto.lain_lain,

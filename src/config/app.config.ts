@@ -10,11 +10,7 @@ interface IAppConfig {
   JWT_SECRET_KEY: string;
   JWT_EXPIRATION_TIME: string;
   TEMP_PASSWORD: string;
-  DATABASE_HOST: string;
-  DATABASE_PORT: number;
-  DATABASE_USERNAME: string;
-  DATABASE_PASSWORD: string;
-  DATABASE_NAME: string;
+  DATABASE_URL: string;
 }
 
 const configService = new ConfigService();
@@ -25,11 +21,7 @@ const configs: IAppConfig = {
   TEMP_PASSWORD: configService.get(`TEMP_PASSWORD`),
   JWT_SECRET_KEY: configService.get(`JWT_SECRET_KEY`),
   JWT_EXPIRATION_TIME: configService.get(`JWT_EXPIRATION_TIME`),
-  DATABASE_HOST: configService.get(`DATABASE_HOST`),
-  DATABASE_PORT: configService.get(`DATABASE_PORT`),
-  DATABASE_USERNAME: configService.get(`DATABASE_USERNAME`),
-  DATABASE_PASSWORD: configService.get(`DATABASE_PASSWORD`),
-  DATABASE_NAME: configService.get(`DATABASE_NAME`),
+  DATABASE_URL: configService.get(`DATABASE_URL`),
 };
 
 const schema = Joi.object<IAppConfig>({
@@ -39,11 +31,7 @@ const schema = Joi.object<IAppConfig>({
   TEMP_PASSWORD: Joi.string().required(),
   JWT_SECRET_KEY: Joi.string().required(),
   JWT_EXPIRATION_TIME: Joi.string().required(),
-  DATABASE_HOST: Joi.string().optional(),
-  DATABASE_PORT: Joi.number().optional(),
-  DATABASE_USERNAME: Joi.string().optional(),
-  DATABASE_PASSWORD: Joi.string().optional(),
-  DATABASE_NAME: Joi.string().optional(),
+  DATABASE_URL: Joi.string().optional(),
 });
 
 export default registerAs('app_configs', () => {
