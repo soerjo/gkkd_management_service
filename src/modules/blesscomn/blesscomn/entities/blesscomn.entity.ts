@@ -18,7 +18,7 @@ import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'blesscomn' })
 export class BlesscomnEntity extends BaseEntity {
-  @PrimaryColumn({ unique: true })
+  @Column({ unique: true })
   unique_id: string;
 
   @Column()
@@ -56,7 +56,7 @@ export class BlesscomnEntity extends BaseEntity {
   @OneToMany(() => BlesscomnAdminEntity, (admin) => admin.blesscomn, { nullable: true })
   admin: BlesscomnAdminEntity[];
 
-  @Column({ generated: 'increment' })
+  @PrimaryColumn({ generated: 'increment', unique: true })
   id: number;
 
   @Exclude()

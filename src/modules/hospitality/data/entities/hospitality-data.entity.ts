@@ -11,7 +11,7 @@ export class HospitaltityDataEntity extends MainEntityAbstract {
   name: string;
 
   @Column({ nullable: true })
-  alias: string;
+  alias?: string;
 
   @Column({ default: GenderEnum.MALE })
   gender: string;
@@ -26,7 +26,7 @@ export class HospitaltityDataEntity extends MainEntityAbstract {
   region_id?: number;
 
   @ManyToOne(() => BlesscomnEntity, { nullable: true })
-  @JoinColumn({ name: 'blesscomn_id' })
+  @JoinColumn({ name: 'blesscomn_id', })
   blesscomn: BlesscomnEntity;
 
   @ManyToOne(() => SegmentEntity, { nullable: true })
@@ -36,6 +36,4 @@ export class HospitaltityDataEntity extends MainEntityAbstract {
   @ManyToOne(() => RegionEntity, { nullable: true })
   @JoinColumn({ name: 'region_id' })
   region: RegionEntity;
-
-
 }

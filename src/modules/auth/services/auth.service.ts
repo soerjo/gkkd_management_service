@@ -18,6 +18,7 @@ export class AuthService {
       username: user.username,
       email: user.email,
       role: user.role,
+      region_id: user.region?.id,
       region: user.region,
       tempPassword: user.temp_password ? true : false,
       isPhoneValidate: user.telegram_user_id ? true : false,

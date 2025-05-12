@@ -22,7 +22,6 @@ export class HospitalityReportEntity extends MainEntityAbstract {
   @JoinColumn({ name: 'sunday_service_id' })
   sunday_service: CermonScheduleEntity;
 
-
   @ManyToOne(() => HospitaltityDataEntity, { nullable: true })
   @JoinColumn({ name: 'hospitality_data_id' })
   hospitality_data: HospitaltityDataEntity;

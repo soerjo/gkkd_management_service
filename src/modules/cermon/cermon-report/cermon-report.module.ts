@@ -8,7 +8,7 @@ import { JadwalIbadahModule } from '../cermon-schedule/cermon-schedule.module';
 import { RegionModule } from '../../region/region.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { CermonSchedulerModule } from '../cermon-scheduler/cermon-scheduler.module';
-import { GkkdServiceModule } from 'src/modules/gkkd-service/gkkd-service.module';
+import { GkkdServiceModule } from '../../../modules/gkkd-service/gkkd-service.module';
 
 @Module({
   imports: [

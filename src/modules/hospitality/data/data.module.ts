@@ -1,9 +1,17 @@
 import { Module } from '@nestjs/common';
-import { DataService } from './services/data.service';
+import { HospitalityDataService } from './services/data.service';
 import { DataController } from './controllers/data.controller';
+import { HospitaltityDataRepository } from './repositories/hospitality-data.repository';
+import { BlesscomnModule } from '../../../modules/blesscomn/blesscomn/blesscomn.module';
+import { SegmentModule } from '../../../modules/segment/segment.module';
 
 @Module({
+  imports: [
+    BlesscomnModule,
+    SegmentModule,
+  ],
   controllers: [DataController],
-  providers: [DataService],
+  providers: [HospitalityDataService, HospitaltityDataRepository],
+  exports: [HospitalityDataService],
 })
-export class DataModule {}
+export class HospitalityDataModule {}

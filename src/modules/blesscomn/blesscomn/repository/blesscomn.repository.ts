@@ -49,7 +49,6 @@ export class BlesscomnRepository extends Repository<BlesscomnEntity> {
   }
 
   async getAll(filter: FilterDto) {
-    console.log({ filter });
     const queryBuilder = this.createQueryBuilder('blesscomn');
     // queryBuilder.leftJoinAndSelect('blesscomn.lead', 'lead');
     queryBuilder.leftJoinAndSelect('blesscomn.region', 'region');

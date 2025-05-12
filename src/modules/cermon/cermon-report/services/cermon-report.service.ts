@@ -9,7 +9,7 @@ import { RegionService } from '../../../region/services/region.service';
 import { CermonReportRepository } from '../repository/cermon-report.repository';
 import { JadwalIbadahService } from '../../cermon-schedule/services/jadwal-ibadah.service';
 import { Transactional } from 'typeorm-transactional';
-import { GkkdServiceService } from 'src/modules/gkkd-service/services/gkkd-service.service';
+import { GkkdServiceService } from '../../../../modules/gkkd-service/services/gkkd-service.service';
 
 @Injectable()
 export class ReportIbadahService {

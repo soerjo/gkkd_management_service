@@ -1,26 +1,79 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateReportDto } from '../dto/create-report.dto';
 import { UpdateReportDto } from '../dto/update-report.dto';
+import { HospitalityReportRepository } from '../repositories/hospitality-report.repository';
+import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface';
+import { JadwalIbadahService } from '../../../../modules/cermon/cermon-schedule/services/jadwal-ibadah.service';
+import { HospitalityDataService } from '../../data/services/data.service';
+import { FindAllReportDto } from '../dto/find-all-report.dto';
 
 @Injectable()
 export class ReportService {
-  create(createReportDto: CreateReportDto) {
-    return 'This action adds a new report';
+  constructor(
+    private readonly hospitalityReportRepository: HospitalityReportRepository,
+    private readonly hospitalityDataService: HospitalityDataService,
+    private readonly cermonService: JadwalIbadahService,
+  ) {}
+
+  async create(createReportDto: CreateReportDto, jwtPayload: IJwtPayload) {
+    const hospitalityData = await this.hospitalityDataService.findOne(createReportDto.hospitality_data_id);
+    if (!hospitalityData) throw new BadRequestException('hospitality data not found');
+    
+    const cermon = await this.cermonService.getOne(createReportDto.sunday_service_id, jwtPayload.region_id);
+    if (!cermon) throw new BadRequestException('cermon not found');
+
+    const createRepor = this.hospitalityReportRepository.create({
+      hospitality_data_id: createReportDto.hospitality_data_id,
+      sunday_service_id: createReportDto.sunday_service_id,
+      date: createReportDto.date,
+      region_id: jwtPayload.region.id,
+      created_by: jwtPayload.id,
+    })
+
+    return this.hospitalityReportRepository.save(createRepor);
   }
 
-  findAll() {
-    return `This action returns all report`;
+  async findAll(dto: FindAllReportDto, jwtPayload: IJwtPayload) {
+    const data = this.hospitalityReportRepository.getAll({...dto, region_id: jwtPayload.region.id});
+    const sumData = this.hospitalityReportRepository.getSumPerSegment({...dto, region_id: jwtPayload.region.id});
+
+    const [result, total] = await Promise.all([data, sumData]);
+    return {total, result}
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} report`;
-  }
+  // findOne(id: number, jwtPayload: IJwtPayload) {
+  //   return `This action returns a #${id} report`;
+  // }
 
-  update(id: number, updateReportDto: UpdateReportDto) {
-    return `This action updates a #${id} report`;
-  }
+  // async update(id: number, updateReportDto: UpdateReportDto, jwtPayload: IJwtPayload) {
+  //   const hospitalityData = await this.hospitalityDataService.findOne(updateReportDto.hospitality_data_id);
+  //   if (!hospitalityData) throw new BadRequestException('hospitality data not found');
 
-  remove(id: number) {
-    return `This action removes a #${id} report`;
+  //   const cermon = await this.cermonService.getOne(updateReportDto.sunday_service_id, jwtPayload.region_id);
+  //   if (!cermon) throw new BadRequestException('cermon not found');
+
+  //   const report = await this.hospitalityReportRepository.findOne({
+  //     where: { id },
+  //   });
+  //   if (!report) throw new BadRequestException('report not found');
+
+  //   return await this.hospitalityReportRepository.save({
+  //     ...report,
+  //     ...updateReportDto,
+  //     hospitality_data_id: updateReportDto.hospitality_data_id,
+  //     sunday_service_id: updateReportDto.sunday_service_id,
+  //     date: updateReportDto.date,
+  //     region_id: jwtPayload.region.id,
+  //     updated_by: jwtPayload.id,
+  //   });
+  // }
+
+  async remove(id: number, jwtPayload: IJwtPayload) {
+    const report = await this.hospitalityReportRepository.findOne({
+      where: { id },
+    });
+    if (!report) throw new BadRequestException('report not found');
+
+    return this.hospitalityReportRepository.remove(report);
   }
 }

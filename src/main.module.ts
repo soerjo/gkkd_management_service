@@ -24,8 +24,6 @@ import { DataSource } from 'typeorm';
 import { BotModule } from './modules/bot/bot.module';
 import { GkkdServiceModule } from './modules/gkkd-service/gkkd-service.module';
 import { SegmentModule } from './modules/segment/segment.module';
-import { DataModule } from './modules/hospitality/data/data.module';
-import { ReportModule } from './modules/hospitality/report/report.module';
 import { HospitalityModule } from './modules/hospitality/hospitality.module';
 
 @Module({
@@ -58,12 +56,12 @@ import { HospitalityModule } from './modules/hospitality/hospitality.module';
     MainCermonModule,
     MainDiscipleshipModule,
     AdminModule,
-    ExampleModule,
-    BotModule,
-    GkkdServiceModule,
+    // ExampleModule,
     SegmentModule,
     HospitalityModule,
     // other module...
+    BotModule,
+    GkkdServiceModule,
   ],
   providers: [
     {

@@ -8,7 +8,7 @@ import { ReportBlesscomnEntity } from '../entities/report-blesscomn.entity';
 import { DataSource } from 'typeorm';
 import { RegionService } from '../../../region/services/region.service';
 import { Transactional } from 'typeorm-transactional';
-import { GkkdServiceService } from 'src/modules/gkkd-service/services/gkkd-service.service';
+import { GkkdServiceService } from '../../../../modules/gkkd-service/services/gkkd-service.service';
 
 @Injectable()
 export class ReportBlesscomnService {
@@ -94,7 +94,7 @@ export class ReportBlesscomnService {
     return { id };
   }
 
-  async upload(listData: Partial<ReportBlesscomnEntity>[], blesscomn_ids?: string[]) {
+  async upload(listData: Partial<ReportBlesscomnEntity>[], blesscomn_ids?: number[]) {
     const batchSize = 1000; // Define the batch size
     const totalBatches = Math.ceil(listData.length / batchSize);
     for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {

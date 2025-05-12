@@ -1,14 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { SegmentService } from '../services/segment.service';
 import { CreateSegmentDto } from '../dto/create-segment.dto';
 import { UpdateSegmentDto } from '../dto/update-segment.dto';
 import { FindSegmentDto } from '../dto/find-segment.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { IJwtPayload } from 'src/common/interface/jwt-payload.interface';
-import { CurrentUser } from 'src/common/decorator/jwt-payload.decorator';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { IJwtPayload } from '../../../common/interface/jwt-payload.interface';
+import { CurrentUser } from '../../../common/decorator/jwt-payload.decorator';
+import { JwtAuthGuard } from '../../../common/guard/jwt-auth.guard';
 
 @ApiTags('Segment')
 @Controller('segment')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class SegmentController {
   constructor(private readonly segmentService: SegmentService) {}
 
@@ -19,6 +22,7 @@ export class SegmentController {
 
   @Get()
   findAll(@CurrentUser() jwtPayload: IJwtPayload, @Query() dto: FindSegmentDto) {
+    console.log('findAll', dto);
     return this.segmentService.findAll(dto, jwtPayload);
   }
 

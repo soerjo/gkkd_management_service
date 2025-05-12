@@ -13,10 +13,10 @@ import {
 
 @Entity({ name: 'cermon_schedule' })
 export class CermonScheduleEntity extends BaseEntity {
-  @PrimaryColumn({ unique: true })
+  @Column({ unique: true })
   unique_id: string;
 
-  @Column({ generated: 'increment' })
+  @PrimaryColumn({ generated: 'increment', unique: true })
   id: number;
 
   @Column({ nullable: true })

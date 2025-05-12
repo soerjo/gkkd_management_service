@@ -4,7 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'segment' })
 export class SegmentEntity extends MainEntityAbstract {
-  @Column()
+  @Column({unique: true})
   name: string;
 
   @Column({ nullable: true })
