@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { AdvancedFilterPlugin } from './utils/swagger-plugin.util';
 import { initializeTransactionalContext } from 'typeorm-transactional';
-import * as morgan from 'morgan';
+// import * as morgan from 'morgan';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -22,7 +22,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.enableCors({ credentials: true });
-  app.use(morgan('tiny'));
+  // app.use(morgan('tiny'));
 
   const theme = new SwaggerTheme();
   const document = SwaggerModule.createDocument(app, config);
@@ -32,8 +32,17 @@ async function bootstrap() {
       showRequestDuration: true, // Show the duration of each request
       plugins: [AdvancedFilterPlugin],
     },
-    customCss: theme.getBuffer('flattop' as SwaggerThemeName),
+    // customCss: theme.getBuffer('flattop' as SwaggerThemeName),
     customSiteTitle: 'Boilerplate Documentation',
+    customJs: [
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js",
+    ],
+    customCssUrl: [
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css",
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.css",
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.css",
+    ],
   });
 
   await app.listen(configService.get('PORT'));

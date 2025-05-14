@@ -6,6 +6,7 @@ import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface'
 import { JadwalIbadahService } from '../../../../modules/cermon/cermon-schedule/services/jadwal-ibadah.service';
 import { HospitalityDataService } from '../../data/services/data.service';
 import { FindAllReportDto } from '../dto/find-all-report.dto';
+import { GetReportDto } from '../dto/get-report.dto';
 
 @Injectable()
 export class ReportService {
@@ -33,40 +34,13 @@ export class ReportService {
     return this.hospitalityReportRepository.save(createRepor);
   }
 
-  async findAll(dto: FindAllReportDto, jwtPayload: IJwtPayload) {
-    const data = this.hospitalityReportRepository.getAll({...dto, region_id: jwtPayload.region.id});
-    const sumData = this.hospitalityReportRepository.getSumPerSegment({...dto, region_id: jwtPayload.region.id});
-
-    const [result, total] = await Promise.all([data, sumData]);
-    return {total, result}
+  findAll(dto: FindAllReportDto, jwtPayload: IJwtPayload) {
+    return this.hospitalityReportRepository.getAll({...dto, region_id: jwtPayload.region.id});
   }
 
-  // findOne(id: number, jwtPayload: IJwtPayload) {
-  //   return `This action returns a #${id} report`;
-  // }
-
-  // async update(id: number, updateReportDto: UpdateReportDto, jwtPayload: IJwtPayload) {
-  //   const hospitalityData = await this.hospitalityDataService.findOne(updateReportDto.hospitality_data_id);
-  //   if (!hospitalityData) throw new BadRequestException('hospitality data not found');
-
-  //   const cermon = await this.cermonService.getOne(updateReportDto.sunday_service_id, jwtPayload.region_id);
-  //   if (!cermon) throw new BadRequestException('cermon not found');
-
-  //   const report = await this.hospitalityReportRepository.findOne({
-  //     where: { id },
-  //   });
-  //   if (!report) throw new BadRequestException('report not found');
-
-  //   return await this.hospitalityReportRepository.save({
-  //     ...report,
-  //     ...updateReportDto,
-  //     hospitality_data_id: updateReportDto.hospitality_data_id,
-  //     sunday_service_id: updateReportDto.sunday_service_id,
-  //     date: updateReportDto.date,
-  //     region_id: jwtPayload.region.id,
-  //     updated_by: jwtPayload.id,
-  //   });
-  // }
+  getSundayService(dto: GetReportDto, jwtPayload: IJwtPayload) {
+    return this.hospitalityReportRepository.getSumPerSegment({...dto, region_id: jwtPayload.region.id});
+  }
 
   async remove(id: number, jwtPayload: IJwtPayload) {
     const report = await this.hospitalityReportRepository.findOne({

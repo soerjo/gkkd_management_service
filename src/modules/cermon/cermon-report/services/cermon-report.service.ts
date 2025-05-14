@@ -203,7 +203,7 @@ export class ReportIbadahService {
     for (const [index, report] of reportList.entries()) {
       await this.gkkdService.syncIbadah({
         tanggal: new Date(report.date).toISOString().split('T')[0],
-        ibadah: report.cermon.name,
+        ibadah: report.cermon.alias,
         pelayanan: report.cermon.segment,
         onsite_pria: report.total_male,
         onsite_wanita: report.total_female,

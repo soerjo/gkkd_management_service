@@ -23,6 +23,9 @@ export class CermonScheduleEntity extends BaseEntity {
   name: string;
 
   @Column({ nullable: true })
+  alias: string;
+
+  @Column({ nullable: true })
   time: string;
 
   @Column({ nullable: true })
