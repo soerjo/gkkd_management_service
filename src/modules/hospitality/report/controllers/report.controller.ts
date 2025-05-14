@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '../../../../common/guard/jwt-auth.guard';
 import { CurrentUser } from '../../../../common/decorator/jwt-payload.decorator';
 import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface';
 import { FindAllReportDto } from '../dto/find-all-report.dto';
+import { GetReportDto } from '../dto/get-report.dto';
 
 @ApiTags('Hospitality')
 @Controller('hospitality/report')
@@ -25,7 +26,7 @@ export class ReportController {
   }
 
   @Get('sunday-service')
-  getSundayService(@Query() dto: FindAllReportDto, @CurrentUser() jwtPayload: IJwtPayload) {
+  getSundayService(@Query() dto: GetReportDto, @CurrentUser() jwtPayload: IJwtPayload) {
     return this.reportService.getSundayService(dto, jwtPayload);
   }
 
