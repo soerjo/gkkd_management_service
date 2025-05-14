@@ -6,6 +6,7 @@ import { IJwtPayload } from '../../../../common/interface/jwt-payload.interface'
 import { JadwalIbadahService } from '../../../../modules/cermon/cermon-schedule/services/jadwal-ibadah.service';
 import { HospitalityDataService } from '../../data/services/data.service';
 import { FindAllReportDto } from '../dto/find-all-report.dto';
+import { GetReportDto } from '../dto/get-report.dto';
 
 @Injectable()
 export class ReportService {
@@ -37,7 +38,7 @@ export class ReportService {
     return this.hospitalityReportRepository.getAll({...dto, region_id: jwtPayload.region.id});
   }
 
-  getSundayService(dto: FindAllReportDto, jwtPayload: IJwtPayload) {
+  getSundayService(dto: GetReportDto, jwtPayload: IJwtPayload) {
     return this.hospitalityReportRepository.getSumPerSegment({...dto, region_id: jwtPayload.region.id});
   }
 

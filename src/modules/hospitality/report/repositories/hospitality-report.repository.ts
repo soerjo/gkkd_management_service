@@ -4,6 +4,7 @@ import { HospitalityReportEntity } from '../entities/report.entity';
 import { FindAllReportDto } from '../dto/find-all-report.dto';
 import { HospitaltityDataEntity } from '../../data/entities/hospitality-data.entity';
 import { SegmentEntity } from '../../../../modules/segment/entities/segment.entity';
+import { GetReportDto } from '../dto/get-report.dto';
 
 @Injectable()
 export class HospitalityReportRepository extends Repository<HospitalityReportEntity> {
@@ -11,7 +12,7 @@ export class HospitalityReportRepository extends Repository<HospitalityReportEnt
     super(HospitalityReportEntity, dataSource.createEntityManager());
   }
 
-  async getSumPerSegment(filter: FindAllReportDto) {
+  async getSumPerSegment(filter: GetReportDto) {
     const subQuery = this.dataSource
       .createQueryBuilder(HospitalityReportEntity, "hr")
       .leftJoin(HospitaltityDataEntity, "hd", "hd.id = hr.hospitality_data_id")
@@ -64,6 +65,10 @@ export class HospitalityReportRepository extends Repository<HospitalityReportEnt
     
     queryBuilder.andWhere('hospitality_data.region_id = :region_id', { region_id: filter.region_id });
     filter.isVersion && queryBuilder.andWhere('hospitality_report.id is not null');
+    filter.name && queryBuilder.andWhere('hospitality_data.name ILIKE :search', { search: `%${filter.name}%` });
+    filter.region_id && queryBuilder.andWhere('hospitality_data.region_id = :region_id', { region_id: filter.region_id });
+    filter.segment_id && queryBuilder.andWhere('hospitality_data.segment_id = :segment_id', { segment_id: filter.segment_id });
+    filter.blesscomn_id && queryBuilder.andWhere('hospitality_data.blesscomn_id = :blesscomn_id', { blesscomn_id: filter.blesscomn_id });
 
     queryBuilder.limit(filter?.take);
     queryBuilder.offset((filter?.page - 1) * filter?.take);
