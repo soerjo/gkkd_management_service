@@ -20,6 +20,10 @@ export class CreateJadwalIbadahDto {
 
   @ApiProperty()
   @IsString()
+  alias: string;
+
+  @ApiProperty()
+  @IsString()
   @Matches(timeFormatRegex, { message: 'Time must be in the format hh:mm' })
   time: string;
 
