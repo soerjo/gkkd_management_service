@@ -84,7 +84,7 @@ export class HospitalityReportRepository extends Repository<HospitalityReportEnt
       case
         when hospitality_report.id is not null then true
         else false
-      end as present
+      end as is_present
       `
     ]);
 
