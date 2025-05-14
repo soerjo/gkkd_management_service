@@ -17,7 +17,7 @@ export class HospitalityReportRepository extends Repository<HospitalityReportEnt
       .leftJoin(HospitaltityDataEntity, "hd", "hd.id = hr.hospitality_data_id")
       .select("hd.segment_id", "segment_id")
       .addSelect("COUNT(*)", "count")
-      .where("DATE(hr.date) = :reportDate", { reportDate: filter.date })
+      .where("DATE(hr.date) = :reportDate AND sunday_service_id = :sunday_service_id", { reportDate: filter.date, sunday_service_id: filter.sunday_service_id })
       .groupBy("hd.segment_id");
 
     const result = await this.dataSource
@@ -37,7 +37,12 @@ export class HospitalityReportRepository extends Repository<HospitalityReportEnt
       .where("s.region_id = :regionId", { regionId: 2 })
       .getRawMany();
 
-      return result;
+      return result.map((item) => ({
+        id: item.id,
+        name: item.name,
+        alias: item.alias,
+        count: Number(item.count),
+      }));
   }
 
   async getAll(filter: FindAllReportDto) {
@@ -56,8 +61,6 @@ export class HospitalityReportRepository extends Repository<HospitalityReportEnt
       sundayServiceId: filter.sunday_service_id,
       reportDate: filter.date,
     });
-
-    console.log('filter', filter);
     
     queryBuilder.andWhere('hospitality_data.region_id = :region_id', { region_id: filter.region_id });
     filter.isVersion && queryBuilder.andWhere('hospitality_report.id is not null');
