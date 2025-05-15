@@ -12,8 +12,8 @@ export class HospitalityReportEntity extends MainEntityAbstract {
   @Column()
   sunday_service_id: number;
 
-  @Column()
-  date: Date;
+  @Column({type: 'date'})
+  date: Date|string;
 
   @Column({ nullable: true })
   region_id?: number;

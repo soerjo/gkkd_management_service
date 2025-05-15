@@ -23,26 +23,32 @@ export class ReportIbadahService {
     private readonly gkkdService: GkkdServiceService,
   ) {}
 
+  @Transactional()
   async create(dto: CreateReportIbadahDto) {
-    const cermon = await this.cermonService.getOne(dto.cermon_id);
-    if (!cermon) throw new BadRequestException('cermon is not found!');
-
-    const isExist = await this.reportRepository.findOne({
-      where: { cermon_id: cermon.unique_id, date: new Date(dto.date) },
-    });
-    if (isExist) throw new BadRequestException('data report already exist');
-
-    const createReport = this.reportRepository.create({
-      date: new Date(dto.date),
-      total_male: dto.total_male,
-      total_female: dto.total_female,
-      total_new_male: dto.total_new_male,
-      total_new_female: dto.total_new_female,
-      cermon: cermon,
-      region_id: cermon.region_id,
-    });
-
-    await this.reportRepository.save(createReport);
+    try {
+      const cermon = await this.cermonService.getOne(dto.cermon_id);
+      if (!cermon) throw new BadRequestException('cermon is not found!');
+  
+      const isExist = await this.reportRepository.findOne({
+        where: { cermon_id: cermon.id, date: new Date(dto.date) },
+      });
+      if (isExist) throw new BadRequestException('data report already exist');
+  
+      const createReport = this.reportRepository.create({
+        date: new Date(dto.date),
+        total_male: dto.total_male,
+        total_female: dto.total_female,
+        total_new_male: dto.total_new_male,
+        total_new_female: dto.total_new_female,
+        cermon_id: cermon.id,
+        region_id: cermon.region_id,
+      });
+  
+      await this.reportRepository.save(createReport);
+    } catch (error) {
+      throw new BadRequestException('data can not be created');
+      
+    }
   }
 
   async getDashboardData(dto: FilterReportDto) {
@@ -84,6 +90,14 @@ export class ReportIbadahService {
     return this.customReportRepository.getOne(id);
   }
 
+  getReportOne(date: Date, cermon_id: number, region_id?: number): Promise<CermonReportEntity | null> {
+    return this.customReportRepository.findOne({where: {
+      date: new Date(date),
+      cermon_id: cermon_id,
+      region_id: region_id,
+    }});
+  }
+
   async update(id: number, dto: UpdateReportIbadahDto) {
     const report = await this.findOne(id);
     if (!report) throw new BadRequestException('report is not found!');
@@ -92,17 +106,19 @@ export class ReportIbadahService {
     if (!cermon) throw new BadRequestException('cermon is not found!');
 
     const isExist = await this.reportRepository.findOne({
-      where: { cermon_id: cermon.unique_id, date: new Date(dto.date) },
+      where: { cermon_id: cermon.id, date: new Date(dto.date) },
     });
     if (isExist && isExist.id !== report.id) throw new BadRequestException('data report already exist');
 
-    this.reportRepository.save({
+    const updateReport = this.reportRepository.create({
       ...report,
       ...dto,
       date: new Date(dto.date),
-      cermon: cermon,
+      cermon_id: cermon.id,
       region_id: cermon.region_id,
-    });
+    } as CermonReportEntity);
+    
+    await this.reportRepository.update(report.id, updateReport)
   }
 
   async remove(id: number, region_id?: number) {
@@ -118,9 +134,9 @@ export class ReportIbadahService {
     for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
       let batch = listData.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
 
-      for (const bc of batch) {
-        if (!cermon_ids?.includes(bc.cermon_id)) throw new BadRequestException('not valid cermon_id in file');
-      }
+      // for (const bc of batch) {
+      //   if (!cermon_ids?.includes(bc.cermon_id)) throw new BadRequestException('not valid cermon_id in file');
+      // }
 
       try {
         await this.dataSource.transaction(async (manager) => {
