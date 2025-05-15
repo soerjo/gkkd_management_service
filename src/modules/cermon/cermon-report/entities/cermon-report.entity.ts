@@ -6,7 +6,7 @@ import { CermonScheduleEntity } from '../../cermon-schedule/entities/cermon-sche
 @Unique(['date', 'cermon_id'])
 export class CermonReportEntity extends MainEntityAbstract {
   @Column({ nullable: true })
-  cermon_id: string;
+  cermon_id: number;
 
   @Column({ nullable: true })
   region_id: number;
