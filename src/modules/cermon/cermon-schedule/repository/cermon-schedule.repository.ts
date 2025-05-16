@@ -73,6 +73,7 @@ export class CermonScheduleRepository extends Repository<CermonScheduleEntity> {
       'cermon-schedule.id as id',
       'cermon-schedule.unique_id as unique_id',
       'cermon-schedule.name as name',
+      'cermon-schedule.alias as alias',
       'cermon-schedule.time as time',
       'cermon-schedule.day as day',
       'cermon-schedule.segment as segment',

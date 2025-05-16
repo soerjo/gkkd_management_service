@@ -24,7 +24,7 @@ async function bootstrap() {
   app.enableCors({ credentials: true });
   // app.use(morgan('tiny'));
 
-  const theme = new SwaggerTheme();
+  // const theme = new SwaggerTheme();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(':v/docs', app, document, {
     swaggerOptions: {

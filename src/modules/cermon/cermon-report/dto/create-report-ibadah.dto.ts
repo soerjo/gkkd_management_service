@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, Max, IsOptional, Min, IsDateString, ValidateIf } from 'class-validator';
 
 export class CreateReportIbadahDto {
-  region_id: number;
+  region_id?: number;
 
   @ApiProperty()
   @IsNumber()
