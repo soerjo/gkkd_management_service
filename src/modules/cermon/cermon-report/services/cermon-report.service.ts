@@ -122,7 +122,7 @@ export class ReportIbadahService {
   }
 
   async remove(id: number, region_id?: number) {
-    const report = await this.findOne(id, region_id);
+    const report = await this.reportRepository.findOne({where: {id}})
     if (!report) throw new BadRequestException('report is not found!');
 
     this.reportRepository.remove(report);
