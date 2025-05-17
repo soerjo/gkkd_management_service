@@ -29,7 +29,7 @@ export class HospitaltityDataRepository extends Repository<HospitaltityDataEntit
         'blesscomn.name as blesscomn_name',
       ]);
   
-      filter.name && queryBuilder.andWhere('hospitality_data.name ILIKE :search OR hospitality_data.alias ILIKE :search', { search: `%${filter.name}%` });
+      filter.name && queryBuilder.andWhere('(hospitality_data.name ILIKE :search OR hospitality_data.alias ILIKE :search)', { search: `%${filter.name}%` });
       filter.region_id && queryBuilder.andWhere('hospitality_data.region_id = :region_id', { region_id: filter.region_id });
       filter.segment_id && queryBuilder.andWhere('hospitality_data.segment_id = :segment_id', { segment_id: filter.segment_id });
       filter.blesscomn_id && queryBuilder.andWhere('hospitality_data.blesscomn_id = :blesscomn_id', { blesscomn_id: filter.blesscomn_id });

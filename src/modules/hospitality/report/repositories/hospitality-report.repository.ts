@@ -52,7 +52,7 @@ export class HospitalityReportRepository extends Repository<HospitalityReportEnt
       hospitality_report.hospitality_data_id = hospitality_data.id
       and hospitality_report.sunday_service_id = :sundayServiceId
       and Date(hospitality_report.date) = :reportDate
-    `);
+    `).withDeleted();
     // queryBuilder.leftJoinAndSelect('hospitality_report.sunday_service', 'cermon-schedule');
     queryBuilder.leftJoinAndSelect('hospitality_data.region', 'region');
     queryBuilder.leftJoinAndSelect('hospitality_data.segment', 'segment');
@@ -63,9 +63,9 @@ export class HospitalityReportRepository extends Repository<HospitalityReportEnt
       reportDate: filter.date,
     });
     
-    queryBuilder.andWhere('hospitality_data.region_id = :region_id', { region_id: filter.region_id });
+    queryBuilder.where("(hospitality_data.deleted_at is null or hospitality_report.id is not null)");
     filter.isVersion && queryBuilder.andWhere('hospitality_report.id is not null');
-    filter.name && queryBuilder.andWhere('hospitality_data.name ILIKE :search OR hospitality_data.alias ILIKE :search', { search: `%${filter.name}%` });
+    filter.name && queryBuilder.andWhere('(hospitality_data.name ILIKE :search OR hospitality_data.alias ILIKE :search)', { search: `%${filter.name}%` });
     filter.region_id && queryBuilder.andWhere('hospitality_data.region_id = :region_id', { region_id: filter.region_id });
     filter.segment_id && queryBuilder.andWhere('hospitality_data.segment_id = :segment_id', { segment_id: filter.segment_id });
     filter.blesscomn_id && queryBuilder.andWhere('hospitality_data.blesscomn_id = :blesscomn_id', { blesscomn_id: filter.blesscomn_id });
